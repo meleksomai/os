@@ -1,10 +1,13 @@
 import { EmailMessage } from "cloudflare:email";
 import { Agent, type AgentEmail } from "agents";
+import { generateText, Output } from "ai";
 import { createMimeMessage } from "mimetext";
 import PostalMime from "postal-mime";
-import { classifyEmailContent } from "./models/classifier";
-import { draftEmail } from "./models/writer";
-import { renderEmail } from "./templates/welcome";
+import z from "zod";
+import classification_email_system_prompt from "./prompts/classifier";
+import draft_email_system_prompt from "./prompts/writer";
+import { renderEmail } from "./templates/response-email";
+import { retrieveGatewayModel } from "./utils";
 
 export type SenderType = "self" | "agent" | "external";
 
@@ -49,18 +52,23 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
   async _onEmail(email: AgentEmail) {
     const triage = this.triageEmail(email);
-    if (triage === "self") {
-      console.log("Email from self. Ignoring.");
-      return;
-    } else if (triage === "agent") {
-      console.log("Email from agent itself. Ignoring.");
-      return;
-    } else if (triage === "external") {
-      console.log("Email from external sender. Processing...");
-      return this.handleExternalEmail(email);
+    switch (triage) {
+      case "agent":
+        console.log("Email from self-agent. Ignoring to prevent loops.");
+        break;
+
+      case "self":
+        console.log("Email from self. Handling as internal message.");
+        break;
+
+      case "external":
+        console.log("Email from external sender. Handling accordingly.");
+        await this.handleExternalEmail(email);
+        break;
+      default:
+        console.log("Unknown sender type. Ignoring email.");
+        break;
     }
-    console.log("Unknown sender type. Ignoring email.");
-    return;
   }
 
   async handleExternalEmail(email: AgentEmail) {
@@ -71,23 +79,28 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
     // Classify the email content
     console.log("Classifying email content using our AI model...");
-    const classification = await classifyEmailContent(msg);
+    const classification = await this.generateEmailClassification(msg);
+    console.log("Email classification:", classification);
 
     if (classification.action === "reply") {
-      console.log("Drafting reply email...");
-      // Draft a reply using the email writer model.
-      const draft = await draftEmail(msg);
-      const content = await renderEmail(draft);
+      const reply = await this.generateReplyDraft(msg);
+      console.log("Sending reply email...");
       await email.reply({
         from: this.env.EMAIL_ROUTING_ADDRESS,
-        raw: content,
-        to: email.from,
+        raw: reply,
+        to: msg.from,
       });
     }
 
     // Forward the email to self by default.
     console.log("Forwarding email to self for record-keeping.");
     await email.forward(this.env.EMAIL_ROUTING_DESTINATION);
+
+    // Notify self by email about the received email with personal summary.
+    await this.notifySelfByEmail({
+      original: email,
+      content: `Received an email from ${msg.from} with subject "${msg.subject}".\n\nClassified action: ${classification.action}.\n\nComments: ${classification.comments}`,
+    });
 
     console.log("Email processing completed.");
     return;
@@ -135,19 +148,20 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     return "external";
   }
 
-  private notifySelfByEmail({
+  private async notifySelfByEmail({
     original,
     content,
     contentType = "text/plain",
     inReplyTo = true,
-    senderName,
+    senderName = "Email Routing Assistant",
   }: {
     original: AgentEmail;
     content: string;
-    contentType: "text/plain" | "text/html";
-    inReplyTo: boolean;
+    contentType?: "text/plain" | "text/html";
+    inReplyTo?: boolean;
     senderName?: string;
   }) {
+    console.log("Notifying self by email with summary...");
     const msg = createMimeMessage();
 
     if (inReplyTo) {
@@ -166,6 +180,63 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       data: content,
     });
 
-    return new EmailMessage(original.to, original.from, msg.asRaw());
+    const emailMessage = new EmailMessage(
+      this.env.EMAIL_ROUTING_DESTINATION,
+      this.env.EMAIL_ROUTING_ADDRESS,
+      msg.asRaw()
+    );
+
+    console.log("Sending email notification to self:", original.to);
+    await this.env.SEB.send(emailMessage);
+    console.log("Notification email sent to self.");
+  }
+
+  private async generateEmailClassification(message: Message) {
+    console.log("Generating (LLM) the email classification...");
+    const model = await retrieveGatewayModel();
+    const { output } = await generateText({
+      model: model,
+      system: classification_email_system_prompt,
+      output: Output.object({
+        schema: z.object({
+          intents: z
+            .array(
+              z.enum([
+                "scheduling",
+                "information_request",
+                "action_request",
+                "introduction_networking",
+                "sales_vendor",
+                "fyi_notification",
+                "sensitive_legal_financial",
+                "unknown_ambiguous",
+              ])
+            )
+            .min(1),
+          risk: z.enum(["low", "medium", "high"]),
+          action: z.enum(["reply", "forward", "ignore"]),
+          // Whether the assistant should wait for explicit user approval before sending or committing.
+          requires_approval: z.boolean(),
+          // A short explanation for logs and UI surfaces.
+          comments: z.string().min(1).max(500),
+        }),
+      }),
+      prompt: `Classify the following email:\n\nfrom:${message.from}\n\n subject:${message.subject}\n\n content:\n\n${message.raw}`,
+    });
+
+    return output;
+  }
+
+  private async generateReplyDraft(message: Message): Promise<string> {
+    console.log("Generating (LLM) the draft reply email...");
+    const model = await retrieveGatewayModel();
+    const { output } = await generateText({
+      model: model,
+      system: draft_email_system_prompt,
+      prompt: `Draft a reply to the following email:\n\nfrom:${message.from}\n\n subject:${message.subject}\n\n content:\n\n${message.raw}`,
+    });
+    console.log("Rendering email content...");
+    const content = await renderEmail(output);
+    return content;
   }
 }

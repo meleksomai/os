@@ -10,8 +10,7 @@
   },
   "send_email": [
     {
-      "name": "SEB",
-      "destination_address": "<EMAIL_ROUTING_DESTINATION>"
+      "name": "SEB"
     }
   ],
   "durable_objects": {
