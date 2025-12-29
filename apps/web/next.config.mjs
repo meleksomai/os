@@ -15,11 +15,16 @@ const options = {
   },
 };
 
+/** @type {import('remark-gfm"').Options} */
+const gfmOptions = {
+  footnoteLabelProperties: { className: ["sr-only"] },
+};
+
 const withMDX = createMDX({
   extension: /\.(md|mdx)$/,
   options: {
     remarkPlugins: [
-      "remark-gfm",
+      ["remark-gfm", gfmOptions],
       "remark-toc",
       "remark-frontmatter",
       ["remark-mdx-frontmatter", { name: "metadata" }],

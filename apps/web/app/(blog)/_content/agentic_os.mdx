@@ -1,0 +1,103 @@
+---
+title: Building a Native AI Assistant for my Email Inbox
+subtitle: Reimagining productivity with LLMs, Cloudflare Workers, and Durable Objects
+featured: true
+publishedAt: 2025-12-27
+category: engineering
+---
+
+import { Callout } from "@workspace/ui/blocks/callout";
+import { Quote } from "@workspace/ui/blocks/quote";
+import { ThemeImage } from "@workspace/ui/blocks/themed-image";
+
+<Callout type="info">
+The source code for this project is available on [https://github.com/meleksomai/os](https://github.com/meleksomai/os).
+</Callout>
+
+Over the past year, I have become more and more convinced that the future of softwares lies in _agent-first_ systems powered by Frontier Language Models (LLMs) or whatever comes next.[^1] By agent-first systems, I mean software systems in which a task is further hidden from the end-user and is embedded within a long-lived, stateful agent. The agent owns the intent interpretation, memory, decision-making, action execution, and ultimately _removes_ further the user from the tasks. This is different from traditional software where the user is expected to interact with a specific UI or API to accomplish a task. Fundamentally, this means that the user no longer needs to learn how to use a piece of software; instead, they can rely on the agent to understand their intent and use the appropriate tools to achieve their goals. A litmus test could be that if you remove the agent, does the system collapse? If yes, it's agent-first. 
+
+[^1]: This is making the assumption that Frontier LLMs will continue to improve in capability, reliability, and safety over time; and that whether we achieve AGI or not, these models will be powerful enough to handle a wide range of tasks that we currently rely on traditional softwares for.
+
+There is obviously a long way to go to reach that across industries, such as health care. However, we are already seeing a glimpse of this future and it is exciting. 
+
+## From Software to Agents
+
+The first _inflection_[^2] point for me came with [ChatGPT](https://chatgpt.com/) where a simple chat interface unlocked a new way to interact with intelligent systems that felt natural, and powerful. The conversational model made it easy to express intent, iterate on ideas, and access the capabilities of a given LLM model without a custom UI for every task. I think OpenAI and Sam Altman brilliant move was to realize that the best interface to let people experience ChatGPT was to build a _UI-less_ interface.
+
+<Quote>
+The next generation of software will be built around agents, not interfaces.
+</Quote>
+
+[^2]: While I've described LLM progress in terms of a step function, the underlying improvements are smoother and predictable. What feels like a sudden capability jump is often a perceptual bias shaped by our limited human capacity to measure change over a continuous spectrum. I highly recommend the following paper: <br /> _Schaeffer, Rylan, Brando Miranda, and Sanmi Koyejo._ 2023. “Are Emergent Abilities of Large Language Models a Mirage?” arXiv [Cs.AI]. arXiv. http://arxiv.org/abs/2304.15004.
+
+The second and more powerful _Aha!_ moment came when I started using (vibe) coding with [Codex](https://openai.com/codex/), [Claude Code](https://github.com/anthropics/claude-code), and [Amp](https://ampcode.com/). All these vibe coding tools used yet another simple interface: a CLI (command-line interface), mostly through a terminal application.[^3] The simplicity[^4] of the interface unlocks instinctively a more natural and frictionless way to bring LLMs to my day-to-day programming routine. I have tried VSCode Copilot, and Cursor but, I had the same feeling of [Andrej Karpathy](https://x.com/karpathy)'s recent [tweet](https://x.com/karpathy/status/2004607146781278521) about how the struggle to increase productivity with LLMs is perhaps more of a skill issue, _and more probably tools issue_. 
+
+[^3]: I highly recommend [Ghostty](https://ghostty.org/) as a terminal. It is such a delightful work by [Mitchell Hashimoto](https://x.com/mitchellh).
+[^4]: Though I have seen a trend to build complex UI interfaces through the CLI using frameworks like TUI and [Ink](https://github.com/vadimdemedes/ink). I personally worry that this could lead to anti-patterns where we are recreating the same complexity of traditional UIs in a CLI context.
+
+This trend - or perhaps principle - of _removing the UI_ unlock LLMs as a new interaction paradigm that requires rethinking how we should build software from the ground up.
+
+## Applying the Principle to my Email Inbox
+
+So during the holidays, aside from reading the latest issue of [London Review of Books](https://www.lrb.co.uk/), I got sometime to ponder of the idea of UI-less computing and what it would look like to build softwares around LLMs from first-principles. I wanted to leverage a simple interface. It happens that during the same holidays, I had to deal with a backlog of emails (sorry if I did not reply to any of those. Now you know why). Emails after all are one of the most universal protocols for communication.
+
+What if I can build an agent that can help me triage, prioritize, and respond to emails on my behalf? More interestingly, what if we can have historical context per email contact (an individual, a company, etc) so the LLM can adjust its behavior for each contact.  What if I can build an agent that can remember the context of my previous conversations and help me draft replies that are consistent with my tone and style? What if I can build an agent that can learn from my feedback and improve over time? And more importantly, what if I can build this agent without a custom UI, but rather using email as the interface?
+
+<Callout>
+You can skip the more technical piece below where I will share the high-level architecture, design decisions, and challenges I faced while building this agentic OS. You can check out the source code for this project on [GitHub](https://github.com/meleksomai/os); or you can try it ut by sending me an email at [hello@somai.me](mailto:hello@somai.me).
+</Callout>
+
+## Platform: Cloudflare Workers + Durable Objects
+
+As I said, I wanted to build this system from first principles. I wanted to avoid building a web app or a mobile app first. I wanted to start with the simplest possible architecture that can scale over time. Over the last few years, I have become a big fan of [serverless platforms](youtube.com/watch?v=mlP_oP5LrIQ&themeRefresh=1). So, I was sure that I needed a simple, serverless architecture to start with. [Vercel](https://vercel.com/) is amazing for web apps and their recent [fluid compute](https://vercel.com/fluid), [AI SDK](https://ai-sdk.dev/), and [Workflow](https://vercel.com/docs/workflow) were intriguing enough. However, Vercel defaults to be tightly coupled to [Next.js](https://nextjs.org/) and the web framework lifecycle. That felt unnatural for an agent-first system. I really like Next.js and love the craft the team at Vercel put into building all the products and services, but I did not want to build a web app first and start from first principles. [AWS](https://aws.amazon.com/) is powerful, but is becoming a very difficult platform to start with. I did not want to setup VPCs, configure Bedrock, manage IAM, connect my CI with Cloudformation and orchestrate a mountain of infrastructure pieces just to get a prototype running. Also, I really find the development experience on AWS Lambda to be quite challenging compared to Vercel.
+
+So, I landed on [Cloudflare Workers](https://workers.cloudflare.com/). Cloudflare felt like the middle ground: AWS-level primitives with Vercel-like developer experience. I had the least experience with Cloudflare compared to Vercel or AWS, but it is the most balanced starting point I have found. I am also a big fan of Cloudflare's philosophy around edge computing, and their (somewhat) recent innovation around [durable objects](https://developers.cloudflare.com/durable-objects/).
+
+_Note: I did not have much experience with Cloudflare before starting this project; and I was able to get a prototype running and deployed the full platform in a few hours. The development experience was smooth, specifically thanks to really good local dev experience with the [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/). The documentation is _okay_ overall, though it is confusing at times._
+
+But the most important aspect of Cloudflare that caught my attention and was definitely the ultimate reason to choose the platform was their recent push for [Durable Objects](https://developers.cloudflare.com/durable-objects/) (DOs). I personally think that DOs is a game-changer. It is perhaps the coolest thing I have seen in serverless computing in the last few years since AWS Lambda and DynamoDB. The concept is pretty simple. Rathe than thinking about scale in terms of distributed systems, DOs let you think about scale in terms of _stateful small machines/instances_. Each instance is a self-contained unit of compute with its own memory, storage, and lifecycle. It is Lambda on steroids. Cloudflare did a really good job of combining the _serverless_ model with the _stateful_ model. This is a perfect match for building agent-first systems where each agent can be a DO instance with its own state and behavior. DOs also adds concepts such as _scheduling_ that enables a DOs to have its own lifecycle.[^5]
+
+[^5]: I am excited but also skeptical. DOs seems to be too good to be true. I am curious to see how Cloudflare will execute on this vision over time. There are still many open questions around DOs, and I have yet to see successful businesses and ideas built on top.
+
+## Architecture
+
+Now, that we have chosen our platform. It is time to start building. The architecture I ended up using is fairly simple: an email is received by Cloudflare Email Routing, forwarded to a Cloudflare Worker that routes the email to a specific agent (Durable Object) instance based on the sender's email address. The agent processes the email, runs LLMs, updates its state, and optionally sends a reply.
+
+<ThemeImage
+  lightSrc="/images/essays/cloudflare_email_architecture_light.png"
+  darkSrc="/images/essays/cloudflare_email_architecture_dark.png"
+  alt="Architecture diagram"
+  width={1200}
+  height={489}
+/>
+
+### Memory
+
+Each DOs has its own memory, a simple SQLLite database. For my use case, I landed on a the following memory structure.
+
+```typescript title="agent.ts"
+export type State = {
+  lastUpdated: Date | null; 
+  messages: Message[];  // history of exchanges
+  autoResponded?: boolean;  // whether the agent has auto-responded
+  context?: string;  // additional context provided by Melek
+  summary?: string // LLM-managed summary
+};
+```
+
+Another limitation is how to manage history and prompts per DO. Durable Objects provide SQLite and KV, but my current mental model (influenced by tools like Codex and Claude Code) pushes me toward a “virtual folder.”
+
+The idea is simple: give each agent a folder where I can drop skills, Markdown docs, templates, or any other context. The sender could even contribute to that folder by sharing files. This avoids the need for a vector database for now. If vector search becomes a file-native feature later, I will happily adopt it.
+
+
+## The missing management plane
+
+This approach is powerful but it creates a new problem: management at scale. If I have dozens or hundreds of concurrent email threads, I need a management plane for visibility, debugging, rate limiting, and operational control. Durable Objects and Workers are great, but the system needs a layer above them.
+
+That is one of the main open problems I am exploring next.
+
+## Try it out
+
+Send me an email at `hello@somai.me` and you will be routed to the agent. It is early, but it already works.
+
+If you want to follow the build, the code lives in `apps/agent` and the public surface lives in `apps/web`.
