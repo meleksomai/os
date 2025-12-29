@@ -40,6 +40,7 @@ export type Message = {
   to: string;
   subject: string;
   raw: string | Uint8Array<ArrayBufferLike>;
+  messageId: string | null;
 };
 
 export class HelloEmailAgent extends Agent<Env, Memory> {
@@ -127,6 +128,8 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       subject: emailParsed.subject || "(No Subject)",
       raw: emailParsed.html || emailParsed.text || "",
       to: email.to,
+      messageId:
+        email.headers.get("Message-ID") || emailParsed.messageId || null,
     };
   }
 
@@ -164,6 +167,9 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     console.log("Notifying self by email with summary...");
     const msg = createMimeMessage();
 
+    const fromAddress = this.env.EMAIL_ROUTING_ADDRESS;
+    const toAddress = this.env.EMAIL_ROUTING_DESTINATION;
+
     if (inReplyTo) {
       // We attach the email response to the original email thread
       msg.setHeader("In-Reply-To", original.headers.get("Message-ID") || "");
@@ -171,22 +177,18 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
     msg.setSender({
       name: senderName,
-      addr: original.to,
+      addr: fromAddress,
     });
-    msg.setRecipient(original.from);
+    msg.setRecipient(toAddress);
     msg.setSubject("Email Routing Auto-reply");
     msg.addMessage({
       contentType: contentType,
       data: content,
     });
 
-    const emailMessage = new EmailMessage(
-      this.env.EMAIL_ROUTING_DESTINATION,
-      this.env.EMAIL_ROUTING_ADDRESS,
-      msg.asRaw()
-    );
+    const emailMessage = new EmailMessage(fromAddress, toAddress, msg.asRaw());
 
-    console.log("Sending email notification to self:", original.to);
+    console.log("Sending email notification to self:", toAddress);
     await this.env.SEB.send(emailMessage);
     console.log("Notification email sent to self.");
   }
@@ -237,6 +239,30 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     });
     console.log("Rendering email content...");
     const content = await renderEmail(output);
-    return content;
+
+    console.log("Creating MIME message for reply...");
+    const mimeMessage = createMimeMessage();
+
+    const subject = message.subject.startsWith("Re:")
+      ? message.subject
+      : `Re: ${message.subject}`;
+
+    mimeMessage.setSender({
+      name: "Email Routing Assistant",
+      addr: this.env.EMAIL_ROUTING_ADDRESS,
+    });
+
+    mimeMessage.setRecipient(message.from);
+    mimeMessage.setSubject(subject);
+    if (message.messageId) {
+      mimeMessage.setHeader("In-Reply-To", message.messageId);
+      mimeMessage.setHeader("References", message.messageId);
+    }
+    mimeMessage.addMessage({
+      contentType: "text/html",
+      data: content,
+    });
+
+    return mimeMessage.asRaw();
   }
 }
