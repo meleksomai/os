@@ -8,6 +8,12 @@
     "enabled": true,
     "head_sampling_rate": 1
   },
+  "send_email": [
+    {
+      "name": "SEB",
+      "destination_address": "<EMAIL_ROUTING_DESTINATION>"
+    }
+  ],
   "durable_objects": {
     "bindings": [
       {
@@ -17,7 +23,8 @@
     ]
   },
   "ai": {
-    "binding": "AI"
+    "binding": "AI",
+    "remote": true
   },
   "migrations": [
     {

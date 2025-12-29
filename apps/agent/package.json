@@ -6,22 +6,28 @@
     "check-types": "tsc --noEmit",
     "deploy": "npx wrangler deploy --minify",
     "dev": "npx wrangler dev",
-    "generate-types": "npx wrangler types"
+    "generate-types": "npx wrangler types",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@workspace/transactional": "workspace:*",
     "@ai-sdk/openai": "^3.0.1",
     "agents": "0.3.0",
     "ai": "6.0.3",
     "ai-gateway-provider": "^3.0.1",
+    "mimetext": "^3.0.27",
+    "postal-mime": "^2.7.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.11.1",
     "@types/node": "24.10.3",
     "@types/react": "19.2.3",
     "@types/react-dom": "19.2.3",
     "@workspace/typescript-config": "workspace:*",
+    "vitest": "^3.1.4",
     "wrangler": "4.56.0"
   }
 }

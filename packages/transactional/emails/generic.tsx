@@ -11,17 +11,17 @@ import {
 } from "@react-email/components";
 import tailwindConfig from "../tailwind.config";
 
-interface WelcomeEmailProps {
+interface GenericEmailProps {
   previewMessage?: string;
   content?: string;
   footer: string;
 }
 
-export const WelcomeEmail = ({
+export const GenericEmail = ({
   content,
   footer,
   previewMessage,
-}: WelcomeEmailProps) => (
+}: GenericEmailProps) => (
   <Html>
     <Head />
     <Tailwind config={tailwindConfig}>
@@ -61,11 +61,11 @@ export const WelcomeEmail = ({
   </Html>
 );
 
-WelcomeEmail.PreviewProps = {
+GenericEmail.PreviewProps = {
   footer:
     "Crafted with focus | [somai.me](https://somai.me) | [hello@somai.me](mailto:hello@somai.me)",
   content:
     "Hey there,\n\nThank you for reaching out. I will get back to you as soon as I can.\n\nIn the meantime, feel free to explore my [website](https://somai.me) to learn more about my work and projects.\n\nLooking forward to connecting with you!\n",
-} as WelcomeEmailProps;
+} as GenericEmailProps;
 
-export default WelcomeEmail;
+export default GenericEmail;
