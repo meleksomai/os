@@ -3,7 +3,7 @@ import {
   env as testEnv,
   waitOnExecutionContext,
 } from "cloudflare:test";
-import { describe, expect, it } from "vitest";
+import { describe, it } from "vitest";
 import worker from "../index";
 import { createMockEmailHelper } from "./helper";
 
@@ -12,7 +12,7 @@ describe("Agent Worker", () => {
 
   it("dispatches fetch event", async () => {
     const ctx = createExecutionContext();
-    await worker.email(request, testEnv);
+    await worker.email(request, testEnv as any);
     await waitOnExecutionContext(ctx);
   });
 });
