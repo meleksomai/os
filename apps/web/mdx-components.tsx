@@ -7,6 +7,7 @@ import {
   Heading5,
   Heading6,
 } from "@workspace/ui/blocks/headings";
+import { cn } from "@workspace/ui/lib/utils";
 import type { MDXComponents } from "mdx/types";
 import Image, { type ImageProps } from "next/image";
 import Link from "next/link";
@@ -16,6 +17,17 @@ type ParagraphProps = ComponentPropsWithoutRef<"p">;
 type AnchorProps = ComponentPropsWithoutRef<"a">;
 type ListProps = ComponentPropsWithoutRef<"ul">;
 type ListItemProps = ComponentPropsWithoutRef<"li">;
+
+function isFootnotesSection(props: React.HTMLAttributes<HTMLElement>) {
+  // remark-gfm often emits: <section data-footnotes class="footnotes">
+  // Some renderers use <div class="footnotes"> or <section class="footnotes">
+  const anyProps = props as any;
+  return (
+    anyProps["data-footnotes"] !== undefined ||
+    props.className?.split(" ").includes("footnotes") ||
+    props.id === "footnotes"
+  );
+}
 
 const components = {
   // Allows customizing built-in components, e.g. to add styling.
@@ -27,8 +39,7 @@ const components = {
   h6: (props: ComponentPropsWithoutRef<"h6">) => <Heading6 {...props} />,
   p: (props: ParagraphProps) => <p className="my-6 leading-loose" {...props} />,
   a: ({ href, ...props }: AnchorProps) => {
-    const className =
-      "underline decoration-muted-foreground hover:text-muted-foreground ";
+    const className = "underline";
     if (href?.startsWith("/")) {
       return <Link className={className} href={href} {...props} />;
     }
@@ -37,7 +48,10 @@ const components = {
     }
     return (
       <a
-        className={className}
+        className={cn(
+          "underline-offset-3 decoration-muted-foreground",
+          className
+        )}
         href={href}
         rel="noopener noreferrer"
         target="_blank"
@@ -46,20 +60,14 @@ const components = {
     );
   },
   ol: (props: ListProps) => (
-    <ol
-      className="my-6 list-decimal space-y-2 pl-5 text-gray-800 dark:text-zinc-300"
-      {...props}
-    />
+    <ol className="my-6 list-decimal space-y-2 pl-5" {...props} />
   ),
   ul: (props: ListProps) => (
-    <ul
-      className="my-6 list-disc space-y-1 pl-5 text-gray-800 dark:text-zinc-300"
-      {...props}
-    />
+    <ul className="my-6 list-disc space-y-1 pl-5" {...props} />
   ),
   li: (props: ListItemProps) => <li className="my-3 pl-1" {...props} />,
   em: (props: ComponentPropsWithoutRef<"em">) => (
-    <em className="font-medium italic" {...props} />
+    <em className="font-serif" {...props} />
   ),
   strong: (props: ComponentPropsWithoutRef<"strong">) => (
     <strong className="font-semibold" {...props} />
@@ -89,6 +97,37 @@ const components = {
     }
 
     return <figcaption {...props} />;
+  },
+  // --- Inline footnote reference wrapper ---
+  sup: ({ className, children, ...props }) => (
+    <sup
+      {...props}
+      className={[
+        // your styling
+        "align-super text-[0.75em] leading-none text-muted-foreground hover:text-foreground",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {children}
+    </sup>
+  ),
+  // --- Footnotes container ---
+  section: ({ className, ...props }) => {
+    if (isFootnotesSection(props)) {
+      return (
+        <section
+          {...props}
+          className={[
+            "mt-10 border-t pt-6",
+            "mt-8 text-sm text-muted-foreground ",
+            className,
+          ]}
+        />
+      );
+    }
+    return <section {...props} className={className} />;
   },
 } satisfies MDXComponents;
 
