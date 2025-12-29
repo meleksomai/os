@@ -1,3 +1,4 @@
+import * as CodeBlock from "@workspace/ui/blocks/code-block";
 import {
   Heading1,
   Heading2,
@@ -64,21 +65,31 @@ const components = {
     <strong className="font-semibold" {...props} />
   ),
   img: (props) => (
-    <Image
-      sizes="100vw"
-      style={{ width: "100%", height: "auto" }}
-      {...(props as ImageProps)}
-    />
+    <Image height={720} width={1200} {...(props as ImageProps)} />
   ),
   blockquote: (props: ComponentPropsWithoutRef<"blockquote">) => (
     <blockquote className="mt-6 border-l-2 pl-6 italic" {...props} />
   ),
-  code: (props: ComponentPropsWithoutRef<"code">) => (
-    <code
-      className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono font-semibold"
-      {...props}
-    />
+  // Don't pass the tabindex prop from shiki, most browsers
+  // now handle scroll containers focus out of the box
+  pre: ({ tabIndex, ...props }) => <CodeBlock.Pre {...props} />,
+  code: (props) => (
+    <CodeBlock.Code className="data-[inline]:mx-[0.1em]" {...props} />
   ),
+  figure: (props) => {
+    if ("data-rehype-pretty-code-figure" in props) {
+      return <CodeBlock.Root {...props} />;
+    }
+
+    return <figure {...props} />;
+  },
+  figcaption: (props) => {
+    if ("data-rehype-pretty-code-title" in props) {
+      return <CodeBlock.Panel {...props} />;
+    }
+
+    return <figcaption {...props} />;
+  },
 } satisfies MDXComponents;
 
 export function useMDXComponents(): MDXComponents {
