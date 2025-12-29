@@ -7,6 +7,14 @@ const nextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
 };
 
+/** @type {import('rehype-pretty-code').Options} */
+const options = {
+  theme: {
+    dark: "github-dark",
+    light: "github-light",
+  },
+};
+
 const withMDX = createMDX({
   extension: /\.(md|mdx)$/,
   options: {
@@ -19,6 +27,7 @@ const withMDX = createMDX({
       "remark-reading-time/mdx",
     ],
     rehypePlugins: [
+      ["rehype-pretty-code", options],
       "rehype-slug",
       ["rehype-katex", { strict: true, throwOnError: true }],
       [
