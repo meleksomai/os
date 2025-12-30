@@ -1,13 +1,8 @@
-import type {
-  EmailClassification,
-  IEmailComposer,
-  IEmailParser,
-  ILLMService,
-  IMemoryManager,
-  Memory,
-  Message,
-  NotificationOptions,
-} from "../types";
+import { EmailComposer } from "@/emails/composer";
+import { EmailParser } from "@/emails/parser";
+import { LLMService } from "@/llm-service";
+import { MemoryManager } from "@/memory-manager";
+import type { EmailClassification, Memory, Message } from "../types";
 
 /**
  * Create a mock email for testing
@@ -88,41 +83,44 @@ export const createMockEmailClassification = (
  * Create a mock EmailParser for testing
  */
 export const createMockEmailParser = (
-  overrides: Partial<IEmailParser> = {}
-): IEmailParser => ({
-  parse: overrides.parse ?? (async () => createMockMessage()),
-});
+  overrides: Partial<EmailParser> = {}
+): EmailParser =>
+  ({
+    parse: overrides.parse ?? (async () => createMockMessage()),
+  }) as EmailParser;
 
 /**
  * Create a mock MemoryManager for testing
  */
 export const createMockMemoryManager = (
-  overrides: Partial<IMemoryManager> = {}
-): IMemoryManager => ({
-  getState: overrides.getState ?? (() => createMockMemory()),
-  storeMessage: overrides.storeMessage ?? (async () => {}),
-  appendContext: overrides.appendContext ?? (async () => {}),
-  updateState: overrides.updateState ?? (async () => {}),
-});
+  overrides: Partial<MemoryManager> = {}
+): MemoryManager =>
+  ({
+    getState: overrides.getState ?? (() => createMockMemory()),
+    storeMessage: overrides.storeMessage ?? (async () => {}),
+    appendContext: overrides.appendContext ?? (async () => {}),
+    updateState: overrides.updateState ?? (async () => {}),
+  }) as MemoryManager;
 
 /**
  * Create a mock LLMService for testing
  */
 export const createMockLLMService = (
-  overrides: Partial<ILLMService> = {}
-): ILLMService => ({
-  classifyEmail:
-    overrides.classifyEmail ?? (async () => createMockEmailClassification()),
-  generateReplyDraft:
-    overrides.generateReplyDraft ?? (async () => "Test reply content"),
-});
+  overrides: Partial<LLMService> = {}
+): LLMService =>
+  ({
+    classifyEmail:
+      overrides.classifyEmail ?? (async () => createMockEmailClassification()),
+    generateReplyDraft:
+      overrides.generateReplyDraft ?? (async () => "Test reply content"),
+  }) as LLMService;
 
 /**
  * Create a mock EmailComposer for testing
  */
 export const createMockEmailComposer = (
-  overrides: Partial<IEmailComposer> = {}
-): IEmailComposer => ({
+  overrides: Partial<EmailComposer> = {}
+): EmailComposer => ({
   composeReply: overrides.composeReply ?? (async () => "Raw MIME reply"),
   composeNotification:
     overrides.composeNotification ?? (async () => "Raw MIME notification"),
