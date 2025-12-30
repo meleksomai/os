@@ -1,6 +1,6 @@
 ---
-title: Building a Native AI Assistant for my Email Inbox
-subtitle: Reimagining productivity with LLMs, Cloudflare Workers, and Durable Objects
+title: Building an Email AI-Assistant
+subtitle: Productivity with LLMs, Cloudflare Workers, and Durable Objects
 featured: true
 publishedAt: 2025-12-27
 category: engineering
@@ -14,26 +14,32 @@ import { ThemeImage } from "@workspace/ui/blocks/themed-image";
 The source code for this project is available on [https://github.com/meleksomai/os](https://github.com/meleksomai/os).
 </Callout>
 
-Over the past year, I have become more and more convinced that the future of softwares lies in _agent-first_ systems powered by Frontier Language Models (LLMs) or whatever comes next.[^1] By agent-first systems, I mean software systems in which a task is further hidden from the end-user and is embedded within a long-lived, stateful agent. The agent owns the intent interpretation, memory, decision-making, action execution, and ultimately _removes_ further the user from the tasks. This is different from traditional software where the user is expected to interact with a specific UI or API to accomplish a task. Fundamentally, this means that the user no longer needs to learn how to use a piece of software; instead, they can rely on the agent to understand their intent and use the appropriate tools to achieve their goals. A litmus test could be that if you remove the agent, does the system collapse? If yes, it's agent-first. 
+Over the past year, I have become more and more convinced that the future of softwares lies in _agent-first_ systems powered by Frontier Language Models (LLMs) or whatever comes next.[^1] By agent-first systems, I mean software systems in which the task to be performed is further hidden from the end-user. The task itself is abstracted awau fro the user. In other words, the agent manages the intent interpretation, memory, decision-making, action execution, and ultimately _removes_ further the user from the task. This is analogous - _to an extend_ - to the way modern high-level programming languages such as Python, Javascript, and others abstract away garbage collection, memory allocation, etc. However, the similarities ends here. LLMs pushes the boundary to perform more tasks that involve "thinking", "conceptualization", and ultimately "craft". 
+
+Furthermore, LLMs seems to have a very different user interaction (UX/UI) from traditional software. In _traditional_[^2] softwares the user is expected to interact with a specific UI to accomplish a task. They have to navigate menus, click on buttons, and fill out forms. Designers would create incredible [design](https://www.radix-ui.com) [systems](https://mui.com/material-ui/) to make the user experience suck less. With LLMs, the user no longer needs to learn how to use a piece of software; instead, they can rely on the agent to understand their intent and use the appropriate tools to achieve their goals. 
 
 [^1]: This is making the assumption that Frontier LLMs will continue to improve in capability, reliability, and safety over time; and that whether we achieve AGI or not, these models will be powerful enough to handle a wide range of tasks that we currently rely on traditional softwares for.
 
-There is obviously a long way to go to reach that across industries, such as health care. However, we are already seeing a glimpse of this future and it is exciting. 
+[^2]: I am amazed how sudden the shift in our view of what a good software looks like. Just a year ago, building a web app with a sophisticated and well-crafted UI was considered innovative. Consider Linear, Figma, Vercel, and others. Now, it feels outdated and mostly an anti-pattern compared to agent-first systems.
+
+How far are we from this future? I think we are closer than we think. We are in this transition phase where we are still building traditional softwares, but increasingly more systems are being built around LLMs and agents. Most incumbent softwares are trying to integrate LLMs as a feature (e.g., code completion in IDEs, chatbots in CRMs, etc). However, this lead in my observation to two things: 1) worst UI experience, and 2) unpractical AI tool. A litmus test is to evaluate removing the agent from your software. If your software collapses, then yes, it's agent-first. If not, it's just a feature.
+
+There is obviously a long way to go to reach that across industries, such as health care. However, we are already seeing a glimpse of this future and it is exciting.
 
 ## From Software to Agents
 
-The first _inflection_[^2] point for me came with [ChatGPT](https://chatgpt.com/) where a simple chat interface unlocked a new way to interact with intelligent systems that felt natural, and powerful. The conversational model made it easy to express intent, iterate on ideas, and access the capabilities of a given LLM model without a custom UI for every task. I think OpenAI and Sam Altman brilliant move was to realize that the best interface to let people experience ChatGPT was to build a _UI-less_ interface.
+The first _inflection_[^3] point towards this direction of agent-based software is without doubt [ChatGPT](https://chatgpt.com/). Its simple chat interface unlocked a new way to interact with intelligent systems that felt natural, and powerful. The conversational model made it easy to express intent, iterate on ideas, and access the capabilities of the LLM model. I think OpenAI and Sam Altman brilliant move was to realize that the best interface to let people experience ChatGPT was to build a _UI-less_ interface.
 
 <Quote>
-The next generation of software will be built around agents, not interfaces.
+The next generation of software will be built around agents, not user interfaces.
 </Quote>
 
-[^2]: While I've described LLM progress in terms of a step function, the underlying improvements are smoother and predictable. What feels like a sudden capability jump is often a perceptual bias shaped by our limited human capacity to measure change over a continuous spectrum. I highly recommend the following paper: <br /> _Schaeffer, Rylan, Brando Miranda, and Sanmi Koyejo._ 2023. “Are Emergent Abilities of Large Language Models a Mirage?” arXiv [Cs.AI]. arXiv. http://arxiv.org/abs/2304.15004.
+[^3]: While I describe LLM progress in terms of a step function, the underlying improvements are smoother and predictable. What feels like a sudden capability jump is often a perceptual bias shaped by our limited human capacity to measure change over a continuous spectrum. I highly recommend the following paper: <br /> _Schaeffer, Rylan, Brando Miranda, and Sanmi Koyejo._ 2023. “Are Emergent Abilities of Large Language Models a Mirage?” arXiv [Cs.AI]. arXiv. http://arxiv.org/abs/2304.15004.
 
-The second and more powerful _Aha!_ moment came when I started using (vibe) coding with [Codex](https://openai.com/codex/), [Claude Code](https://github.com/anthropics/claude-code), and [Amp](https://ampcode.com/). All these vibe coding tools used yet another simple interface: a CLI (command-line interface), mostly through a terminal application.[^3] The simplicity[^4] of the interface unlocks instinctively a more natural and frictionless way to bring LLMs to my day-to-day programming routine. I have tried VSCode Copilot, and Cursor but, I had the same feeling of [Andrej Karpathy](https://x.com/karpathy)'s recent [tweet](https://x.com/karpathy/status/2004607146781278521) about how the struggle to increase productivity with LLMs is perhaps more of a skill issue, _and more probably tools issue_. 
+The second and more powerful _Aha!_ moment came more recently when I started using (vibe) coding with [Codex](https://openai.com/codex/), [Claude Code](https://github.com/anthropics/claude-code), and [Amp](https://ampcode.com/). All these vibe coding tools used yet another simple Command-line Interface (CLI).[^4] The simplicity[^5] of the CLI unlocks instinctively a more natural and frictionless way to bring LLMs to my day-to-day programming routine. I use VSCode Copilot, and Cursor but, I feel that those tools regress my ability to leverage LLMs. Cursor and VS Code are for sure attempting to _assist_ the current generation _adopt_ LLMs. In my opinion, while it has some value, it is counterproductive. I have the same opinion than [Andrej Karpathy](https://x.com/karpathy)'s recent [tweet](https://x.com/karpathy/status/2004607146781278521) about how the struggle to increase productivity with LLMs is perhaps more of a skill issue, _and also tools issue_.
 
-[^3]: I highly recommend [Ghostty](https://ghostty.org/) as a terminal. It is such a delightful work by [Mitchell Hashimoto](https://x.com/mitchellh).
-[^4]: Though I have seen a trend to build complex UI interfaces through the CLI using frameworks like TUI and [Ink](https://github.com/vadimdemedes/ink). I personally worry that this could lead to anti-patterns where we are recreating the same complexity of traditional UIs in a CLI context.
+[^4]: I highly recommend [Ghostty](https://ghostty.org/) as a terminal. It is such a delightful work by [Mitchell Hashimoto](https://x.com/mitchellh).
+[^5]: Though I have seen a trend to build complex UI interfaces through the CLI using frameworks like TUI and [Ink](https://github.com/vadimdemedes/ink). I personally worry that this could lead to anti-patterns where we are recreating the same complexity of traditional UIs in a CLI context.
 
 This trend - or perhaps principle - of _removing the UI_ unlock LLMs as a new interaction paradigm that requires rethinking how we should build software from the ground up.
 
@@ -55,9 +61,9 @@ So, I landed on [Cloudflare Workers](https://workers.cloudflare.com/). Cloudflar
 
 _Note: I did not have much experience with Cloudflare before starting this project; and I was able to get a prototype running and deployed the full platform in a few hours. The development experience was smooth, specifically thanks to really good local dev experience with the [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/). The documentation is _okay_ overall, though it is confusing at times._
 
-But the most important aspect of Cloudflare that caught my attention and was definitely the ultimate reason to choose the platform was their recent push for [Durable Objects](https://developers.cloudflare.com/durable-objects/) (DOs). I personally think that DOs is a game-changer. It is perhaps the coolest thing I have seen in serverless computing in the last few years since AWS Lambda and DynamoDB. The concept is pretty simple. Rathe than thinking about scale in terms of distributed systems, DOs let you think about scale in terms of _stateful small machines/instances_. Each instance is a self-contained unit of compute with its own memory, storage, and lifecycle. It is Lambda on steroids. Cloudflare did a really good job of combining the _serverless_ model with the _stateful_ model. This is a perfect match for building agent-first systems where each agent can be a DO instance with its own state and behavior. DOs also adds concepts such as _scheduling_ that enables a DOs to have its own lifecycle.[^5]
+But the most important aspect of Cloudflare that caught my attention and was definitely the ultimate reason to choose the platform was their recent push for [Durable Objects](https://developers.cloudflare.com/durable-objects/) (DOs). I personally think that DOs is a game-changer. It is perhaps the coolest thing I have seen in serverless computing in the last few years since AWS Lambda and DynamoDB. The concept is pretty simple. Rathe than thinking about scale in terms of distributed systems, DOs let you think about scale in terms of _stateful small machines/instances_. Each instance is a self-contained unit of compute with its own memory, storage, and lifecycle. It is Lambda on steroids. Cloudflare did a really good job of combining the _serverless_ model with the _stateful_ model. This is a perfect match for building agent-first systems where each agent can be a DO instance with its own state and behavior. DOs also adds concepts such as _scheduling_ that enables a DOs to have its own lifecycle.[^6]
 
-[^5]: I am excited but also skeptical. DOs seems to be too good to be true. I am curious to see how Cloudflare will execute on this vision over time. There are still many open questions around DOs, and I have yet to see successful businesses and ideas built on top.
+[^6]: I am excited but also skeptical. DOs seems to be too good to be true. I am curious to see how Cloudflare will execute on this vision over time. There are still many open questions around DOs, and I have yet to see successful businesses and ideas built on top.
 
 ## Architecture
 
@@ -71,30 +77,64 @@ Now, that we have chosen our platform. It is time to start building. The archite
   height={489}
 />
 
+I will focus on the most interesting parts of the architecture: 1) _routing_ logic, 2) AI _memory_, 2) AI Assistant _lifecycle_, and 3) some of the _missing_ pieces.
+
+### Routing
+
+Since I am using Durable Objects, an incoming email must be _routed_ to its corresponding agent instance. The critical workflow I wanted to implement is to be able to send "confidential" emails to the agent to remember some context about a specific contact. Again, my goal is to rely on the email for _all_ interactions. I want to send an email to my agent "You can share my phone with Alice." The agent should then store this context in its memory and use it to inform future interactions with Alice. Thus, the routing logic must be able to distinguish between emails sent by me (the owner of the agent) and emails sent by other contacts. 
+
+Each email has a set of headers that can be used to identify the thread. The most relevant headers are `Message-ID`, `In-Reply-To`, and `References`. These headers are used by email clients (e.g., Gmail, Outlook, etc) to group emails into threads. So, if I reply to an email from Alice that only includes my AI Assistant email, the email will have the same `In-Reply-To` and `References` headers as the original email from Alice. This allows me to identify the thread and route the email to the correct agent instance.
+
+I used a simple KV store to map thread identifiers to agent instance IDs. When an email is received, the routing logic checks the headers for thread identifiers. If a match is found in the KV store, the email is routed to the corresponding agent instance. If no match is found, a new agent instance is created, and the thread identifier is stored in the KV store.
+
+```typescript title="resolver.ts" {4,10-12}
+export function createThreadBasedEmailResolver<Env>(
+  agentName: string,
+  ownerEmail: string,
+  store: KVNamespace
+): EmailResolver<Env> {
+  return async (email: ForwardableEmailMessage, _env: Env) => {
+    // ...
+
+    // Extract thread identifiers from headers
+    const messageId = email.headers.get("Message-ID");
+    const inReplyTo = email.headers.get("In-Reply-To");
+    const references = email.headers.get("References");
+
+    // ...
+
+    // Store the mapping for future lookups
+    await store.put(threadId, contact, {
+      expirationTtl: 60 * 60 * 24 * 90,
+    });
+
+    return {
+      agentName,
+      agentId: contact,
+    };
+  };
+}
+```
+
+Ok, now that we have routing, let's talk about memory.
+
 ### Memory
 
-Each DOs has its own memory, a simple SQLLite database. For my use case, I landed on a the following memory structure.
+We now have routed our email to the correct agent instance. The next step is to make the instance remember the context of the conversation. As mentioned earlier, each DOs has its own memory, a simple SQLLite database. This architecture makes the memory management straightforward. Each agent instance can store its own state in its own database. The memory schema is simple:
 
-```typescript title="agent.ts"
-export type State = {
-  lastUpdated: Date | null; 
-  messages: Message[];  // history of exchanges
-  autoResponded?: boolean;  // whether the agent has auto-responded
-  context?: string;  // additional context provided by Melek
-  summary?: string // LLM-managed summary
+```typescript {3} title="memory.ts" 
+export type Memory = {
+  lastUpdated: Date | null;
+  messages: Message[];
+  context: string;
+  summary: string;
+  hasAutoReplied: boolean;
 };
 ```
 
-Another limitation is how to manage history and prompts per DO. Durable Objects provide SQLite and KV, but my current mental model (influenced by tools like Codex and Claude Code) pushes me toward a “virtual folder.”
+### AI Assistant Lifecycle
 
-The idea is simple: give each agent a folder where I can drop skills, Markdown docs, templates, or any other context. The sender could even contribute to that folder by sharing files. This avoids the need for a vector database for now. If vector search becomes a file-native feature later, I will happily adopt it.
-
-
-## The missing management plane
-
-This approach is powerful but it creates a new problem: management at scale. If I have dozens or hundreds of concurrent email threads, I need a management plane for visibility, debugging, rate limiting, and operational control. Durable Objects and Workers are great, but the system needs a layer above them.
-
-That is one of the main open problems I am exploring next.
+The AI Assistant lifecycle is divided into three main phases: 1) _ingestion_, 2) _processing_, and 3) _action_.
 
 ## Try it out
 
