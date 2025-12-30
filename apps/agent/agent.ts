@@ -145,7 +145,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
   ): Promise<void> {
     console.log("Notifying self by email with summary...");
 
-    const content = `Received an email from ${msg.from} with subject "${msg.subject}".\n\nClassified action: ${classification.action}.\n\nComments: ${classification.comments}`;
+    const content = `Received an email from ${msg.from} with subject "${msg.subject}".\n\nClassified action: ${classification.action}.\n\nComments: ${classification.comments}\n\nContext:\n${this.getMemoryManager().getState().context}`;
 
     const notificationRaw = await composer.composeNotification({
       fromAddress: this.env.EMAIL_ROUTING_ADDRESS,
