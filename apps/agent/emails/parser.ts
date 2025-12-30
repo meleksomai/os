@@ -6,18 +6,16 @@ import { type Message, MessageSchema } from "../types";
  * Email parser implementation using PostalMime
  */
 export class EmailParser {
-  private readonly parser: PostalMime;
-
-  constructor() {
-    this.parser = new PostalMime();
-  }
-
   /**
    * Parse raw email into structured Message
    */
   async parse(email: AgentEmail): Promise<Message> {
     const rawEmail = await email.getRaw();
-    const parsed = await this.parser.parse(rawEmail);
+
+    // Create a new PostalMime instance for each parse
+    // PostalMime parsers cannot be reused
+    const parser = new PostalMime();
+    const parsed = await parser.parse(rawEmail);
 
     // Extract CC recipients
     const cc: string[] = [];

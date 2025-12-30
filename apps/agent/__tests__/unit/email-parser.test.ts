@@ -174,4 +174,44 @@ describe("EmailParser", () => {
 
     expect(result.raw).toContain("HTML");
   });
+
+  it("should be able to parse multiple emails with the same parser instance", async () => {
+    // This test demonstrates a bug: EmailParser reuses a PostalMime instance
+    // which cannot be reused. The second parse() call will fail.
+    const parser = new EmailParser();
+
+    const email1: Partial<AgentEmail> = {
+      from: "sender1@example.com",
+      to: "recipient@example.com",
+      headers: new Headers({ "Message-ID": "message-1" }),
+      getRaw: async () =>
+        new Uint8Array(
+          Buffer.from(
+            "From: sender1@example.com\r\nTo: recipient@example.com\r\nSubject: Email 1\r\n\r\nFirst email"
+          )
+        ),
+    };
+
+    const email2: Partial<AgentEmail> = {
+      from: "sender2@example.com",
+      to: "recipient@example.com",
+      headers: new Headers({ "Message-ID": "message-2" }),
+      getRaw: async () =>
+        new Uint8Array(
+          Buffer.from(
+            "From: sender2@example.com\r\nTo: recipient@example.com\r\nSubject: Email 2\r\n\r\nSecond email"
+          )
+        ),
+    };
+
+    // Parse first email - this works fine
+    const result1 = await parser.parse(email1 as AgentEmail);
+    expect(result1.from).toBe("sender1@example.com");
+    expect(result1.subject).toBe("Email 1");
+
+    // Parse second email with the same parser instance
+    const result2 = await parser.parse(email2 as AgentEmail);
+    expect(result2.from).toBe("sender2@example.com");
+    expect(result2.subject).toBe("Email 2");
+  });
 });
