@@ -4,12 +4,31 @@ import {
   listDurableObjectIds,
   waitOnExecutionContext,
 } from "cloudflare:test";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import worker from "../../index";
 import { createMockEmailHelper } from "../helper";
 
+// Mock LLMService to avoid real AI calls in tests We are mocking the LLMService
+// used in the agent Durable Object worker to avoid making real AI calls during
+// tests. This tests of the routing logic does not need to depend on LLM
+// functionality and the AI Gateway.
+vi.mock("@/llm-service", () => {
+  return {
+    LLMService: vi.fn().mockImplementation(() => ({
+      classifyEmail: vi.fn().mockResolvedValue({
+        intents: ["test"],
+        risk: "low",
+        action: "ignore",
+        requires_approval: false,
+        comments: "Mocked for testing",
+      }),
+      generateReplyDraft: vi.fn().mockResolvedValue("Mocked reply content"),
+    })),
+  };
+});
+
 /**
- * Email Routing Bug Test - Using Cloudflare's official DO testing patterns
+ * Email Routing Bug Test
  *
  * Tests the routing logic used in apps/agent/index.ts:
  *   createCatchAllEmailResolver("HelloEmailAgent", message.from)
@@ -38,7 +57,7 @@ describe("Email Routing - Thread Continuity", () => {
   const EXTERNAL_EMAIL = "friend@example.com";
   const THREAD_ID = "<conversation-thread-123@example.com>";
 
-  it("FAILS: should route emails in same thread to same agent instance", async () => {
+  it("should route emails in same thread to same agent instance", async () => {
     const ctx = createExecutionContext();
 
     // Email 1: External person sends TO routing address
@@ -90,7 +109,7 @@ describe("Email Routing - Thread Continuity", () => {
     expect(agentIds.length).toBe(1);
   }, 15000);
 
-  it("FAILS: should maintain same agent when owner replies", async () => {
+  it("should maintain same agent when owner replies", async () => {
     const ctx = createExecutionContext();
 
     const externalEmail = createMockEmailHelper({
