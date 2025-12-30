@@ -10,15 +10,6 @@ export default defineWorkersProject({
   test: {
     poolOptions: {
       workers: {
-        miniflare: {
-          send_email: [
-            {
-              name: "SEB",
-              allowed_sender_addresses: ["sender@example.com"],
-              destination_address: "recipient@example.com",
-            },
-          ],
-        },
         singleWorker: true,
         wrangler: {
           configPath: "./wrangler.jsonc",
