@@ -72,6 +72,7 @@ export type Memory = {
   messages: Message[];
   context: string;
   summary: string;
+  hasAutoReplied: boolean; // Track if we've auto-replied to this conversation
 };
 
 /**
@@ -82,6 +83,7 @@ export const MemorySchema = z.object({
   messages: z.array(MessageSchema),
   context: z.string(),
   summary: z.string(),
+  hasAutoReplied: z.boolean(),
 });
 
 /**

@@ -50,7 +50,7 @@ export class EmailComposer {
       content,
       contentType = "text/plain",
       inReplyTo = null,
-      senderName = "Email Routing Assistant",
+      senderName = "Melek Somai (AI Assistant)",
     } = options;
 
     const msg = createMimeMessage();

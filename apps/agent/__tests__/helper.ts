@@ -5,19 +5,51 @@ import { MemoryManager } from "@/memory-manager";
 import type { EmailClassification, Memory, Message } from "../types";
 
 /**
- * Create a mock email for testing
+ * Create a mock email for testing with Cloudflare email operation limits
+ *
+ * Cloudflare limits:
+ * - Maximum 2 operations (reply/forward) per email
+ * - Exceeding this throws "original email is not repliable or exceeds reply limit"
  */
 export const createMockEmailHelper = (
   overrides: Partial<ForwardableEmailMessage> & {
     getRaw?: () => Promise<string | Uint8Array>;
+    enforceOperationLimits?: boolean; // Enable Cloudflare-like limits
   } = {}
 ): ForwardableEmailMessage & { getRaw: () => Promise<string | Uint8Array> } => {
   const encoder = new TextEncoder();
   const streamBody = encoder.encode("Test body");
 
+  // Track email operations to simulate Cloudflare limits
+  let operationCount = 0;
+  const MAX_OPERATIONS = 2;
+  const enforceOperationLimits = overrides.enforceOperationLimits ?? false;
+
+  const checkOperationLimit = () => {
+    if (enforceOperationLimits && operationCount >= MAX_OPERATIONS) {
+      throw new Error("original email is not repliable or exceeds reply limit");
+    }
+    operationCount++;
+  };
+
+  const messageId =
+    overrides.headers?.get("Message-ID") ?? "<test-message@example.com>";
+  const from = overrides.from ?? "sender@example.com";
+  const to = overrides.to ?? "recipient@example.com";
+
+  // Create a valid MIME email with proper headers
+  const validMimeEmail = `Message-ID: ${messageId}
+From: ${from}
+To: ${to}
+Subject: Test Subject
+Date: ${new Date().toUTCString()}
+Content-Type: text/plain; charset=utf-8
+
+Test body`;
+
   return {
-    from: overrides.from ?? "sender@example.com",
-    to: overrides.to ?? "recipient@example.com",
+    from,
+    to,
     raw:
       overrides.raw ??
       new ReadableStream<Uint8Array>({
@@ -29,11 +61,21 @@ export const createMockEmailHelper = (
     headers: overrides.headers ?? new Headers(),
     rawSize: overrides.rawSize ?? streamBody.byteLength,
     setReject: overrides.setReject ?? (() => {}),
-    forward: overrides.forward ?? (async () => {}),
-    reply: overrides.reply ?? (async (_message: EmailMessage) => {}),
-    getRaw() {
-      return Promise.resolve("Test body");
-    },
+    forward:
+      overrides.forward ??
+      (async () => {
+        checkOperationLimit();
+      }),
+    reply:
+      overrides.reply ??
+      (async (_message: EmailMessage) => {
+        checkOperationLimit();
+      }),
+    getRaw:
+      overrides.getRaw ??
+      (() => {
+        return Promise.resolve(validMimeEmail);
+      }),
   };
 };
 
@@ -63,6 +105,7 @@ export const createMockMemory = (overrides: Partial<Memory> = {}): Memory => ({
   messages: overrides.messages ?? [],
   context: overrides.context ?? "",
   summary: overrides.summary ?? "",
+  hasAutoReplied: overrides.hasAutoReplied ?? false,
 });
 
 /**

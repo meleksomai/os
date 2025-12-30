@@ -17,6 +17,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     messages: [],
     context: "",
     summary: "",
+    hasAutoReplied: false, // Track if we've sent an auto-reply
   };
 
   // Services (initialized lazily in production, can be injected in tests)
@@ -81,35 +82,53 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     console.log("Storing email message in agent memory.");
     await memory.storeMessage(msg);
 
-    // Classify
-    console.log("Classifying email content using our AI model...");
-    const context = memory.getState().context;
-    const classification = await llm.classifyEmail(msg, context);
-    console.log("Email classification:", classification);
+    // Check if we've already auto-replied to this conversation
+    const currentState = memory.getState();
+    const hasAlreadyReplied = currentState.hasAutoReplied;
 
-    // Reply if needed
-    if (classification.action === "reply") {
-      const replyContent = await llm.generateReplyDraft(msg, context);
-      const reply = await composer.composeReply(
-        msg,
-        replyContent,
-        this.env.EMAIL_ROUTING_ADDRESS
+    if (hasAlreadyReplied) {
+      console.log(
+        "Already auto-replied to this thread. Skipping auto-reply logic."
       );
+    } else {
+      // Classify
+      console.log("Classifying email content using our AI model...");
+      const context = currentState.context;
+      const classification = await llm.classifyEmail(msg, context);
+      console.log("Email classification:", classification);
 
-      console.log("Sending reply email...");
-      await email.reply({
-        from: this.env.EMAIL_ROUTING_ADDRESS,
-        raw: reply,
-        to: msg.from,
-      });
+      // Reply if needed (only on first email in thread)
+      if (classification.action === "reply") {
+        const replyContent = await llm.generateReplyDraft(msg, context);
+        const reply = await composer.composeReply(
+          msg,
+          replyContent,
+          this.env.EMAIL_ROUTING_ADDRESS
+        );
+
+        console.log("Sending reply email...");
+        await email.reply({
+          from: this.env.EMAIL_ROUTING_ADDRESS,
+          raw: reply,
+          to: msg.from,
+        });
+
+        // Mark that we've auto-replied to this conversation
+        console.log("Marking conversation as auto-replied.");
+        await memory.updateState({
+          ...currentState,
+          hasAutoReplied: true,
+        });
+      }
+
+      // Notify about classification even if we don't reply
+      await this.notifySelfByEmail(email, msg, classification, composer);
     }
 
-    // Forward
-    console.log("Forwarding email to self for record-keeping.");
+    // Forward to self for record-keeping (always)
+    console.log("Forwarding email to self for record-keeping...");
     await email.forward(this.env.EMAIL_ROUTING_DESTINATION);
 
-    // Notify
-    await this.notifySelfByEmail(email, msg, classification, composer);
     console.log("Email processing completed.");
   }
 
@@ -153,7 +172,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       content,
       contentType: "text/plain",
       inReplyTo: original.headers.get("Message-ID"),
-      senderName: "Email Routing Assistant",
+      senderName: "Melek Somai (AI Assistant)",
     });
 
     const emailMessage = new EmailMessage(
