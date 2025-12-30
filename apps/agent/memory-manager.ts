@@ -1,4 +1,4 @@
-import { type Memory, MemorySchema, type Message } from "./types";
+import { type Memory, type Message } from "./types";
 
 /**
  * Memory manager implementation for Durable Objects state
@@ -27,8 +27,6 @@ export class MemoryManager {
       messages: [...currentState.messages, message],
     };
 
-    // Validate with Zod to ensure type safety
-    MemorySchema.parse(newState);
     await this.setStateFn(newState);
   }
 
@@ -37,13 +35,16 @@ export class MemoryManager {
    */
   async appendContext(update: string | Uint8Array): Promise<void> {
     const currentState = this.getState();
+    const updateStr =
+      typeof update === "string" ? update : new TextDecoder().decode(update);
     const newState: Memory = {
       ...currentState,
       lastUpdated: new Date(),
-      context: `${currentState.context}\n\n${update}`,
+      context: currentState.context
+        ? `${currentState.context}\n\n${updateStr}`
+        : updateStr,
     };
 
-    MemorySchema.parse(newState);
     await this.setStateFn(newState);
   }
 
@@ -58,7 +59,6 @@ export class MemoryManager {
       lastUpdated: new Date(),
     };
 
-    MemorySchema.parse(newState);
     await this.setStateFn(newState);
   }
 }
