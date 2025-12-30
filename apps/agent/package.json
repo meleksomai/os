@@ -10,8 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@workspace/transactional": "workspace:*",
     "@ai-sdk/openai": "^3.0.1",
+    "@workspace/transactional": "workspace:*",
     "agents": "0.3.0",
     "ai": "6.0.3",
     "ai-gateway-provider": "^3.0.1",
@@ -22,6 +22,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251229.0",
     "@cloudflare/vitest-pool-workers": "^0.11.1",
     "@types/node": "24.10.3",
     "@types/react": "19.2.3",

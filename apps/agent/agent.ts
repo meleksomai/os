@@ -111,7 +111,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
     const msg = await parser.parse(email);
     console.log("Storing email message in agent memory as context.");
-    await memory.storeContext(msg);
+    await memory.appendContext(msg.raw);
   }
 
   /**
@@ -217,6 +217,3 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     console.log("Notification email sent to self.");
   }
 }
-
-// Re-export types for backward compatibility
-export type { Memory, Message, SenderType } from "./types";

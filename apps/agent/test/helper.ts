@@ -1,4 +1,3 @@
-import type { EmailMessage, ForwardableEmailMessage } from "cloudflare:email";
 import type {
   EmailClassification,
   IEmailComposer,
@@ -49,7 +48,8 @@ export const createMockMessage = (
   to: overrides.to ?? "recipient@example.com",
   subject: overrides.subject ?? "Test Subject",
   raw: overrides.raw ?? "Test content",
-  messageId: overrides.messageId ?? "message-id-123",
+  messageId:
+    overrides.messageId !== undefined ? overrides.messageId : "message-id-123",
 });
 
 /**
@@ -93,7 +93,7 @@ export const createMockMemoryManager = (
 ): IMemoryManager => ({
   getState: overrides.getState ?? (() => createMockMemory()),
   storeMessage: overrides.storeMessage ?? (async () => {}),
-  storeContext: overrides.storeContext ?? (async () => {}),
+  appendContext: overrides.appendContext ?? (async () => {}),
   updateState: overrides.updateState ?? (async () => {}),
 });
 

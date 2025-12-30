@@ -128,9 +128,9 @@ export interface IMemoryManager {
   storeMessage(message: Message): Promise<void>;
 
   /**
-   * Store a message as context (for internal emails)
+   * Append a message as context in agent memory
    */
-  storeContext(message: Message): Promise<void>;
+  appendContext(update: string | Uint8Array): Promise<void>;
 
   /**
    * Update agent state with partial updates

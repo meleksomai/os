@@ -40,12 +40,12 @@ export class MemoryManager implements IMemoryManager {
   /**
    * Store a message as context (for internal emails)
    */
-  async storeContext(message: Message): Promise<void> {
+  async appendContext(update: string | Uint8Array): Promise<void> {
     const currentState = this.getState();
     const newState: Memory = {
       ...currentState,
       lastUpdated: new Date(),
-      context: `${currentState.context}\n\n${message.raw}`,
+      context: `${currentState.context}\n\n${update}`,
     };
 
     MemorySchema.parse(newState);
