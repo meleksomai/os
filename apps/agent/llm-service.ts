@@ -69,13 +69,30 @@ export class LLMService {
    * Build classification prompt with message and context
    */
   private buildClassificationPrompt(message: Message, context: string): string {
-    return `Classify the following email:\n\nfrom:${message.from}\n\n subject:${message.subject}\n\n content:\n\n${message.raw}\n\nPlease keep in mind the context provided below that may help with classification:\n\n${context}`;
+    return `Classify the following email:
+
+from:${message.from}
+subject:${message.subject}
+content:
+${message.raw}
+
+Please keep in mind the context provided below that may help with classification:
+${context}`;
   }
 
   /**
    * Build reply prompt with message and context
    */
   private buildReplyPrompt(message: Message, context: string): string {
-    return `Draft a reply to the following email:\n\nfrom:${message.from}\n\n subject:${message.subject}\n\n content:\n\n${message.raw}.Please keep in mind the context provided below that may help with classification:\n\n${context}`;
+    return `Draft a reply to the following email:
+
+from:${message.from}
+subject:${message.subject}
+content:
+${message.raw}.
+
+Please keep in mind the context provided below that may help with classification:
+
+${context}`;
   }
 }
