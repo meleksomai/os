@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { EmailComposer } from "../emails/composer";
-import { createMockMessage } from "./helper";
+import { EmailComposer } from "../../emails/composer";
+import { createMockMessage } from "../helper";
 
 describe("EmailComposer", () => {
   describe("composeReply", () => {

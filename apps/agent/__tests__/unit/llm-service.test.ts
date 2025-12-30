@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { LLMService } from "../llm-service";
-import { createMockEmailClassification, createMockMessage } from "./helper";
+import { LLMService } from "../../llm-service";
+import { createMockEmailClassification, createMockMessage } from "../helper";
 
 // Mock the AI SDK
 vi.mock("ai", async () => {
@@ -19,7 +19,7 @@ vi.mock("@ai-sdk/openai", () => ({
 }));
 
 // Mock email rendering
-vi.mock("../emails/renderer", () => ({
+vi.mock("../../emails/renderer", () => ({
   renderEmail: vi.fn((content: string) =>
     Promise.resolve(`<html>${content}</html>`)
   ),
@@ -41,7 +41,7 @@ vi.mock("cloudflare:workers", () => ({
 
 // Import after mocking
 import { generateText } from "ai";
-import { renderEmail } from "../emails/renderer";
+import { renderEmail } from "../../emails/renderer";
 
 describe("LLMService", () => {
   beforeEach(() => {

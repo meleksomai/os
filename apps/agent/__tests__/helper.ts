@@ -13,8 +13,10 @@ import type {
  * Create a mock email for testing
  */
 export const createMockEmailHelper = (
-  overrides: Partial<ForwardableEmailMessage> = {}
-): ForwardableEmailMessage => {
+  overrides: Partial<ForwardableEmailMessage> & {
+    getRaw?: () => Promise<string | Uint8Array>;
+  } = {}
+): ForwardableEmailMessage & { getRaw: () => Promise<string | Uint8Array> } => {
   const encoder = new TextEncoder();
   const streamBody = encoder.encode("Test body");
 
@@ -34,6 +36,9 @@ export const createMockEmailHelper = (
     setReject: overrides.setReject ?? (() => {}),
     forward: overrides.forward ?? (async () => {}),
     reply: overrides.reply ?? (async (_message: EmailMessage) => {}),
+    getRaw() {
+      return Promise.resolve("Test body");
+    },
   };
 };
 

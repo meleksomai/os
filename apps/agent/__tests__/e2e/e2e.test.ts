@@ -4,8 +4,8 @@ import {
   waitOnExecutionContext,
 } from "cloudflare:test";
 import { describe, it } from "vitest";
-import worker from "..";
-import { createMockEmailHelper } from "./helper";
+import worker from "../..";
+import { createMockEmailHelper } from "../helper";
 
 describe("Agent Worker", () => {
   const request = createMockEmailHelper();

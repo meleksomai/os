@@ -1,6 +1,6 @@
 import type { AgentEmail } from "agents";
 import { describe, expect, it, vi } from "vitest";
-import { EmailParser } from "../emails/parser";
+import { EmailParser } from "../../emails/parser";
 
 describe("EmailParser", () => {
   it("should parse email with HTML content", async () => {

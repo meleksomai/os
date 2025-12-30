@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { MemoryManager } from "../memory-manager";
-import type { Memory, Message } from "../types";
-import { createMockMemory, createMockMessage } from "./helper";
+import { MemoryManager } from "../../memory-manager";
+import type { Memory, Message } from "../../types";
+import { createMockMemory, createMockMessage } from "../helper";
 
 describe("MemoryManager", () => {
   it("should get current state", () => {
