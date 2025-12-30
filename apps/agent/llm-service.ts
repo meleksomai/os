@@ -7,14 +7,13 @@ import draft_email_system_prompt from "./prompts/writer";
 import {
   type EmailClassification,
   EmailClassificationSchema,
-  type ILLMService,
   type Message,
 } from "./types";
 
 /**
  * LLM service implementation using Vercel AI SDK
  */
-export class LLMService implements ILLMService {
+export class LLMService {
   private async modelProvider() {
     const url = await env.AI.gateway(env.CLOUDFLARE_AI_GATEWAY_ID).getUrl(
       "openai"

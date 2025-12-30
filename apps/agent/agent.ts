@@ -6,10 +6,6 @@ import { LLMService } from "./llm-service";
 import { MemoryManager } from "./memory-manager";
 import {
   type EmailClassification,
-  type IEmailComposer,
-  type IEmailParser,
-  type ILLMService,
-  type IMemoryManager,
   type Memory,
   type Message,
   type SenderType,
@@ -24,56 +20,10 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
   };
 
   // Services (initialized lazily in production, can be injected in tests)
-  private emailParser?: IEmailParser;
-  private memoryManager?: IMemoryManager;
-  private llmService?: ILLMService;
-  private emailComposer?: IEmailComposer;
-
-  /**
-   * Get email parser instance (lazy initialization)
-   */
-  private getEmailParser(): IEmailParser {
-    if (!this.emailParser) {
-      this.emailParser = new EmailParser();
-    }
-    return this.emailParser;
-  }
-
-  /**
-   * Get memory manager instance (lazy initialization)
-   */
-  private getMemoryManager(): IMemoryManager {
-    if (!this.memoryManager) {
-      this.memoryManager = new MemoryManager(
-        () => this.state,
-        (state: Memory) => {
-          this.setState(state);
-          return Promise.resolve();
-        }
-      );
-    }
-    return this.memoryManager;
-  }
-
-  /**
-   * Get LLM service instance (lazy initialization)
-   */
-  private getLLMService(): ILLMService {
-    if (!this.llmService) {
-      this.llmService = new LLMService();
-    }
-    return this.llmService;
-  }
-
-  /**
-   * Get email composer instance (lazy initialization)
-   */
-  private getEmailComposer(): IEmailComposer {
-    if (!this.emailComposer) {
-      this.emailComposer = new EmailComposer();
-    }
-    return this.emailComposer;
-  }
+  private emailParser?: EmailParser;
+  private memoryManager?: MemoryManager;
+  private llmService?: LLMService;
+  private emailComposer?: EmailComposer;
 
   /**
    * Main entry point for handling incoming emails
@@ -87,8 +37,8 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
         return;
 
       case "self":
-        console.log("Email from self. Handling as internal message.");
-        await this.handleInternalEmail(email);
+        console.log("Email from owner. Storing as context.");
+        await this.handleOwnerEmail(email);
         return;
 
       case "external":
@@ -103,15 +53,18 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
   }
 
   /**
-   * Handle emails from self (store as context)
+   * Handle emails from owner
+   * Simple: store as context for now
+   * TODO: Add tool-based agentic approach
    */
-  private async handleInternalEmail(email: AgentEmail): Promise<void> {
+  private async handleOwnerEmail(email: AgentEmail): Promise<void> {
     const parser = this.getEmailParser();
     const memory = this.getMemoryManager();
 
     const msg = await parser.parse(email);
-    console.log("Storing email message in agent memory as context.");
+    console.log("Storing owner email as context.");
     await memory.appendContext(msg.raw);
+    console.log("Owner email stored in context.");
   }
 
   /**
@@ -188,7 +141,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     original: AgentEmail,
     msg: Message,
     classification: EmailClassification,
-    composer: IEmailComposer
+    composer: EmailComposer
   ): Promise<void> {
     console.log("Notifying self by email with summary...");
 
@@ -215,5 +168,53 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     );
     await this.env.SEB.send(emailMessage);
     console.log("Notification email sent to self.");
+  }
+
+  // Services
+
+  /**
+   * Get email parser instance (lazy initialization)
+   */
+  private getEmailParser(): EmailParser {
+    if (!this.emailParser) {
+      this.emailParser = new EmailParser();
+    }
+    return this.emailParser;
+  }
+
+  /**
+   * Get memory manager instance (lazy initialization)
+   */
+  private getMemoryManager(): MemoryManager {
+    if (!this.memoryManager) {
+      this.memoryManager = new MemoryManager(
+        () => this.state,
+        (state: Memory) => {
+          this.setState(state);
+          return Promise.resolve();
+        }
+      );
+    }
+    return this.memoryManager;
+  }
+
+  /**
+   * Get LLM service instance (lazy initialization)
+   */
+  private getLLMService(): LLMService {
+    if (!this.llmService) {
+      this.llmService = new LLMService();
+    }
+    return this.llmService;
+  }
+
+  /**
+   * Get email composer instance (lazy initialization)
+   */
+  private getEmailComposer(): EmailComposer {
+    if (!this.emailComposer) {
+      this.emailComposer = new EmailComposer();
+    }
+    return this.emailComposer;
   }
 }

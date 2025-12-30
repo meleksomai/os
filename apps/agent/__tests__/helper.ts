@@ -55,6 +55,9 @@ export const createMockMessage = (
   raw: overrides.raw ?? "Test content",
   messageId:
     overrides.messageId !== undefined ? overrides.messageId : "message-id-123",
+  cc: overrides.cc,
+  inReplyTo: overrides.inReplyTo,
+  references: overrides.references,
 });
 
 /**

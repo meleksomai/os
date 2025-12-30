@@ -1,14 +1,10 @@
 import { createMimeMessage } from "mimetext";
-import {
-  type IEmailComposer,
-  type Message,
-  type NotificationOptions,
-} from "../types";
+import { type Message, type NotificationOptions } from "../types";
 
 /**
  * Email composer implementation using mimetext
  */
-export class EmailComposer implements IEmailComposer {
+export class EmailComposer {
   /**
    * Compose a reply email as raw MIME
    */

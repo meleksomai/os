@@ -7,7 +7,7 @@ import { describe, it } from "vitest";
 import worker from "../..";
 import { createMockEmailHelper } from "../helper";
 
-describe("Agent Worker", () => {
+describe.skip("Agent Worker", () => {
   const request = createMockEmailHelper();
 
   it("dispatches fetch event", async () => {

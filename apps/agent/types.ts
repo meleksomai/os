@@ -1,4 +1,3 @@
-import type { AgentEmail } from "agents";
 import { z } from "zod";
 
 /**
@@ -45,6 +44,9 @@ export type Message = {
   subject: string;
   raw: string | Uint8Array<ArrayBufferLike>;
   messageId: string | null;
+  cc?: string[]; // CC recipients
+  inReplyTo?: string | null; // In-Reply-To header for threading
+  references?: string[]; // References header for email threads
 };
 
 /**
@@ -57,6 +59,9 @@ export const MessageSchema = z.object({
   subject: z.string(),
   raw: z.union([z.string(), z.instanceof(Uint8Array)]),
   messageId: z.string().nullable(),
+  cc: z.array(z.string().email()).optional(),
+  inReplyTo: z.string().nullable().optional(),
+  references: z.array(z.string()).optional(),
 });
 
 /**
@@ -102,75 +107,3 @@ export const NotificationOptionsSchema = z.object({
   inReplyTo: z.string().nullable().optional(),
   senderName: z.string().optional(),
 });
-
-/**
- * Email parser interface
- */
-export interface IEmailParser {
-  /**
-   * Parse raw email into structured Message
-   */
-  parse(email: AgentEmail): Promise<Message>;
-}
-
-/**
- * Memory manager interface
- */
-export interface IMemoryManager {
-  /**
-   * Get current agent state
-   */
-  getState(): Memory;
-
-  /**
-   * Store a message in agent memory
-   */
-  storeMessage(message: Message): Promise<void>;
-
-  /**
-   * Append a message as context in agent memory
-   */
-  appendContext(update: string | Uint8Array): Promise<void>;
-
-  /**
-   * Update agent state with partial updates
-   */
-  updateState(updates: Partial<Memory>): Promise<void>;
-}
-
-/**
- * LLM service interface
- */
-export interface ILLMService {
-  /**
-   * Classify an email using LLM
-   */
-  classifyEmail(
-    message: Message,
-    context: string
-  ): Promise<EmailClassification>;
-
-  /**
-   * Generate a reply draft for an email using LLM
-   */
-  generateReplyDraft(message: Message, context: string): Promise<string>;
-}
-
-/**
- * Email composer interface
- */
-export interface IEmailComposer {
-  /**
-   * Compose a reply email as raw MIME
-   */
-  composeReply(
-    message: Message,
-    content: string,
-    fromAddress: string
-  ): Promise<string>;
-
-  /**
-   * Compose a notification email as raw MIME
-   */
-  composeNotification(options: NotificationOptions): Promise<string>;
-}

@@ -1,14 +1,9 @@
-import {
-  type IMemoryManager,
-  type Memory,
-  MemorySchema,
-  type Message,
-} from "./types";
+import { type Memory, MemorySchema, type Message } from "./types";
 
 /**
  * Memory manager implementation for Durable Objects state
  */
-export class MemoryManager implements IMemoryManager {
+export class MemoryManager {
   constructor(
     private readonly getStateFn: () => Memory,
     private readonly setStateFn: (state: Memory) => Promise<void>
