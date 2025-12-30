@@ -30,5 +30,11 @@
       "new_sqlite_classes": ["HelloEmailAgent"],
       "tag": "v1"
     }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "EMAIL_LOOKUP_KV",
+      "id": "5c8cd4b3d71e403384d0dd2b58e00f5a"
+    }
   ]
 }

@@ -141,21 +141,29 @@ describe("Email Routing - Thread Continuity", () => {
     expect(agentIds.length).toBe(1);
   }, 15000);
 
-  it("documents current buggy behavior (PASSES)", async () => {
+  it("should handle owner private messages to assistant in thread", async () => {
     const ctx = createExecutionContext();
 
+    // Email 1: External person starts conversation
     const email1 = createMockEmailHelper({
       from: EXTERNAL_EMAIL,
       to: ROUTING_EMAIL,
-      headers: new Headers({ "Message-ID": THREAD_ID }),
+      headers: new Headers({
+        "Message-ID": THREAD_ID,
+        Subject: "Question about your product",
+      }),
     });
 
+    // Email 2: Owner sends private note to AI assistant (no external person in TO/CC)
+    // This should still route to the same DO instance for the external person
     const email2 = createMockEmailHelper({
       from: OWNER_EMAIL,
       to: ROUTING_EMAIL,
       headers: new Headers({
+        "Message-ID": "<private-note@example.com>",
         "In-Reply-To": THREAD_ID,
         References: THREAD_ID,
+        Subject: "Re: Question about your product",
       }),
     });
 
@@ -165,8 +173,75 @@ describe("Email Routing - Thread Continuity", () => {
 
     const agentIds = await listDurableObjectIds(env.HelloEmailAgent);
 
-    // Current buggy behavior: 2 instances created
-    // This test PASSES, documenting the bug
+    // Both emails should route to the same agent instance (friend@example.com)
+    // Even though email2 is a private message from owner to assistant
+    expect(agentIds.length).toBe(1);
+  }, 15000);
+
+  it("should keep separate conversations with different people isolated", async () => {
+    const ctx = createExecutionContext();
+
+    const PERSON_A = "alice@example.com";
+    const PERSON_B = "bob@example.com";
+    const THREAD_A = "<thread-a@example.com>";
+    const THREAD_B = "<thread-b@example.com>";
+
+    // Conversation 1: Email from Alice
+    const emailFromAlice = createMockEmailHelper({
+      from: PERSON_A,
+      to: ROUTING_EMAIL,
+      headers: new Headers({
+        "Message-ID": THREAD_A,
+        Subject: "Question from Alice",
+      }),
+    });
+
+    // Conversation 2: Email from Bob (separate thread)
+    const emailFromBob = createMockEmailHelper({
+      from: PERSON_B,
+      to: ROUTING_EMAIL,
+      headers: new Headers({
+        "Message-ID": THREAD_B,
+        Subject: "Question from Bob",
+      }),
+    });
+
+    // Owner replies to Alice's thread
+    const replyToAlice = createMockEmailHelper({
+      from: OWNER_EMAIL,
+      to: ROUTING_EMAIL,
+      headers: new Headers({
+        "Message-ID": "<reply-to-alice@example.com>",
+        "In-Reply-To": THREAD_A,
+        References: THREAD_A,
+        Subject: "Re: Question from Alice",
+      }),
+    });
+
+    // Owner replies to Bob's thread
+    const replyToBob = createMockEmailHelper({
+      from: OWNER_EMAIL,
+      to: ROUTING_EMAIL,
+      headers: new Headers({
+        "Message-ID": "<reply-to-bob@example.com>",
+        "In-Reply-To": THREAD_B,
+        References: THREAD_B,
+        Subject: "Re: Question from Bob",
+      }),
+    });
+
+    // Process all emails
+    await worker.email(emailFromAlice, env);
+    await worker.email(emailFromBob, env);
+    await worker.email(replyToAlice, env);
+    await worker.email(replyToBob, env);
+    await waitOnExecutionContext(ctx);
+
+    const agentIds = await listDurableObjectIds(env.HelloEmailAgent);
+
+    // Should have 2 separate DO instances: one for Alice, one for Bob
+    // Alice's thread and owner's reply to Alice → alice@example.com DO
+    // Bob's thread and owner's reply to Bob → bob@example.com DO
     expect(agentIds.length).toBe(2);
   }, 15000);
 });
