@@ -3,7 +3,7 @@
 // Runtime types generated with workerd@1.20251217.0 2025-12-23 nodejs_compat
 declare namespace Cloudflare {
 	interface GlobalProps {
-		mainModule: typeof import("./index");
+		mainModule: typeof import("./llm-service");
 		durableNamespaces: "HelloEmailAgent";
 	}
 	interface Env {
@@ -13,7 +13,7 @@ declare namespace Cloudflare {
 		CLOUDFLARE_AI_GATEWAY_TOKEN: string;
 		CLOUDFLARE_AI_GATEWAY_ID: string;
 		OPENAI_API_KEY: string;
-		HelloEmailAgent: DurableObjectNamespace<import("./index").HelloEmailAgent>;
+		HelloEmailAgent: DurableObjectNamespace<import("./llm-service").HelloEmailAgent>;
 		SEB: SendEmail;
 		AI: Ai;
 	}
