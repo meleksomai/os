@@ -49,7 +49,7 @@ const components = {
     return (
       <a
         className={cn(
-          "underline-offset-3 decoration-muted-foreground",
+          "underline-offset-3 break-all decoration-muted-foreground",
           className
         )}
         href={href}
