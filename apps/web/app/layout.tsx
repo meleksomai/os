@@ -1,4 +1,4 @@
-import { EB_Garamond, Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Lora } from "next/font/google";
 
 import "./styles.css";
 import { VercelToolbar } from "@vercel/toolbar/next";
@@ -17,9 +17,10 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 });
 
-const fontSerif = EB_Garamond({
+const fontSerif = Lora({
   subsets: ["latin"],
   variable: "--font-serif",
+  style: ["italic", "normal"],
 });
 
 export default function RootLayout({
