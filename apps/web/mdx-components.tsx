@@ -104,7 +104,7 @@ const components = {
       {...props}
       className={[
         // your styling
-        "align-super text-[0.75em] leading-none text-muted-foreground hover:text-foreground",
+        "align-super text-[0.7em] leading-none text-muted-foreground hover:text-foreground",
         className,
       ]
         .filter(Boolean)
