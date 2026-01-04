@@ -8,11 +8,25 @@ import worker from "../../index";
 import { createMockEmailHelper } from "../helper";
 
 // Mock LLMService to control classification results
-vi.mock("@/llm-service", () => {
+vi.mock("@/services/llm", () => {
   return {
     LLMService: vi.fn().mockImplementation(() => ({
       classifyEmail: vi.fn(),
       generateReplyDraft: vi.fn().mockResolvedValue("Mocked reply content"),
+    })),
+  };
+});
+
+// Mock ResendService to avoid hitting rate limits
+vi.mock("@/services/resend", () => {
+  return {
+    ResendService: vi.fn().mockImplementation(() => ({
+      sendReply: vi
+        .fn()
+        .mockResolvedValue({ id: "mock-resend-id", error: null }),
+      sendEmail: vi
+        .fn()
+        .mockResolvedValue({ id: "mock-resend-id", error: null }),
     })),
   };
 });
@@ -35,7 +49,7 @@ describe("Email Operation Limits", () => {
     const ctx = createExecutionContext();
 
     // Import the mocked LLMService to control classification
-    const { LLMService } = await import("@/llm-service");
+    const { LLMService } = await import("@/services/llm");
     const mockClassifyEmail = vi.fn().mockResolvedValue({
       intents: ["question"],
       risk: "low",
@@ -75,7 +89,7 @@ describe("Email Operation Limits", () => {
   it("should NOT exceed limits when action is 'ignore'", async () => {
     const ctx = createExecutionContext();
 
-    const { LLMService } = await import("@/llm-service");
+    const { LLMService } = await import("@/services/llm");
     const mockClassifyEmail = vi.fn().mockResolvedValue({
       intents: ["spam"],
       risk: "low",
@@ -111,10 +125,10 @@ describe("Email Operation Limits", () => {
     // Total: 1 operation (within limit of 2)
   }, 15000);
 
-  it("WOULD exceed limits if both reply AND forward were called (demonstrating the bug)", async () => {
+  it("should stay within Cloudflare's 2-operation limit when replying", async () => {
     const ctx = createExecutionContext();
 
-    const { LLMService } = await import("@/llm-service");
+    const { LLMService } = await import("@/services/llm");
     const mockClassifyEmail = vi.fn().mockResolvedValue({
       intents: ["question"],
       risk: "low",
@@ -131,7 +145,7 @@ describe("Email Operation Limits", () => {
         }) as any
     );
 
-    // Create a mock that would fail if both operations are called
+    // Track operations to ensure we don't exceed the limit
     let operationCount = 0;
     const email = createMockEmailHelper({
       from: EXTERNAL_EMAIL,
@@ -144,8 +158,8 @@ describe("Email Operation Limits", () => {
       },
       forward: async () => {
         operationCount++;
-        // If both reply AND forward are called, we exceed the limit
-        if (operationCount > 1) {
+        // Cloudflare allows up to 2 operations
+        if (operationCount > 2) {
           throw new Error(
             "original email is not repliable or exceeds reply limit"
           );
@@ -153,18 +167,20 @@ describe("Email Operation Limits", () => {
       },
     });
 
-    // With the fix, this should NOT throw because forward is not called when action is "reply"
+    // Should not throw - we use Resend for replies (0 operations) + forward (1 operation)
     await expect(worker.email(email, env)).resolves.not.toThrow();
     await waitOnExecutionContext(ctx);
 
-    // Verify only 1 operation was called (reply, not forward)
+    // Verify we used only 1 operation (forward) - Resend doesn't count
     expect(operationCount).toBe(1);
   }, 15000);
 
-  it("should use SEB for replies and email.forward() for forwarding", async () => {
+  it("should use Resend API for replies and email.forward() for forwarding", async () => {
     const ctx = createExecutionContext();
 
-    const { LLMService } = await import("@/llm-service");
+    const { LLMService } = await import("@/services/llm");
+    const { ResendService } = await import("@/services/resend");
+
     const mockClassifyEmail = vi.fn().mockResolvedValue({
       intents: ["question"],
       risk: "low",
@@ -173,11 +189,22 @@ describe("Email Operation Limits", () => {
       comments: "Test",
     });
 
+    const mockSendReply = vi
+      .fn()
+      .mockResolvedValue({ id: "test-id", error: null });
+
     vi.mocked(LLMService).mockImplementation(
       () =>
         ({
           classifyEmail: mockClassifyEmail,
           generateReplyDraft: vi.fn().mockResolvedValue("Test reply"),
+        }) as any
+    );
+
+    vi.mocked(ResendService).mockImplementation(
+      () =>
+        ({
+          sendReply: mockSendReply,
         }) as any
     );
 
@@ -201,16 +228,17 @@ describe("Email Operation Limits", () => {
     await worker.email(email, env);
     await waitOnExecutionContext(ctx);
 
-    // Agent uses SEB.send() for replies (avoids reply limits)
-    // but uses email.forward() for forwarding (simple and reliable)
-    expect(replyCount).toBe(0);
-    expect(forwardCount).toBe(1);
+    // Agent uses Resend API for replies (no email operations) and email.forward() for forwarding
+    // Total: 1 email operation (forward only)
+    expect(replyCount).toBe(0); // No email.reply() calls
+    expect(forwardCount).toBe(1); // Still forward for record-keeping
+    expect(mockSendReply).toHaveBeenCalled(); // Resend was used
   }, 15000);
 
   it("should always forward regardless of action", async () => {
     const ctx = createExecutionContext();
 
-    const { LLMService } = await import("@/llm-service");
+    const { LLMService } = await import("@/services/llm");
     const mockClassifyEmail = vi.fn().mockResolvedValue({
       intents: ["info"],
       risk: "low",
@@ -250,5 +278,65 @@ describe("Email Operation Limits", () => {
     // Always forward for record-keeping, never use email.reply()
     expect(replyCount).toBe(0);
     expect(forwardCount).toBe(1);
+  }, 15000);
+
+  it("should reply to original sender (msg.from), not routing address (email.to)", async () => {
+    const ctx = createExecutionContext();
+
+    const { LLMService } = await import("@/services/llm");
+    const { ResendService } = await import("@/services/resend");
+
+    const mockClassifyEmail = vi.fn().mockResolvedValue({
+      intents: ["question"],
+      risk: "low",
+      action: "reply",
+      requires_approval: false,
+      comments: "Test",
+    });
+
+    const mockSendReply = vi
+      .fn()
+      .mockResolvedValue({ id: "test-id", error: null });
+
+    vi.mocked(LLMService).mockImplementation(
+      () =>
+        ({
+          classifyEmail: mockClassifyEmail,
+          generateReplyDraft: vi.fn().mockResolvedValue("Test reply"),
+        }) as any
+    );
+
+    vi.mocked(ResendService).mockImplementation(
+      () =>
+        ({
+          sendReply: mockSendReply,
+        }) as any
+    );
+
+    const email = createMockEmailHelper({
+      from: EXTERNAL_EMAIL,
+      to: ROUTING_EMAIL,
+      headers: new Headers({
+        "Message-ID": "<test@example.com>",
+      }),
+      reply: async () => {
+        // Should not be called
+      },
+      forward: async () => {
+        // no-op
+      },
+    });
+
+    await worker.email(email, env);
+    await waitOnExecutionContext(ctx);
+
+    // Critical: Reply should be sent to the original sender (EXTERNAL_EMAIL),
+    // NOT to the routing address (ROUTING_EMAIL or env.EMAIL_ROUTING_ADDRESS)
+    // Bug: "rcpt to is different from original sender" occurs when this is wrong
+    expect(mockSendReply).toHaveBeenCalled();
+    const callArgs = mockSendReply.mock.calls[0][0];
+    expect(callArgs.to).toBe(EXTERNAL_EMAIL);
+    expect(callArgs.to).not.toBe(ROUTING_EMAIL);
+    expect(callArgs.from).toBe(env.EMAIL_ROUTING_ADDRESS);
   }, 15000);
 });

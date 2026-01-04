@@ -1,239 +1,114 @@
 import { EmailMessage } from "cloudflare:email";
 import { Agent, type AgentEmail } from "agents";
-import { EmailComposer } from "./emails/composer";
 import { EmailParser } from "./emails/parser";
-import { LLMService } from "./llm-service";
-import { MemoryManager } from "./memory-manager";
-import {
-  type EmailClassification,
-  type Memory,
-  type Message,
-  type SenderType,
-} from "./types";
+import { LLMService } from "./services/llm";
+import { EmailService } from "./services/resend";
+import type { EmailClassification, Memory, Message } from "./types";
 
+/**
+ * HelloEmailAgent - AI-powered email routing assistant
+ * Simple, educational architecture - easy to understand and extend
+ */
 export class HelloEmailAgent extends Agent<Env, Memory> {
   initialState: Memory = {
     lastUpdated: null,
     messages: [],
     context: "",
     summary: "",
-    hasAutoReplied: false, // Track if we've sent an auto-reply
   };
 
-  // Services (initialized lazily in production, can be injected in tests)
-  private emailParser?: EmailParser;
-  private memoryManager?: MemoryManager;
-  private llmService?: LLMService;
-  private emailComposer?: EmailComposer;
+  // Services - directly instantiated, no magic
+  private readonly parser: EmailParser;
+  private readonly llm: LLMService;
+  private readonly resend: EmailService;
+
+  constructor(state: DurableObjectState, env: Env) {
+    super(state, env);
+
+    // Initialize services upfront - simple and explicit
+    this.parser = new EmailParser();
+    this.llm = new LLMService(env);
+    this.resend = new EmailService(this.env.RESEND_API_KEY);
+  }
 
   /**
    * Main entry point for handling incoming emails
    */
   async _onEmail(email: AgentEmail): Promise<void> {
-    const triage = this.triageEmail(email);
+    const from = email.from.toLowerCase();
+    const owner = this.env.EMAIL_ROUTING_DESTINATION.toLowerCase();
+    const routing = this.env.EMAIL_ROUTING_ADDRESS.toLowerCase();
 
-    switch (triage) {
-      case "agent":
-        console.log("Email from self-agent. Ignoring to prevent loops.");
-        return;
-
-      case "self":
-        console.log("Email from owner. Storing as context.");
-        await this.handleOwnerEmail(email);
-        return;
-
-      case "external":
-        console.log("Email from external sender. Handling accordingly.");
-        await this.handleExternalEmail(email);
-        return;
-
-      default:
-        console.log("Unknown sender type. Ignoring email.");
-        return;
+    // Route based on sender
+    if (from === routing) {
+      // Email from our own routing address - ignore to prevent loops
+      console.log("Email from self-agent. Ignoring to prevent loops.");
+      return;
     }
+
+    if (from === owner) {
+      // Email from owner - store as context
+      await this.handleOwnerEmail(email);
+      return;
+    }
+
+    // Email from external sender - full workflow
+    await this.handleExternalEmail(email);
   }
 
   /**
-   * Handle emails from owner
-   * Simple: store as context for now
-   * TODO: Add tool-based agentic approach
+   * Handle emails from owner - store as context
    */
   private async handleOwnerEmail(email: AgentEmail): Promise<void> {
-    const parser = this.getEmailParser();
-    const memory = this.getMemoryManager();
+    console.log("Email from owner. Storing as context.");
+    const msg = await this.parser.parse(email);
 
-    const msg = await parser.parse(email);
-    console.log("Storing owner email as context.");
-    await memory.appendContext(msg.raw);
+    this.setState({
+      ...this.state,
+      lastUpdated: new Date(),
+      context: `${this.state.context}\n\n${msg.raw}`,
+    });
+
     console.log("Owner email stored in context.");
   }
 
   /**
    * Handle emails from external senders
+   * Full workflow: parse, classify, reply if needed, notify, forward
    */
   private async handleExternalEmail(email: AgentEmail): Promise<void> {
-    const parser = this.getEmailParser();
-    const memory = this.getMemoryManager();
-    const llm = this.getLLMService();
-    const composer = this.getEmailComposer();
-
-    // Parse and store
-    const msg = await parser.parse(email);
+    console.log("Email from external sender. Handling accordingly.");
+    // Parse and store message
+    const msg = await this.parser.parse(email);
     console.log("Storing email message in agent memory.");
-    await memory.storeMessage(msg);
 
-    // Check if we've already auto-replied to this conversation
-    const currentState = memory.getState();
-    const hasAlreadyReplied = currentState.hasAutoReplied;
-
-    if (hasAlreadyReplied) {
-      console.log(
-        "Already auto-replied to this thread. Skipping auto-reply logic."
-      );
-    } else {
-      // Classify
-      console.log("Classifying email content using our AI model...");
-      const context = currentState.context;
-      const classification = await llm.classifyEmail(msg, context);
-      console.log("Email classification:", classification);
-
-      // Reply if needed (only on first email in thread)
-      if (classification.action === "reply") {
-        const replyContent = await llm.generateReplyDraft(msg, context);
-        const reply = await composer.composeReply(
-          msg,
-          replyContent,
-          this.env.EMAIL_ROUTING_ADDRESS
-        );
-
-        console.log("Sending reply email...");
-        await email.reply({
-          from: this.env.EMAIL_ROUTING_ADDRESS,
-          raw: reply,
-          to: msg.from,
-        });
-
-        // Mark that we've auto-replied to this conversation
-        console.log("Marking conversation as auto-replied.");
-        await memory.updateState({
-          ...currentState,
-          hasAutoReplied: true,
-        });
-      }
-
-      // Notify about classification even if we don't reply
-      await this.notifySelfByEmail(email, msg, classification, composer);
-    }
-
-    // Forward to self for record-keeping (always)
-    console.log("Forwarding email to self for record-keeping...");
-    await email.forward(this.env.EMAIL_ROUTING_DESTINATION);
-
-    console.log("Email processing completed.");
-  }
-
-  /**
-   * Triage email based on sender
-   */
-  private triageEmail(email: AgentEmail): SenderType {
-    const from = email.from.toLowerCase();
-
-    // Simple triage rules
-    // 1. If the email is from me (likely a response), mark as self
-    if (from === this.env.EMAIL_ROUTING_DESTINATION.toLowerCase()) {
-      return "self";
-    }
-
-    // 2. If the email is from the routing address, mark as agent (agent replying to the thread)
-    if (from === this.env.EMAIL_ROUTING_ADDRESS.toLowerCase()) {
-      return "agent";
-    }
-
-    // 3. Otherwise, mark as external
-    return "external";
-  }
-
-  /**
-   * Send notification email to self with summary
-   */
-  private async notifySelfByEmail(
-    original: AgentEmail,
-    msg: Message,
-    classification: EmailClassification,
-    composer: EmailComposer
-  ): Promise<void> {
-    console.log("Notifying self by email with summary...");
-
-    const content = `Received an email from ${msg.from} with subject "${msg.subject}".\n\nClassified action: ${classification.action}.\n\nComments: ${classification.comments}\n\nContext:\n${this.getMemoryManager().getState().context}`;
-
-    const notificationRaw = await composer.composeNotification({
-      fromAddress: this.env.EMAIL_ROUTING_ADDRESS,
-      toAddress: this.env.EMAIL_ROUTING_DESTINATION,
-      content,
-      contentType: "text/plain",
-      inReplyTo: original.headers.get("Message-ID"),
-      senderName: "Melek Somai (AI Assistant)",
+    this.setState({
+      ...this.state,
+      lastUpdated: new Date(),
+      messages: [...this.state.messages, msg],
     });
 
-    const emailMessage = new EmailMessage(
-      this.env.EMAIL_ROUTING_ADDRESS,
-      this.env.EMAIL_ROUTING_DESTINATION,
-      notificationRaw
-    );
+    // Classify the email using AI
+    console.log("Classifying email content using our AI model...");
+    const classification = await this.llm.classifyEmail(this.state);
+    console.log("Email classification:", classification);
 
-    console.log(
-      "Sending email notification to self:",
-      this.env.EMAIL_ROUTING_DESTINATION
-    );
-    await this.env.SEB.send(emailMessage);
-    console.log("Notification email sent to self.");
-  }
+    // Send reply if AI recommends it
+    if (classification.action === "reply") {
+      console.log("AI recommends replying to the email. Drafting reply...");
+      const content = await this.llm.generateReplyDraft(this.state);
 
-  // Services
-
-  /**
-   * Get email parser instance (lazy initialization)
-   */
-  private getEmailParser(): EmailParser {
-    if (!this.emailParser) {
-      this.emailParser = new EmailParser();
-    }
-    return this.emailParser;
-  }
-
-  /**
-   * Get memory manager instance (lazy initialization)
-   */
-  private getMemoryManager(): MemoryManager {
-    if (!this.memoryManager) {
-      this.memoryManager = new MemoryManager(
-        () => this.state,
-        (state: Memory) => {
-          this.setState(state);
-          return Promise.resolve();
-        }
+      console.log("Sending reply via Resend service...");
+      await this.resend.sendReply(msg, content, this.env.EMAIL_ROUTING_ADDRESS);
+    } else {
+      console.log(
+        `No reply action needed as per classification (${classification.action}).`
       );
     }
-    return this.memoryManager;
-  }
 
-  /**
-   * Get LLM service instance (lazy initialization)
-   */
-  private getLLMService(): LLMService {
-    if (!this.llmService) {
-      this.llmService = new LLMService();
-    }
-    return this.llmService;
-  }
-
-  /**
-   * Get email composer instance (lazy initialization)
-   */
-  private getEmailComposer(): EmailComposer {
-    if (!this.emailComposer) {
-      this.emailComposer = new EmailComposer();
-    }
-    return this.emailComposer;
+    // Forward to owner for record-keeping
+    console.log("Forwarding email to self for record-keeping...");
+    await email.forward(this.env.EMAIL_ROUTING_DESTINATION);
+    console.log("Email processing completed.");
   }
 }

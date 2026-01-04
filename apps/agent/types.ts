@@ -35,45 +35,21 @@ export const EmailClassificationSchema = z.object({
 export type EmailClassification = z.infer<typeof EmailClassificationSchema>;
 
 /**
- * Parsed email message
- */
-export type Message = {
-  date: Date;
-  from: string;
-  to: string;
-  subject: string;
-  raw: string | Uint8Array<ArrayBufferLike>;
-  messageId: string | null;
-  cc?: string[]; // CC recipients
-  inReplyTo?: string | null; // In-Reply-To header for threading
-  references?: string[]; // References header for email threads
-};
-
-/**
  * Zod schema for Message validation
  */
 export const MessageSchema = z.object({
   date: z.date(),
-  from: z.string().email(),
-  to: z.string().email(),
+  from: z.email(),
+  to: z.email(),
   subject: z.string(),
-  raw: z.union([z.string(), z.instanceof(Uint8Array)]),
+  raw: z.string(),
   messageId: z.string().nullable(),
-  cc: z.array(z.string().email()).optional(),
+  cc: z.array(z.email()).optional(),
   inReplyTo: z.string().nullable().optional(),
   references: z.array(z.string()).optional(),
 });
 
-/**
- * Agent memory state
- */
-export type Memory = {
-  lastUpdated: Date | null;
-  messages: Message[];
-  context: string;
-  summary: string;
-  hasAutoReplied: boolean; // Track if we've auto-replied to this conversation
-};
+export type Message = z.infer<typeof MessageSchema>;
 
 /**
  * Zod schema for Memory validation
@@ -83,20 +59,9 @@ export const MemorySchema = z.object({
   messages: z.array(MessageSchema),
   context: z.string(),
   summary: z.string(),
-  hasAutoReplied: z.boolean(),
 });
 
-/**
- * Options for composing notification emails
- */
-export type NotificationOptions = {
-  fromAddress: string;
-  toAddress: string;
-  content: string;
-  contentType?: "text/plain" | "text/html";
-  inReplyTo?: string | null;
-  senderName?: string;
-};
+export type Memory = z.infer<typeof MemorySchema>;
 
 /**
  * Zod schema for NotificationOptions validation
@@ -109,3 +74,5 @@ export const NotificationOptionsSchema = z.object({
   inReplyTo: z.string().nullable().optional(),
   senderName: z.string().optional(),
 });
+
+export type NotificationOptions = z.infer<typeof NotificationOptionsSchema>;
