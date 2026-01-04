@@ -15,4 +15,9 @@ export default {
       ),
     });
   },
+
+  fetch(request: Request) {
+    console.log("Received fetch request:", request.url);
+    return new Response("HelloEmailAgent is running.");
+  },
 };

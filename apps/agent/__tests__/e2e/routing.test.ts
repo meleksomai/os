@@ -12,7 +12,7 @@ import { createMockEmailHelper } from "../helper";
 // used in the agent Durable Object worker to avoid making real AI calls during
 // tests. This tests of the routing logic does not need to depend on LLM
 // functionality and the AI Gateway.
-vi.mock("@/llm-service", () => {
+vi.mock("@/services/llm", () => {
   return {
     LLMService: vi.fn().mockImplementation(() => ({
       classifyEmail: vi.fn().mockResolvedValue({
@@ -23,6 +23,20 @@ vi.mock("@/llm-service", () => {
         comments: "Mocked for testing",
       }),
       generateReplyDraft: vi.fn().mockResolvedValue("Mocked reply content"),
+    })),
+  };
+});
+
+// Mock ResendService to avoid hitting rate limits
+vi.mock("@/services/resend", () => {
+  return {
+    ResendService: vi.fn().mockImplementation(() => ({
+      sendReply: vi
+        .fn()
+        .mockResolvedValue({ id: "mock-resend-id", error: null }),
+      sendEmail: vi
+        .fn()
+        .mockResolvedValue({ id: "mock-resend-id", error: null }),
     })),
   };
 });
