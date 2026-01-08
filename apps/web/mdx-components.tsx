@@ -49,7 +49,7 @@ const components = {
     return (
       <a
         className={cn(
-          "underline-offset-3 break-all decoration-muted-foreground",
+          "underline-offset-3 wrap-break-word break-normal decoration-muted-foreground",
           className
         )}
         href={href}
@@ -82,7 +82,10 @@ const components = {
   // now handle scroll containers focus out of the box
   pre: ({ tabIndex, ...props }) => <CodeBlock.Pre {...props} />,
   code: (props) => (
-    <CodeBlock.Code className="data-[inline]:mx-[0.1em]" {...props} />
+    <CodeBlock.Code
+      className="data-inline:mx-[0.1em] text-[0.9em]"
+      {...props}
+    />
   ),
   figure: (props) => {
     if ("data-rehype-pretty-code-figure" in props) {
