@@ -1,12 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../components/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../components/tooltip";
 import { cn } from "../lib/utils";
 
 interface HighlightProps {

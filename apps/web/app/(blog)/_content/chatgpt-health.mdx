@@ -7,22 +7,35 @@ category: engineering
 ---
 
 import { Quote } from "@workspace/ui/blocks/quote";
+import { RelativeTime } from "@workspace/ui/blocks/relative-time";
+import { Highlight } from "@workspace/ui/blocks/highlight";
 
-OpenAI's [announcement of ChatGPT Health](https://openai.com/index/introducing-chatgpt-health/) represents a renewed push toward consumer-centric healthcare. This is a high-stakes experiment in whether Frontier Models can succeed where traditional health IT platforms have repeatedly failed: making healthcare data accessible, actionable, and meaningful to the people who own it. Individuals will have a conversational interface to engage with their own health information, not through static portals or confusing dashboards, but through natural language queries and contextual responses.
+OpenAI's announced <RelativeTime date={"2026-01-07"} /> the launch of [ChatGPT Health]((https://openai.com/index/introducing-chatgpt-health/)). This represents a high-stakes bet that AI Frontier models can succeed where decades of consumer health and personal health record platforms have fallen short: making healthcare data accessible, actionable, and genuinely useful to the people who own it — and doing so at consumer scale.
+
+What is interesting is that users are already turning to ChatGPT and similar tools for health-related questions well before this announcement. OpenAI itself has acknowledged this pattern in [prior](https://openai.com/index/strengthening-chatgpt-responses-in-sensitive-conversations/) [work](https://openai.com/index/helping-people-when-they-need-it-most/). What changes with ChatGPT Health is not the user behavior-it is already happening, but the fact that OpenAI is now _explicitly_ positioning ChatGPT as an official health care and wellness product. I believe OpenAI has a real shot at making this work where others, including Google, have failed.
 
 ## The Promise: Consumer Engagement with Health Data
 
-Historically, patients had limited opportunities to engage with their health data. The primary avenue was through their physician during infrequent office visits, perhaps a handful of times per year. The alternative was informal consultation with friends or family members who happened to work in medicine. Neither option scaled, and neither provided the kind of on-demand, personalized interaction that modern digital experiences have conditioned us to expect.
+Historically, patients had limited opportunities to engage with their health data. The primary avenue was through their physician during infrequent office visits, perhaps a handful of times per year if they are lucky to schedule an 18 minute appointment.[^1] Or through clunky and very cumbersome patient portals that are _by design_ difficult to use and hard to navigate. The health care space struggled - or ignored - to provide the kind of on-demand, personalized interaction that put the patient at the center.
 
-ChatGPT Health changes this dynamic. It offers patients a way to ask questions about their lab results, medication interactions, symptom patterns, and care plans without waiting for their next appointment. It creates a persistent, always-available interface between the patient and their data. The impact on patient engagement could be substantial. I personally see that first hand. My dad has a complex medical condition and he is constantly using ChatGPT to help him understand his symptoms, medications, and treatment options. As a physician, I see how this empowers him to take a more active role in his care. It does not mean that he is doing always the right thing, but it means he is more informed and more engaged. He feels more in control. And that is powerful.
+[^1]: _Neprash, Hannah T., John F. Mulcahy, Dori A. Cross, Joseph E. Gaugler, Ezra Golberstein, and Ishani Ganguli._ 2023. “Association of Primary Care Visit Length with Potentially Inappropriate Prescribing.” JAMA Health Forum 4 (3): e230052. https://doi.org/10.1001/jamahealthforum.2023.0052
+
+
+<Quote author="Dr Warner Slack" source="Professor at Harvard Medical School & Pioneer of Clinical Computing">
+Patients are the most under-utilized resource in health care
+</Quote>
+
+ChatGPT Health could potentially change this paradigm. OpenAI wants people to use ChatGPT Health to ask questions about their lab results, medication interactions, symptom patterns, and care plans without waiting for their next appointment. It creates a persistent, always-available interface between the patient and their data. The impact on patient engagement could be substantial. I personally see that first hand. My dad has a complex medical condition and he is constantly using ChatGPT to help him understand his symptoms, medications, and treatment options. He uploaded all his health records, lab results, radiology reports, and even voice recordings to ChatGPT, and is using it everyday. As a physician and a son, I see how this empowers him to take a more active role in his care. It does not mean that ChatGPT is providing always the right information, but my dad is more informed and more engaged than ever before. He feels more in control. And that is powerful.
 
 ## Acknowledging Risk Without Demanding Perfection
 
-There are legitimate concerns about hallucinations, diagnostic errors, and the potential for misinformation that could lead to poor health decisions or worse. These risks are real and must be taken seriously. However, demanding absolute perfection from any healthcare service, human or machine, is neither realistic nor helpful.
+Nonetheless, there are legitimate concerns about hallucinations, diagnostic errors, and the potential for misinformation that could lead to wrong health decisions or worse. These risks are real and must be taken seriously. However, demanding absolute perfection from any healthcare service, human or machine, is neither realistic nor helpful.
 
-The question is not whether ChatGPT Health will be flawless. It will not be. The question is whether OpenAI demonstrates a commitment to safety, research, and continuous improvement proportional to the scale and criticality of the service they are deploying. The same way health care systems have embraced quality standards such as the Joint Commission or other Zero Harm system design, OpenAI must (and hopefully is) approaching this with humility and focus. The standard should be high—higher than most consumer products—but not absolute. What matters is transparency, rapid iteration in response to failures, and a willingness to invest in safety infrastructure that matches the ambition of the product.
+The question is not whether ChatGPT Health will be flawless. It will not be. The more pressing question is whether OpenAI demonstrates a commitment to safety, research, and continuous improvement proportional to the scale and criticality of the service they are deploying for their users. The same way health care systems have embraced quality standards and Zero Harm policies and system design, OpenAI must (and hopefully is) approaching this with humility and rigor. The standard of deploying ChatGPT Health should be high—higher than most consumer products—but not absolute. What matters is transparency, rapid iteration in response to failures, and a willingness to invest in safety infrastructure that matches the ambition of the product.
 
-I expect OpenAI to treat ChatGPT Health as a core strategic priority. I would not be surprised if OpenAI invests heavily in reinforcement learning techniques—particularly RLHF (Reinforcement Learning from Human Feedback) or RLVR (Reinforcement Learning with Verifiable Rewards) to optimize their models specifically for healthcare reasoning. Just as they developed `GPT-5.2-Codex`, a version of GPT-5.2 further optimized for agentic coding, I expect a similar trajectory for health. A specialized model trained on healthcare-specific reasoning tasks, diagnostic workflows, and safety constraints could become a core differentiator.
+I expect OpenAI to treat ChatGPT Health as a core strategic priority. I would not be surprised if OpenAI invests heavily in reinforcement learning techniques—particularly RLHF (Reinforcement Learning from Human Feedback) or RLVR[^2] (Reinforcement Learning with Verifiable Rewards) to optimize their models specifically for healthcare reasoning. Just as they developed [`GPT-5.2-Codex`](https://openai.com/index/introducing-gpt-5-2-codex/), a version of GPT-5.2 further optimized for agentic coding, I expect a similar trajectory for health. A specialized model trained on healthcare-specific reasoning tasks, diagnostic workflows, and safety constraints could become a core differentiator.
+
+[^2]: Reinforcement Learning with Verifiable Rewards (RLVR) represents a meaningful advance in model verifiability. However, translating it into health care settings remains highly non-trivial, given the difficulty of formalizing clinical correctness, outcome attribution, and regulatory accountability into machine-verifiable reward functions.
 
 But, that won't be enough on its own.
 
@@ -30,21 +43,19 @@ But, that won't be enough on its own.
 
 To understand what ChatGPT Health must overcome, it is essential to revisit Google Health. [Launched in 2008](https://www.technologyreview.com/2008/05/19/97209/google-health-launches/), Google Health was a personal health record platform designed to help individuals "organize and act on their health and wellness information in one place." It integrated with fitness devices like Fitbit and CardioTrainer. It promised to give patients control over their data.
 
-It shut down in 2012.[^1]
+It shut down in 2012.[^3]
+
+[^3]: https://www.healthitanswers.net/the-end-of-google-health/
 
 <Quote author="Missy Krasner" source="Product Marketing Manager of Google Health">
 Because health care is not a true market-based commodity in this country, patients end up being lousy health care consumers. Unlike the banking, airline and retail industries, this makes it much harder to convince a broad array of consumers to engage in a service that helps them organize, manage and share their medical records online.[^1]
 </Quote>
 
-[^1]: https://www.healthitanswers.net/the-end-of-google-health/
-
 The key insight from Google Health's failure is that aggregating and storing data was not enough. Patients did not want a repository; they wanted solutions to practical healthcare pain points. Google Health provided access to information without providing a compelling reason to engage with that information regularly.
 
-This is the bar OpenAI must clear: not just making data accessible, but making it actionable and valuable in everyday decision-making.
+This is the bar OpenAI must clear: not just making data accessible, but making it actionable and valuable in everyday health and wellness decision-making.
 
-## Why ChatGPT Health Might Succeed Where Google Failed
-
-Despite the historical precedent of failure, there are structural reasons to believe **ChatGPT Health** has a better chance of gaining traction than Google Health ever did.
+Despite the historical precedent of failure, there are structural reasons to believe ChatGPT Health has a better chance of gaining traction than Google Health ever did.
 
 ### LLMs Enable a Different Interaction Model
 
@@ -52,7 +63,7 @@ Google Health was fundamentally a database with a web interface. Users could sea
 
 ![Google Health interface showing health records and data integration options.](/images/essays/chatgpt_health_google_health_screenshot.png "Google Health Interface")
 
-This is not a marginal improvement; It is a different category of interaction. Instead of asking patients to become database query experts, ChatGPT Health allows them to ask natural questions: "Why did my cholesterol go up?" or "What should I expect from this medication?" The model can contextualize lab results against population norms, explain medical terminology, and surface patterns across longitudinal data that would be invisible in a static portal.
+This is not a marginal improvement; It is a different category of interaction. Instead of asking patients to become database query experts, ChatGPT Health would allow a user to ask natural questions: "Why did my cholesterol go up?" or "What should I expect from this medication?" The model can contextualize lab results against population statistics, explain medical terminology, and surface patterns across longitudinal data that would be invisible in a static portal.
 
 Crucially, LLMs also have embedded "memory" of the world—general medical knowledge that allows them to provide context beyond what exists in the patient's record alone. If executed well, this combination of personal data and general medical reasoning could be powerful.
 
@@ -64,51 +75,43 @@ ChatGPT Health, by contrast, is built on the same underlying interface and infra
 
 This matters. Adoption friction is one of the primary reasons consumer health tools fail. If ChatGPT Health can reduce that friction by leveraging an existing, widely-used interface, it significantly increases its odds of sustained engagement.
 
-### Why a Separate Product?
-
 If the interface is so similar, why not simply integrate health data into the core ChatGPT experience? I believe OpenAI made this a distinct product for three strategic reasons:
 
-**Consumer experience and trust.** Health data is uniquely sensitive. Patients need to feel that their health information exists in a private, secure space—separate from their general queries about recipes, travel, or work. This is not a technical limitation but a psychological and user experience requirement. The separation signals to users that their health data is treated differently.
+- **Consumer experience and trust.** Health data is uniquely sensitive. Patients need to _feel_ that their health information exists in a private, secure space—separate from their general queries about recipes, travel, or work. This is not a technical limitation but a psychological and user experience requirement. The separation signals to users that their health data is treated differently.
 
-I suspect this decision was heavily influenced by [Ashley Alexander](https://www.linkedin.com/in/ashleyyuki/), who leads the ChatGPT Health product team and previously worked at Instagram. Over time, as users become more comfortable with how LLMs operate and how their data is used, ChatGPT Health could evolve and become more integrated. But for now, the separation is deliberate and wise.
+  I suspect this decision was heavily influenced by [Ashley Alexander](https://www.linkedin.com/in/ashleyyuki/), who leads the ChatGPT Health product team and previously worked at Instagram. Over time, as users become more comfortable with how LLMs operate and how their data is used, ChatGPT Health could evolve and become more integrated. But for now, the separation is deliberate and wise.
 
-**Ecosystem and tooling.** OpenAI is betting that ChatGPT Health will have its own ecosystem of tools, integrations, and capabilities distinct from general-purpose ChatGPT. In the short term, I expect them to invest heavily in health-specific tooling, potentially integrating services like [OpenEvidence](https://www.openevidence.com/) for integrating medical literature, or building their own healthcare-focused retrieval and reasoning systems.
+- **Ecosystem and tooling.** OpenAI is betting that ChatGPT Health will have its own ecosystem of tools, integrations, and capabilities distinct from general-purpose ChatGPT. In the short term, I expect them to invest heavily in health-specific tooling, potentially integrating services like [OpenEvidence](https://www.openevidence.com/) for integrating medical literature, or building their own healthcare-focused retrieval and reasoning systems.
 
-They could also optimize the prompt engineering and context engineering of ChatGPT Health to prioritize clinical relevance, safety, and interpretability. This level of domain-specific tuning is difficult to achieve within a general-purpose product. A dedicated product allows for focused iteration and differentiation.
+  They could also optimize the prompt engineering and context engineering of ChatGPT Health to prioritize clinical relevance, safety, and interpretability. This level of domain-specific tuning is difficult to achieve within a general-purpose product. A dedicated product allows for focused iteration and differentiation.
 
-**Interoperability with healthcare systems.** The long-term play is interoperability by integrating ChatGPT Health with electronic health records, pharmacy systems, insurance providers, and care management platforms. This is where the real value lies, and also where Google failed most dramatically. If OpenAI can establish partnerships with healthcare systems to enable seamless data exchange and actionable workflows (e.g., scheduling appointments, refilling prescriptions, submitting prior authorizations), ChatGPT Health becomes sticky. It moves from being a passive repository to an active participant in the care journey. And patients, including myself, will be more than happy to use it instead of the clunky portals health care systems offer today.
+- **Interoperability with healthcare systems.** The long-term play is interoperability by integrating ChatGPT Health with electronic health records, pharmacy systems, insurance providers, and other care platforms. This is where the real value lies long term, and also where Google failed most dramatically. If OpenAI can establish partnerships with healthcare systems to enable seamless data exchange and actionable workflows (e.g., scheduling appointments, refilling prescriptions, submitting prior authorizations), ChatGPT Health becomes sticky. It moves from being a passive repository to an active participant in the care journey. And patients, including myself, will be more than happy to use it instead of the clunky portals health care systems offer today. I think their collaboration with [b.well](https://www.icanbwell.com/), a care coordination platform, is an encouraging first step in this direction.
 
-This is analogous to how ChatGPT integrates already with [Instacart](https://openai.com/index/instacart-partnership/), [Stripe](https://openai.com/index/buy-it-in-chatgpt/), and [DoorDash](https://about.doordash.com/en-us/news/openai). Bringing similar integrations to healthcare would be transformative but also extraordinarily difficult. The regulatory complexity, fragmentation of systems, and lack of standardized APIs make this a multi-year effort. Whether OpenAI has the patience and persistence to see it through remains to be seen. I think their collaboration with [b.well](https://www.icanbwell.com/), a care coordination platform, is an encouraging first step in this direction.
+  This is analogous to how ChatGPT integrates already with [Instacart](https://openai.com/index/instacart-partnership/), [Stripe](https://openai.com/index/buy-it-in-chatgpt/), and [DoorDash](https://about.doordash.com/en-us/news/openai). Bringing similar integrations to healthcare would be transformative but also extraordinarily difficult. The regulatory complexity, fragmentation of systems, and lack of standardized APIs make this a multi-year effort. Whether OpenAI has the patience and persistence to see it through remains to be seen.
 
-## Competitive Landscape: Google, Anthropic, and the Path Not Taken
+## Competitive Landscape
 
-The only credible competitor to OpenAI in this space is Google. More specifically, the combination of Google Gemini, Google Health, and Google DeepMind.
+The only credible competitor to OpenAI in this space is obviously Google. More specifically, the combination of Google Gemini, Google Health, and Google DeepMind.
 
-Unfortunately for Google, these teams are fragmented. Google Health still carries institutional scars from its 2008 failure. DeepMind is focused on [scientific discovery](https://deepmind.google/science/) and [biology](https://deepmind.google/blog/alphaproteo-generates-novel-proteins-for-biology-and-health-research/) not consumer health applications, though they were behind Gemini 3. And while [Google Health's AMIE](https://www.nature.com/articles/s41586-025-08866-7) team has made impressive strides in diagnostic reasoning (arguably ahead of OpenAI in clinical evaluation benchmarks), they have yet to translate that research into a consumer-facing product.
+Unfortunately for Google, these teams are fragmented. Google Health still carries institutional scars from its 2008 failure. DeepMind is focused on [scientific discovery](https://deepmind.google/science/) and [biology](https://deepmind.google/blog/alphaproteo-generates-novel-proteins-for-biology-and-health-research/) not consumer health applications, though they were behind Gemini 3. And while [Google Health's AMIE](https://www.nature.com/articles/s41586-025-08866-7) team has made impressive strides in diagnostic reasoning (arguably ahead of OpenAI), they have yet to translate that research into a consumer-facing product that is as ubiquitous as ChatGPT; and the only contender is Google search itself: [https://google.com](https://google.com).
 
 Google has the infrastructure, the talent, and the model capabilities to compete. What they lack is organizational alignment and a clear product strategy. If they could unify Google Health, AMIE, and Gemini under a coherent vision, they would be formidable.
 
-As for Anthropic, I do not believe they have the bandwidth or strategic focus to tackle consumer healthcare at this stage. Anthropic's culture prioritizes safety, interpretability, and alignment research, which seems to align perfectly with health care. However, my guess is that Anthropic will likely be on the enterprise side, building tools for health systems, researchers, and clinicians, not for patients directly.
+As for Anthropic, I do not believe they have the bandwidth or strategic focus _yet_ to tackle consumer healthcare. Anthropic's culture prioritizes safety, interpretability, and alignment research, which seems to align perfectly with health care. However, my guess is that Anthropic will likely be on the enterprise side, building tools for health systems, researchers, and clinicians, not for patients directly.
 
-The competition, then, is between OpenAI and Google. The winner will be determined by which company can move fastest, integrate most effectively with existing healthcare workflows, and build trust with patients at scale.
-
-## Challenges and Areas for Improvement
-
-For ChatGPT Health to succeed, OpenAI must address several critical challenges:
-
-### Clinical Validation and Safety Infrastructure
+## Clinical Validation and Safety Infrastructure
 
 Unlike general ChatGPT queries, health-related questions carry clinical risk. Inaccurate information can lead to poor decisions, delayed care, or harm. OpenAI must invest in clinical validation infrastructure—testing the model's responses against clinical guidelines, monitoring for dangerous hallucinations, and building feedback loops with medical experts. They have started this journey with [Health Bench](https://openai.com/index/healthbench/). It is a good start, but insufficient and must scale tremendously.
 
-This will require partnerships with clinicians, medical institutions, and regulatory bodies. It may also require formal clinical trials or real-world evidence studies to demonstrate that ChatGPT Health improves outcomes or at least does not cause harm.
+This will require most likely partnerships with a large cohort of clinicians, medical institutions, and regulatory bodies. It may also require formal clinical trials or real-world evidence studies to demonstrate that ChatGPT Health improves outcomes or at least does not cause harm.
 
 Transparency will be key. OpenAI should publish regular reports on model performance, safety incidents, and how they are addressing edge cases. Building trust with patients and providers requires ongoing communication and accountability.
 
 ## Conclusion: Empowerment Through Better Tools
 
-Overall, this is good for the industry and good for patients. I am convinced that healthcare should be owned by the patient and that we should empower individuals to engage with their data, make informed decisions, and take an active role in their care. LLMs represent an inflection point and a genuine shift in how accessible and interpretable health information can become.
+Overall, this is good for the industry and good for patients. I am convinced that health care should be owned by the patient and that we should empower individuals to engage with their data, make informed decisions, and take an active role in their care. LLMs represent an inflection point and a genuine shift in how accessible and interpretable health information can become.
 
-ChatGPT Health is not guaranteed to succeed. It faces technical challenges, regulatory hurdles, and the weight of historical precedent. But it also benefits from a fundamentally better interaction model than what existed in 2008 or even five years ago: a mature product infrastructure, and the possibility of deep integration with healthcare systems.
+ChatGPT Health is not guaranteed to succeed. It faces technical challenges, regulatory hurdles, and the weight of historical precedent. But it also benefits from a fundamentally better interaction model than what existed in 2008 or even five years ago.
 
 The challenges ahead are opportunities, not blockers. If OpenAI approaches this with the rigor, investment, and long-term commitment it demands, ChatGPT Health could prove to be the catalyst that finally unlocks consumer-centric healthcare data at scale.
 
