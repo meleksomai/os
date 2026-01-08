@@ -73,6 +73,7 @@ export function RelativeTime({ date, className }: RelativeTimeProps) {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   });
 
   return (
