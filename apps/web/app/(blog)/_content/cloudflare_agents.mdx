@@ -1,0 +1,227 @@
+---
+title: Building an Email AI-Assistant using Cloudflare Workers and Durable Objects
+subtitle: Productivity with LLMs, Cloudflare Workers, and Durable Objects
+featured: true
+publishedAt: 2026-01-14
+category: engineering
+---
+
+import { Callout } from "@workspace/ui/blocks/callout";
+import { Quote } from "@workspace/ui/blocks/quote";
+import { ThemeImage } from "@workspace/ui/blocks/themed-image";
+import { RelativeTime } from "@workspace/ui/blocks/relative-time";
+import { Highlight } from "@workspace/ui/blocks/highlight";
+
+import { GitHubIcon } from "@workspace/ui/components/icons";
+
+As explained in [my previous blog post](/essay/agents), I have become increasingly convinced that the future of software lies in _agent-first_ systems. So during the holidays <RelativeTime date={"2026-01-01"} />, I got some time to ponder the concept and what it would look like to build software around LLMs from first principles.[^1] Around the same time, I found myself confronting a backlog of emails requiring the usual tedious task of triaging, prioritizing, responding, scheduling, etc.
+
+[^1]: By building "_from first principles,_" I mean starting not from existing software patterns or human workflows, but from the fundamental capabilities and constraints of LLMs themselves. Most AI products today attempt to fit language models into interfaces designed for humans—dashboards, buttons, forms. The first-principles approach inverts this: what would software look like if we designed it around what an agent can naturally do? In the case of email, this meant asking: given that LLMs are stateless, context-dependent, and excel at language understanding, what architecture would allow an agent to operate autonomously within a protocol that was never designed for machines? The answer required rethinking memory, state, and interaction patterns from the ground up—not retrofitting AI into an inbox UI.
+
+So, the idea that emerged was to avoid responding personally to those emails and instead build an _AI assistant_ that operates autonomously over email on my behalf. This is a great example of an _agentic_ applications where the AI Agent operates autonomously on behalf of a user.  espite its persistent dysfunction, Email remains the most resilient protocol for asynchronous human (and soon machine) communication. Moreover, it is a well-defined protocol with clear inputs (incoming messages) and outputs (responses, scheduling actions), making it an ideal testbed. The assistant must navigate the complexities of human communication, context retention, and task execution, all while adhering to the constraints of email as a medium. 
+
+It would be killing two birds with one stone: reducing my email burden while also exploring the design space of agent-first systems. It also felt like enough of risk since I was not relying on this system for anything mission-critical, yet it would be launched into the wild and exposed to the real-world. I am certainly still concerned about potential jailbreaking or misbehavior from the AI assistant. I will explore some of these challenges later in the post. But, seeing how the system would fail and what edge cases would emerge when deployed in the wild is part of this experiment after all.
+
+## Design Principles
+
+Since I am starting from first principles, I had to define the design principles that would guide the architecture and implementation of this AI Assistant. Its goal is to manage emails autonomously — providing context-aware responses, scheduling meetings, and handling routine inquiries without human intervention. For this to work, the AI Assistant must:
+
+- **intercept and understand emails** sent to a specific email inbox (e.g., `hello@somai.me`). The AI Assistant should be able to parse the email content, extract relevant information, and understand the context of the conversation.
+- **maintain context _per_ contact** to adjust its behavior safely. The assistant remembers prior interactions with each individual contact to inform future responses. It also means that there is a _unique_ memory/context for each contact and that there is no cross-contamination of context between different contacts. Technically, this means that the assistant must be able to maintain separate state/memory for each contact.
+- **connect to tools and services** to perform actions on my behalf, such as scheduling meetings, sending follow-up emails, or retrieving information from external sources. [Model-Context-Protocol](https://modelcontextprotocol.io/docs/getting-started/intro) (MCP) can be useful here to connect LLMs with external tools and services.
+- **learn from my personal feedback** and improve over time. The assistant should adapt its responses based on my personal feedback, refining its understanding of preferences and communication styles. This requires a feedback loop where I can provide corrections or suggestions to the assistant, and it can incorporate that feedback into its future behavior.
+- **be secure and private** since email often contains sensitive information. The assistant must ensure that all data is handled securely and without exposing sensitive information to unauthorized parties.
+
+## Platform: Cloudflare Workers + Durable Objects
+
+[Cloudflare](https://www.cloudflare.com/) is definitely gaining momentum. Cloudflare seems to be on the verge of replacing AWS as the platform of choice for those who want the sophistication of a cloud provider with AWS-level primitives and a Vercel-like developer experience. Although I had the least experience with Cloudflare compared to Vercel or AWS, it turned out to be the most balanced starting point I have found. They have a solid serverless platform with [Cloudflare Workers](https://developers.cloudflare.com/workers/), [Cloudflare Email Routing](https://developers.cloudflare.com/email-routing/), [Cloudflare KV](https://developers.cloudflare.com/workers/runtime-apis/kv/), and most importantly [Cloudflare Durable Objects](https://developers.cloudflare.com/durable-objects/). I also found their documentation to be good enough and their tooling around Cloudflare Workers with the [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) very practical compared to the old way of writing IaC.[^2]
+
+[^2]: **Vercel vs AWS vs Cloudflare**: [Vercel](https://vercel.com/) is an amazing platform. It has historically been great for web apps. The recent [fluid compute](https://vercel.com/fluid), [AI SDK](https://ai-sdk.dev/), and [Workflow](https://vercel.com/docs/workflow) are very powerful and have tons of community support. However, Vercel is tightly coupled to [Next.js](https://nextjs.org/) and the web framework lifecycle. For this project, it felt unnatural for an agent-first system. I really like the craft the team at Vercel put into building all the products and services, but I did not want to build on top of a web app. [AWS](https://aws.amazon.com/) is a powerful hyper-scaler. It has become, though, an onerous platform to start with. I certainly do not want to set up VPCs, configure Bedrock, manage IAM, connect my CI with Cloudformation and orchestrate a mountain of infrastructure pieces just to get a prototype running. Moreover, their foray into AI with [AWS Bedrock](https://aws.amazon.com/bedrock) and its sub-services like [AgentCore](https://aws.amazon.com/bedrock/agentcore) seems not to resonate with the new community of developers. For instance, I find the development experience on AWS Lambda to be quite challenging compared to Vercel. AWS's new AI services do not have the same "care" and dynamism that AWS used to put into building things like DynamoDB or S3 back in the day.
+
+### Cloudflare Durable Objects
+
+Durable Objects service is the coolest thing I have seen in serverless computing in the last few years since AWS Lambda. Rather than thinking about scale in terms of microservices and distributed systems, Durable Objects let you think about scale in terms of _stateful_ machines/instances. Each instance is a self-contained unit of compute with its own memory, storage, and lifecycle. The scaling unit is no longer a stateless function but a stateful object that can maintain its own context over time. This is a perfect match for building agent-first systems where each agent can be a Durable Object instance with its own state and behavior. Durable Objects add concepts such as **scheduling** that enables each instance to have its own lifecycle, **web sockets** for streaming and long running connections (ideal for agents), and **single-threading** which enormously simplifies how we think about concurrency and race conditions.[^3]
+
+[^3]: I am excited but also skeptical. I am curious to see how Cloudflare will execute on this vision over time. There are still many open questions around Durable Objects, and I have yet to see successful businesses and ideas built on top.
+
+<Quote>
+Agents require infrastructure designed for _continuity_, not ephemerality.
+</Quote>
+
+My short experience building agent-first systems on traditional serverless platforms has been fraught with complexity. Serverless assumes ephemerality. Functions execute, return results, and disappear. State, if needed, lives _elsewhere_ in a database or external storage. This works well for request-response architectures but too complex when applying serverless paradigms to agentic computing. And this is only going to get worse as agents become more sophisticated and stateful.[^4]
+
+[^4]: We see already the emergence of new infrastructure constructs and primitives such as [sandboxed execution environments](https://modal.com/docs/guide/sandboxes) that allow agents to invoke tools safely, dedicated [agent VMs](https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/agent-windows) that maintain state between invocations, RAG systems that ground LLM reasoning in retrieved knowledge, and orchestration layers (LangGraph, Temporal, AWS Step Functions) that coordinate multi-step agentic workflows. All these point to a future where agents require _continuity_ rather than _ephemerality_. Traditional serverless platforms are not designed for this paradigm shift.
+
+## Architecture
+
+The architecture I ended up using is fairly simple: an email is received by Cloudflare Email Routing, forwarded to a Cloudflare Worker that routes the email to a specific agent (Durable Object) instance. The agent processes the email, runs LLMs, updates its state, and optionally sends a reply.
+
+<ThemeImage
+  lightSrc="/images/essays/cloudflare_routing_light.png"
+  darkSrc="/images/essays/cloudflare_routing_dark.png"
+  alt="Architecture diagram"
+  width={1500}
+  height={580}
+  className="my-12"
+/>
+
+I will focus on the most interesting parts of the architecture: 1) _routing_ logic, 2) AI _memory_, 2) AI Assistant _lifecycle_, and 3) some of the _missing_ pieces. You can check out the source code on <GitHubIcon className="inline-block w-4 h-4" /> [meleksomai/os](https://github.com/meleksomai/os).
+
+### Cloudflare Worker
+
+The Cloudflare Worker is the entry point for handling incoming emails. It uses the [Agents SDK](https://developers.cloudflare.com/agents/) to route emails to the appropriate agent instance.
+
+```typescript title="cloudflare worker logic" {1}
+import { routeAgentEmail } from "agents";
+
+export default {
+  async email(message: ForwardableEmailMessage, env: Env) {
+    await routeAgentEmail(message, env, {
+      // ... logic to resolve the correct agent instance ...
+    });
+  },
+};
+```
+
+In its most basic logic, when an email is received, the routing logic should extract the sender's email address and use it to determine the correct agent instance. If an instance for that contact does not exist, a new one is created. 
+
+However, email threads complicate things. If I have an ongoing conversation with someone (someone@example.com) and I reply to their email, I want the email to be routed to the same agent instance that is handling my conversation with that person, regardless of the sender. This is where email headers come into play. Email has a set of headers that can be used to identify the thread. The most relevant headers are `Message-ID`, `In-Reply-To`, and `References`.[^5] These headers are used by email clients (e.g., Gmail, Outlook, etc) to group emails into threads and stack conversations. 
+
+[^5]: For more information about email threading and headers, see [**RFC 5322 bis 12**](https://datatracker.ietf.org/doc/html/draft-ietf-emailcore-rfc5322bis-12#name-identification-fields). It is important to note that we are assuming that `In-Reply-To` is always a single parent and hence we can walk backwards through the `References` field to find the parent of each message listed there. Therefore, this is not compatible when a reply has multiple parents (which is discouraged in the RFC). https://datatracker.ietf.org/doc/html/draft-ietf-emailcore-rfc5322bis-12#name-identification-fields
+
+There is another benefit of using thread identifiers for routing. I can reply to the email thread from my email personal address to only my AI Assistant (`hello@somai.me`). That way, I can share a private conversation with my AI Assistant regarding the ongoing thread without exposing its content to the other participants. This is a very powerful pattern that allows me to have private conversations with my AI Assistant about ongoing email threads that can be used to adjust its behavior or provide additional context.
+
+### Deterministic Routing Resolver
+
+Cloudflare provides some email routing resolvers out of the box in its Agents SDK like `createCatchAllEmailResolver` / `createAddressBasedEmailResolver` / `createHeaderBasedEmailResolver`. However, none of them fit my use case. I needed a custom routing logic that could route emails based on the email thread and contact.
+
+The solution is building a custom email resolver that can maintain this mapping using a Cloudflare KV store. When a new email is received, the routing logic checks for the sender's email address and the thread identifiers in the email headers. If a match is found in the KV store, the email is routed to the corresponding agent instance. If no match is found, a new agent instance is created, and the thread identifier is stored in the KV store.
+
+```typescript title="resolver.ts" {11, 21, 28}
+import type { EmailResolver } from "agents";
+
+export function createThreadBasedEmailResolver<Env>(
+  agentName: string,
+  store: KVNamespace
+): EmailResolver<Env> {
+  return async (email: ForwardableEmailMessage, env: Env) => {
+    const state = await evaluateState(email, store);
+
+    switch (state.type) {
+      case "NEW_THREAD":
+        // Map new thread ID to external person's email
+        await store.put(state.threadId!, state.instanceId, {
+          expirationTtl: 60 * 60 * 24 * 90, // 90 days
+        });
+        return {
+          agentName,
+          agentId: state.instanceId,
+        };
+
+      case "EXISTING_THREAD":
+        // Route to existing mapped instance
+        return {
+          agentName,
+          agentId: state.instanceId,
+        };
+
+      case "NO_THREAD":
+        // No thread ID, route based on sender (could be owner or external)
+        return {
+          agentName,
+          agentId: email.from,
+        };
+
+      default:
+        throw new Error("Unhandled email state");
+    }
+  };
+}
+```
+
+### Cloudflare KV Store
+
+The KV store is used to maintain the mapping between thread IDs and agent instance IDs. The KV store is attached to the Worker that handles the email routing using the `wrangler.jsonc` configuration file.
+
+```jsonc title="wrangler.jsonc" {7-12}
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "emailbot",
+  "compatibility_date": "2025-12-23",
+  "compatibility_flags": ["nodejs_compat"],
+  // ... other configurations ...
+  "kv_namespaces": [
+    {
+      "binding": "EMAIL_LOOKUP_KV",
+      "id": "your-kv-namespace-id"
+    }
+  ]
+}
+```
+
+The only missing piece is updating the routing logic to use this custom resolver.
+
+```typescript title="cloudflare worker with custom resolver" {3, 8}
+import { routeAgentEmail } from "agents";
+import { HelloEmailAgent } from "./agent";
+import { createThreadBasedEmailResolver } from "./resolvers";
+
+export default {
+  async email(message: ForwardableEmailMessage, env: Env) {
+    await routeAgentEmail(message, env, {
+      resolver: createThreadBasedEmailResolver(HelloEmailAgent.name, env.EMAIL_LOOKUP_KV),
+    });
+  }
+};
+```
+
+### AI Agent
+
+Now that we have the routing logic in place, we can focus on the AI Agent itself. The AI Agent is implemented as a Cloudflare Durable Object that handles incoming emails, processes them using LLMs, maintains its memory, and optionally sends replies.
+
+```typescript title="agent.ts"
+import { EmailMessage } from "cloudflare:email";
+import { Agent, type AgentEmail } from "agents";
+import type { EmailClassification, Memory, Message } from "./types";
+
+/**
+ * HelloEmailAgent - AI-powered email routing assistant
+ * Simple, educational architecture - easy to understand and extend
+ */
+export class HelloEmailAgent extends Agent<Env, Memory> {
+
+  /**
+   * Main entry point for handling incoming emails
+   */
+  async _onEmail(email: AgentEmail): Promise<void> {
+    // Logic goes here
+  }
+}
+```
+
+As mentioned, each Durable Object (e.g. AI Agent instance) has its own memory: a simple [SQLite](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/) database. This architecture makes the memory management straightforward. Each agent instance can store its own state in its own database. The memory schema is therefore simple since we do not have to worry about multi-tenancy or cross-contamination of context between different contacts. For my use case, the memory schema consists of the following fields:
+
+```typescript {3} title="memory.ts" 
+export type Memory = {
+  lastUpdated: Date | null;
+  messages: Message[];
+  context: string;
+  summary: string;
+};
+```
+
+### AI Assistant Lifecycle
+
+The AI Assistant lifecycle is divided into three main phases: 1) _ingestion_, 2) _processing_, and 3) _action_.
+
+## Try it out
+
+Send me an email at `hello@somai.me` and you will be routed to the agent. It is early, but it already works.
+
+If you want to follow the build, the code lives in `apps/agent` and the public surface lives in `apps/web`.
+
+## Security and Jailbreaking
+
+### Routing Safety of the Email Resolver
+
+The custom email resolver is designed to ensure that emails are routed safely to the correct agent instance. By using thread identifiers and maintaining a mapping in the KV store, we can prevent unauthorized access to agent instances. Only emails that are part of an existing thread or from known contacts will be routed to the corresponding agent instance. New threads will always create a new agent instance, ensuring that there is no cross-contamination of context between different contacts. Someone can technically _hijack_ an existing thread by spoofing the `In-Reply-To` or `References` headers, but this is a low-risk scenario since (1) email spoofing is generally hard to pull off due to SPF, DKIM, and DMARC protections, and (2) even if someone manages to hijack a thread, the agent instance will only have access to the context of the conversation with the original contact. 
