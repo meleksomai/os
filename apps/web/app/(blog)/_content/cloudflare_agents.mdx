@@ -67,7 +67,7 @@ The architecture I ended up using is fairly simple: an email is received by Clou
 
 I will focus on the most interesting parts of the architecture: 1) _routing_ logic, 2) AI _memory_, 2) AI Assistant _lifecycle_, and 3) some of the _missing_ pieces. You can check out the source code on <GitHubIcon className="inline-block w-4 h-4" /> [meleksomai/os](https://github.com/meleksomai/os).
 
-### Cloudflare Worker
+## Cloudflare Worker
 
 The Cloudflare Worker is the entry point for handling incoming emails. It uses the [Agents SDK](https://developers.cloudflare.com/agents/) to route emails to the appropriate agent instance.
 
@@ -175,11 +175,19 @@ export default {
 };
 ```
 
-### AI Agent
+## AI Agent
 
 Now that we have the routing logic in place, we can focus on the AI Agent itself. The AI Agent is implemented as a Cloudflare Durable Object that handles incoming emails, processes them using LLMs, maintains its memory, and optionally sends replies.
 
-```typescript title="agent.ts"
+### Workflow
+
+At the entry point, the agent receives an email and determines whether it is from me (the owner) or from an external contact. If the email is from me, it is treated as context or feedback to update the agent's memory. If the email is from an external contact, the agent processes the email, updates its memory, and decides whether to send a reply. 
+
+This is a "gate-keeping" mechanism to ensure that only my emails can modify the agent's behavior or context. External contacts cannot directly influence the agent's memory or behavior, which is crucial for security and privacy. It feels similar to how human assistants operate: only the owner can provide instructions or feedback to the assistant, while external contacts interact with the assistant based on the owner's established preferences and context.[^6]
+
+[^6]: This design pattern of separating owner and external contact interactions is essential for maintaining control over the agent's behavior. It prevents unauthorized manipulation of the agent's memory and ensures that the agent operates within the boundaries set by the owner. Could we have relied on the agent itself to determine whether an email is from the owner or an external contact? Possibly, but that would introduce unnecessary complexity and potential security risks. By enforcing this separation at the routing level, we can ensure a clear and secure interaction model. I am very interested if there are other patterns or best practices emerging in the agent-first systems community around this topic.
+
+```typescript title="agent.ts" {20, 26, 33}
 import { EmailMessage } from "cloudflare:email";
 import { Agent, type AgentEmail } from "agents";
 import type { EmailClassification, Memory, Message } from "./types";
@@ -194,10 +202,30 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
    * Main entry point for handling incoming emails
    */
   async _onEmail(email: AgentEmail): Promise<void> {
-    // Logic goes here
+    const from = email.from.toLowerCase();
+    const owner = this.env.EMAIL_ROUTING_DESTINATION.toLowerCase();
+    const routing = this.env.EMAIL_ROUTING_ADDRESS.toLowerCase();
+
+    // Route based on sender
+    if (from === routing) {
+      // Email from our own routing address - ignore to prevent loops
+      console.log("Email from self-agent. Ignoring to prevent loops.");
+      return;
+    }
+
+    if (from === owner) {
+      // Email from owner - handle as context/feedback
+      await this.handleOwnerEmail(email);
+      return;
+    }
+
+    // Email from external sender(s) - full workflow
+    await this.handleExternalEmail(email);
   }
 }
 ```
+
+### Memory
 
 As mentioned, each Durable Object (e.g. AI Agent instance) has its own memory: a simple [SQLite](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/) database. This architecture makes the memory management straightforward. Each agent instance can store its own state in its own database. The memory schema is therefore simple since we do not have to worry about multi-tenancy or cross-contamination of context between different contacts. For my use case, the memory schema consists of the following fields:
 

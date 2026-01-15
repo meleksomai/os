@@ -1,5 +1,4 @@
 import { routeAgentEmail } from "agents";
-// biome-ignore lint/performance/noBarrelFile: required
 import { HelloEmailAgent } from "./agent";
 import { createThreadBasedEmailResolver } from "./resolvers";
 

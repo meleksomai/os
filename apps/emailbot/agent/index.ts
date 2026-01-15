@@ -1,9 +1,8 @@
-import { EmailMessage } from "cloudflare:email";
 import { Agent, type AgentEmail } from "agents";
-import { EmailParser } from "./emails/parser";
-import { LLMService } from "./services/llm";
-import { EmailService } from "./services/resend";
-import type { EmailClassification, Memory, Message } from "./types";
+import { LLMTool } from "./tools/llm";
+import { EmailTool } from "./tools/resend";
+import type { Memory } from "./types";
+import { EmailParser } from "./utils/parser";
 
 /**
  * HelloEmailAgent - AI-powered email routing assistant
@@ -19,16 +18,16 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
   // Services - directly instantiated, no magic
   private readonly parser: EmailParser;
-  private readonly llm: LLMService;
-  private readonly resend: EmailService;
+  private readonly llm: LLMTool;
+  private readonly resend: EmailTool;
 
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
 
     // Initialize services upfront - simple and explicit
     this.parser = new EmailParser();
-    this.llm = new LLMService(env);
-    this.resend = new EmailService(this.env.RESEND_API_KEY);
+    this.llm = new LLMTool(env);
+    this.resend = new EmailTool(this.env.RESEND_API_KEY);
   }
 
   /**

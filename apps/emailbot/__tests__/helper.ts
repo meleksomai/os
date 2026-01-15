@@ -2,7 +2,7 @@ import { EmailComposer } from "@/emails/composer";
 import { EmailParser } from "@/emails/parser";
 import { LLMService } from "@/llm-service";
 import { MemoryManager } from "@/memory-manager";
-import type { EmailClassification, Memory, Message } from "../types";
+import type { EmailClassification, Memory, Message } from "../agent/types";
 
 /**
  * Create a mock email for testing with Cloudflare email operation limits

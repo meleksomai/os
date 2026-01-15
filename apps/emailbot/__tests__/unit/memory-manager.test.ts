@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Memory, Message } from "../../agent/types";
 import { MemoryManager } from "../../memory-manager";
-import type { Memory, Message } from "../../types";
 import { createMockMemory, createMockMessage } from "../helper";
 
 describe("MemoryManager", () => {

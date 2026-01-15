@@ -1,17 +1,39 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText, Output } from "ai";
+import { z } from "zod";
 import classification_email_system_prompt from "../prompts/classifier";
 import draft_email_system_prompt from "../prompts/writer";
-import {
-  type EmailClassification,
-  EmailClassificationSchema,
-  Memory,
-} from "../types";
+import { Memory } from "../types";
+
+/**
+ * Email intent classification
+ */
+export const EmailIntentSchema = z.enum([
+  "scheduling",
+  "information_request",
+  "action_request",
+  "introduction_networking",
+  "sales_vendor",
+  "fyi_notification",
+  "sensitive_legal_financial",
+  "unknown_ambiguous",
+]);
+
+/**
+ * Email classification schema and type
+ */
+export const EmailClassificationSchema = z.object({
+  intents: z.array(EmailIntentSchema).min(1),
+  risk: z.enum(["low", "medium", "high"]),
+  action: z.enum(["reply", "forward", "ignore"]),
+  requires_approval: z.boolean(),
+  comments: z.string().min(1).max(500),
+});
 
 /**
  * LLM service implementation using Vercel AI SDK
  */
-export class LLMService {
+export class LLMTool {
   constructor(private readonly env: Env) {}
 
   /**
@@ -38,7 +60,7 @@ export class LLMService {
   /**
    * Classify an email using LLM
    */
-  async classifyEmail(state: Memory): Promise<EmailClassification> {
+  async classifyEmail(state: Memory) {
     const model = await this.modelProvider();
 
     console.log("Classifying email using LLM...");
