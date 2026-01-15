@@ -1,4 +1,5 @@
 @import "@workspace/ui/globals.css";
+@import "rehype-callouts/theme/obsidian";
 
 code[data-theme*=" "],
 code[data-theme*=" "] span {
