@@ -49,7 +49,7 @@ export function createThreadBasedEmailResolver<Env>(
         // No thread ID, route based on sender (could be owner or external)
         return {
           agentName,
-          agentId: email.from,
+          agentId: email.from.toLocaleLowerCase(),
         };
 
       default:

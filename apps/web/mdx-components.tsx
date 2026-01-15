@@ -39,7 +39,8 @@ const components = {
   h6: (props: ComponentPropsWithoutRef<"h6">) => <Heading6 {...props} />,
   p: (props: ParagraphProps) => <p className="my-6 leading-loose" {...props} />,
   a: ({ href, ...props }: AnchorProps) => {
-    const className = "underline";
+    const className =
+      "underline underline-offset-3 decoration-gray-200 dark:decoration-gray-700 hover:decoration-gray-700 dark:hover:decoration-gray-200 transition-colors";
     if (href?.startsWith("/")) {
       return <Link className={className} href={href} {...props} />;
     }
@@ -48,10 +49,7 @@ const components = {
     }
     return (
       <a
-        className={cn(
-          "underline-offset-3 wrap-break-word break-normal decoration-muted-foreground",
-          className
-        )}
+        className={className}
         href={href}
         rel="noopener noreferrer"
         target="_blank"
@@ -60,12 +58,14 @@ const components = {
     );
   },
   ol: (props: ListProps) => (
-    <ol className="my-6 list-decimal space-y-2 pl-5" {...props} />
+    <ol className="my-6 list-decimal space-y-2 pl-5 leading-loose" {...props} />
   ),
   ul: (props: ListProps) => (
-    <ul className="my-6 list-disc space-y-1 pl-5" {...props} />
+    <ul className="my-6 list-disc space-y-1 pl-5 leading-loose" {...props} />
   ),
-  li: (props: ListItemProps) => <li className="my-3 pl-1" {...props} />,
+  li: (props: ListItemProps) => (
+    <li className="my-3 pl-1 leading-loose" {...props} />
+  ),
   em: (props: ComponentPropsWithoutRef<"em">) => (
     <em className="font-serif" {...props} />
   ),
@@ -81,9 +81,12 @@ const components = {
   // Don't pass the tabindex prop from shiki, most browsers
   // now handle scroll containers focus out of the box
   pre: ({ tabIndex, ...props }) => <CodeBlock.Pre {...props} />,
-  code: (props) => (
+  code: ({ className, ...props }) => (
     <CodeBlock.Code
-      className="data-inline:mx-[0.1em] text-[0.9em]"
+      className={cn(
+        className,
+        " inline-code:bg-slate-100  dark:inline-code:bg-slate-800 inline-code:rounded inline-code:px-[0.3em] inline-code:py-[0.2em] inline-code:text-[0.9em]"
+      )}
       {...props}
     />
   ),
