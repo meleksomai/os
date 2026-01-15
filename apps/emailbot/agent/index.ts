@@ -1,7 +1,8 @@
 import { Agent, type AgentEmail } from "agents";
-import { LLMTool } from "./tools/llm";
-import { EmailTool } from "./tools/resend";
+import { generateText } from "ai";
+import { getContextTools, getEmailTools } from "./tools";
 import type { Memory } from "./types";
+import { retrieveModel } from "./utils/model-provider";
 import { EmailParser } from "./utils/parser";
 
 /**
@@ -18,16 +19,12 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
   // Services - directly instantiated, no magic
   private readonly parser: EmailParser;
-  private readonly llm: LLMTool;
-  private readonly resend: EmailTool;
 
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
 
     // Initialize services upfront - simple and explicit
     this.parser = new EmailParser();
-    this.llm = new LLMTool(env);
-    this.resend = new EmailTool(this.env.RESEND_API_KEY);
   }
 
   /**
@@ -52,7 +49,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     }
 
     // Email from external sender - full workflow
-    await this.handleExternalEmail(email);
+    await this.handleIncomingEmail(email);
   }
 
   /**
@@ -65,18 +62,42 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     this.setState({
       ...this.state,
       lastUpdated: new Date(),
-      context: `${this.state.context}\n\n${msg.raw}`,
+      messages: [...this.state.messages, msg],
     });
 
-    console.log("Owner email stored in context.");
+    const currentState = this.state;
+    const updateState = this.setState.bind(this);
+
+    const result = await generateText({
+      model: await this.model(),
+      prompt: "",
+      tools: getContextTools(this.env),
+      onStepFinish({ toolResults }) {
+        for (const toolResult of toolResults) {
+          if (toolResult.dynamic) {
+            // Ignore dynamic tool results
+            continue;
+          }
+          switch (toolResult.toolName) {
+            case "updateContext":
+              const updatedContext = toolResult.output.context;
+              console.log("Updated context:", updatedContext);
+              updateState({
+                ...currentState,
+                lastUpdated: new Date(),
+                context: updatedContext,
+              });
+              break;
+          }
+        }
+      },
+    });
   }
 
   /**
    * Handle emails from external senders
-   * Full workflow: parse, classify, reply if needed, notify, forward
    */
-  private async handleExternalEmail(email: AgentEmail): Promise<void> {
-    console.log("Email from external sender. Handling accordingly.");
+  private async handleIncomingEmail(email: AgentEmail): Promise<void> {
     // Parse and store message
     const msg = await this.parser.parse(email);
     console.log("Storing email message in agent memory.");
@@ -87,27 +108,34 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       messages: [...this.state.messages, msg],
     });
 
-    // Classify the email using AI
-    console.log("Classifying email content using our AI model...");
-    const classification = await this.llm.classifyEmail(this.state);
-    console.log("Email classification:", classification);
+    const currentState = this.state;
+    const updateState = this.setState.bind(this);
 
-    // Send reply if AI recommends it
-    if (classification.action === "reply") {
-      console.log("AI recommends replying to the email. Drafting reply...");
-      const content = await this.llm.generateReplyDraft(this.state);
+    const { steps } = await generateText({
+      model: await this.model(),
+      prompt: "",
+      tools: getEmailTools(this.env),
+      onStepFinish: async ({ toolResults }) => {
+        for (const toolResult of toolResults) {
+          if (toolResult.dynamic) {
+            // Ignore dynamic tool results
+            continue;
+          }
+          switch (toolResult.toolName) {
+            case "sendEmail":
+              // updateState({
+              //   ...currentState,
+              //   lastUpdated: new Date(),
+              //   messages: [...currentState.messages],
+              // });
+              break;
+          }
+        }
+      },
+    });
+  }
 
-      console.log("Sending reply via Resend service...");
-      await this.resend.sendReply(msg, content, this.env.EMAIL_ROUTING_ADDRESS);
-    } else {
-      console.log(
-        `No reply action needed as per classification (${classification.action}).`
-      );
-    }
-
-    // Forward to owner for record-keeping
-    console.log("Forwarding email to self for record-keeping...");
-    await email.forward(this.env.EMAIL_ROUTING_DESTINATION);
-    console.log("Email processing completed.");
+  private model() {
+    return retrieveModel(this.env);
   }
 }

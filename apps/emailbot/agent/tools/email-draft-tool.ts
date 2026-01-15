@@ -1,4 +1,62 @@
-export default `You are an AI Email Assistant operating on behalf of Melek Somai.
+import { generateText, tool } from "ai";
+import { z } from "zod";
+import { MemorySchema } from "../types";
+import { retrieveModel } from "../utils/model-provider";
+
+// Tool for generating email reply drafts
+export const generateReplyDraftTool = (env: Env) =>
+  tool({
+    description:
+      "Generate a draft reply to an email based on the message content and context. Use this after classification determines a reply is needed.",
+    inputSchema: z.object({
+      state: MemorySchema.describe(
+        "The current agent memory state with messages and context"
+      ),
+    }),
+    outputSchema: z.string().describe("The draft reply email content"),
+    execute: async ({ state }) => {
+      try {
+        const model = await retrieveModel(env);
+
+        const message = state.messages[state.messages.length - 1];
+        const context = state.context;
+        const contextMessages = state.messages
+          .slice(0, -1)
+          .slice(-10)
+          .map((msg) => msg.raw)
+          .join("\n\n---\n\n");
+        const prompt = `Draft a reply to the following email:
+
+        from:${message?.from}
+        subject:${message?.subject}
+        content:
+        ${message?.raw}.
+
+        ----------------------
+        Prior historical messages (last 10 messages sent prior to this email by the same sender):
+        ${contextMessages}
+
+        ----------------------
+        Please keep in mind the context provided below that may help with classification:
+        ${context}`;
+
+        const { output } = await generateText({
+          model,
+          system: SYSTEM_PROMPT,
+          prompt,
+        });
+
+        return output;
+      } catch (err) {
+        console.error("Failed to generate reply draft:", err);
+        throw err;
+      }
+    },
+  });
+
+// ----------- System Prompt -----------
+
+const SYSTEM_PROMPT = `You are an AI Email Assistant operating on behalf of Melek Somai.
 
 Your role is to directly respond to incoming emails as an AI assistant,
 with transparency about your identity and scope, while representing Melek
