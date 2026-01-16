@@ -14,6 +14,7 @@ vi.mock("resend", () => ({
 
 // Import mocked Resend to control behavior per test
 import { Resend } from "resend";
+import { ToolResult } from "../workflows/agent";
 
 const mockEnv: Env = {
   EMAIL_ROUTING_ADDRESS: "agent@example.com",
@@ -56,7 +57,7 @@ describe("sendEmailTool", () => {
       const state = createState({ contact: "john@example.com" });
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "contact", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -78,7 +79,7 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -100,7 +101,7 @@ describe("sendEmailTool", () => {
       const state = createState({ contact: "john@example.com" });
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "both", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -122,7 +123,7 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -140,26 +141,26 @@ describe("sendEmailTool", () => {
       const state = createState({ contact: null });
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "contact", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBeNull();
-      expect(result.data.error).toBe("No contact address available in state");
+      expect(result?.data?.id).toBeNull();
+      expect(result?.data?.error).toBe("No contact address available in state");
     });
 
     it("should return error when contact is null and recipient is 'both'", async () => {
       const state = createState({ contact: null });
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "both", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBeNull();
-      expect(result.data.error).toBe("No contact address available in state");
+      expect(result?.data.id).toBeNull();
+      expect(result?.data.error).toBe("No contact address available in state");
     });
 
     it("should succeed when contact is null but recipient is 'owner'", async () => {
@@ -171,13 +172,13 @@ describe("sendEmailTool", () => {
       const state = createState({ contact: null });
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBe("email-1");
-      expect(result.data.error).toBeNull();
+      expect(result?.data.id).toBe("email-1");
+      expect(result?.data.error).toBeNull();
     });
   });
 
@@ -191,7 +192,7 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Hello World", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -212,7 +213,7 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Re: Hello World", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -237,7 +238,7 @@ describe("sendEmailTool", () => {
       });
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -267,7 +268,7 @@ describe("sendEmailTool", () => {
       });
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -290,7 +291,7 @@ describe("sendEmailTool", () => {
       const state = createState({ messages: [] });
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -316,7 +317,7 @@ describe("sendEmailTool", () => {
       });
       const tool = sendEmailTool(mockEnv, state);
 
-      await tool.execute(
+      await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
       );
@@ -344,13 +345,13 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBe("sent-email-123");
-      expect(result.data.error).toBeNull();
+      expect(result?.data.id).toBe("sent-email-123");
+      expect(result?.data.error).toBeNull();
     });
 
     it("should return error when Resend returns error object", async () => {
@@ -364,13 +365,13 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBeNull();
-      expect(result.data.error).toBe("Invalid API key");
+      expect(result?.data.id).toBeNull();
+      expect(result?.data.error).toBe("Invalid API key");
     });
 
     it("should return error when Resend returns no data", async () => {
@@ -382,13 +383,13 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBeNull();
-      expect(result.data.error).toBe("No data returned from Resend");
+      expect(result?.data.id).toBeNull();
+      expect(result?.data.error).toBe("No data returned from Resend");
     });
 
     it("should catch and return thrown exceptions", async () => {
@@ -400,13 +401,13 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBeNull();
-      expect(result.data.error).toBe("Network failure");
+      expect(result?.data.id).toBeNull();
+      expect(result?.data.error).toBe("Network failure");
     });
 
     it("should handle non-Error thrown values", async () => {
@@ -418,13 +419,13 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
-      expect(result.data.id).toBeNull();
-      expect(result.data.error).toBe("String error");
+      expect(result?.data.id).toBeNull();
+      expect(result?.data.error).toBe("String error");
     });
   });
 
@@ -438,14 +439,14 @@ describe("sendEmailTool", () => {
       const state = createState();
       const tool = sendEmailTool(mockEnv, state);
 
-      const result = await tool.execute(
+      const result = (await tool.execute?.(
         { recipient: "owner", subject: "Test", content: "Hello" },
         { messages: [], toolCallId: "test-1" }
-      );
+      )) as ToolResult<any> | null;
 
       expect(result).toHaveProperty("data");
-      expect(result.data).toHaveProperty("id");
-      expect(result.data).toHaveProperty("error");
+      expect(result?.data).toHaveProperty("id");
+      expect(result?.data).toHaveProperty("error");
     });
   });
 });
