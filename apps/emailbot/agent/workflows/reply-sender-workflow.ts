@@ -48,7 +48,7 @@ export const replySenderAgent = (env: Env, state: Memory) =>
           ? originalEmail.subject
           : `Re: ${originalEmail.subject}`,
         raw: draft,
-        date: new Date(),
+        date: new Date().toISOString(),
         messageId: "", // Will be filled in by email sender
         references: originalEmail.messageId
           ? [originalEmail.messageId, ...(originalEmail.references || [])]
@@ -61,7 +61,7 @@ export const replySenderAgent = (env: Env, state: Memory) =>
       // 3. Return result
       return {
         state: {
-          lastUpdated: new Date(),
+          lastUpdated: new Date().toISOString(),
           messages: [...state.messages, replyMessage],
         },
       };

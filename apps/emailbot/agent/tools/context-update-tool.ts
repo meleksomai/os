@@ -28,7 +28,7 @@ export const contextUpdateTool = (env: Env) =>
 
         ---
 
-        New email from owner:
+        New email from:
         From: ${message?.from}
         Subject: ${message?.subject}
         Content:

@@ -1,7 +1,6 @@
 import GenericEmail from "@workspace/transactional/emails/generic";
 import { tool } from "ai";
 import { Resend } from "resend";
-import { z } from "zod";
 import { MessageSchema } from "../types";
 
 const DEFAULT_FOOTER =

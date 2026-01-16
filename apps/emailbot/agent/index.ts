@@ -1,9 +1,7 @@
 import { Agent, type AgentEmail } from "agents";
-import { generateText } from "ai";
-import { getContextTools, getEmailTools } from "./tools";
 import type { Memory } from "./types";
-import { retrieveModel } from "./utils/model-provider";
 import { EmailParser } from "./utils/parser";
+import { createOwnerResponseAgent } from "./workflows/owner-response-agent";
 import { replySenderAgent } from "./workflows/reply-sender-workflow";
 
 /**
@@ -56,19 +54,33 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
   }
 
   /**
-   * Handle emails from owner - store as context
+   * Handle emails from owner
+   * Uses ToolLoopAgent to decide actions: update context, act on behalf, etc.
    */
   private async handleOwnerEmail(email: AgentEmail): Promise<void> {
-    console.log("Email from owner. Storing as context.");
+    console.log("Email from owner. Processing with owner response agent.");
     const msg = await this.parser.parse(email);
 
+    // Store the message first
     this.setState({
       ...this.state,
-      lastUpdated: new Date(),
+      lastUpdated: new Date().toISOString(),
       messages: [...this.state.messages, msg],
     });
 
-    // TO BE IMPLEMENTED: context update workflow
+    // Run the owner response agent
+    const agent = await createOwnerResponseAgent(this.env);
+
+    console.log("Running owner response agent...");
+    const { text } = await agent.generate({
+      prompt: `New email from owner:\n\nFrom: ${msg.from}\nSubject: ${msg.subject}\nContent:\n${msg.raw}`,
+    });
+
+    // Update state if modified
+    this.setState({
+      ...this.state,
+      context: text.trim(),
+    });
   }
 
   /**
@@ -81,7 +93,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
     this.setState({
       ...this.state,
-      lastUpdated: new Date(),
+      lastUpdated: new Date().toISOString(),
       messages: [...this.state.messages, msg],
     });
 
@@ -97,9 +109,5 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
         ...result.state,
       });
     }
-  }
-
-  private model() {
-    return retrieveModel(this.env);
   }
 }
