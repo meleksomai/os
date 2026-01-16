@@ -4,7 +4,7 @@ import { clearTranscript, log } from "./utils/logger";
 import { EmailParser } from "./utils/parser";
 import { sendTranscript } from "./utils/transcript-sender";
 import { createOwnerResponseAgent } from "./workflows/owner-loop-agent";
-import { replyContactAgent } from "./workflows/reply-contact-workflow";
+import { createReplyContactAgent } from "./workflows/reply-contact-workflow";
 
 /**
  * HelloEmailAgent - AI-powered email routing assistant
@@ -30,10 +30,50 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
   }
 
   /**
+   * Apply state updates atomically
+   * Single source of truth - only this method mutates state
+   */
+  private applyUpdates(updates: Partial<Memory> | undefined): void {
+    if (!updates) return;
+    this.setState({ ...this.state, ...updates });
+    log.debug("[agent] state updated", { keys: Object.keys(updates) });
+  }
+
+  /**
+   * TEMPORARY: Migrate old instances that don't have contact set.
+   * Extracts contact from first external message in state.
+   * TODO: Remove after all instances are migrated.
+   */
+  private migrateContact(): void {
+    if (this.state.contact) return;
+    if (this.state.messages.length === 0) return;
+
+    const owner = this.env.EMAIL_ROUTING_DESTINATION.toLowerCase();
+    const routing = this.env.EMAIL_ROUTING_ADDRESS.toLowerCase();
+
+    // Find first message from external sender
+    const externalMessage = this.state.messages.find((msg) => {
+      const from = msg.from.toLowerCase();
+      return from !== owner && from !== routing;
+    });
+
+    if (externalMessage) {
+      log.info("[agent] migrating contact", { contact: externalMessage.from });
+      this.setState({
+        ...this.state,
+        contact: externalMessage.from,
+      });
+    }
+  }
+
+  /**
    * Main entry point for handling incoming emails
    */
   async _onEmail(email: AgentEmail): Promise<void> {
     clearTranscript();
+
+    // Migrate old instances
+    this.migrateContact();
 
     const from = email.from.toLowerCase();
     const owner = this.env.EMAIL_ROUTING_DESTINATION.toLowerCase();
@@ -77,21 +117,19 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
     const msg = await this.parser.parse(email);
 
-    this.setState({
-      ...this.state,
+    // Add message to state
+    this.applyUpdates({
       lastUpdated: new Date().toISOString(),
       messages: [...this.state.messages, msg],
     });
 
     const agent = await createOwnerResponseAgent(this.env, this.state);
-    const { text } = await agent.generate({
+    const result = await agent.execute({
       prompt: `New email from owner:\n\nFrom: ${msg.from}\nSubject: ${msg.subject}\n\nContent:\n${msg.raw}`,
     });
 
-    this.setState({
-      ...this.state,
-      context: text.trim(),
-    });
+    // Apply any state updates proposed by the agent
+    this.applyUpdates(result.stateUpdates);
 
     log.info("[owner-workflow] ended", { durationMs: Date.now() - startTime });
   }
@@ -105,31 +143,22 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
     const msg = await this.parser.parse(email);
 
-    // Set contact if not already set (handles first message and migration of existing instances)
-    if (!this.state.contact) {
-      log.info("[reply-workflow] setting contact", { contact: msg.from });
-      this.setState({
-        ...this.state,
-        contact: msg.from,
-      });
-    }
-
-    this.setState({
-      ...this.state,
+    // Add message to state, set contact if not already set
+    this.applyUpdates({
       lastUpdated: new Date().toISOString(),
       messages: [...this.state.messages, msg],
+      contact: this.state.contact ?? msg.from,
     });
 
-    const replyWorkflow = replyContactAgent(this.env, this.state);
-    const result = await replyWorkflow.generate();
+    const agent = createReplyContactAgent(this.env, this.state);
+    const result = await agent.execute();
 
-    if (result?.state) {
-      this.setState({
-        ...this.state,
-        ...result.state,
-      });
-    }
+    // Apply any state updates proposed by the agent
+    this.applyUpdates(result.stateUpdates);
 
-    log.info("[reply-workflow] ended", { durationMs: Date.now() - startTime });
+    log.info("[reply-workflow] ended", {
+      durationMs: Date.now() - startTime,
+      action: result.output.action,
+    });
   }
 }

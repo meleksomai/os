@@ -1,15 +1,23 @@
 import { generateText, tool } from "ai";
 import { z } from "zod";
-import { MemorySchema } from "../types";
+import { type Memory, MemorySchema } from "../types";
 import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
+import type { ToolResult } from "../workflows/agent";
 
 // Output schema for context update
 const ContextUpdateOutputSchema = z.object({
-  context: z.string().describe("The updated context string"),
+  data: z.object({
+    context: z.string().describe("The updated context string"),
+  }),
+  stateUpdates: z
+    .object({
+      context: z.string(),
+    })
+    .optional(),
 });
 
-export const contextUpdateTool = (env: Env) =>
+export const contextUpdateTool = (env: Env, state: Memory) =>
   tool({
     description:
       "Update the agent's context based on a new email from the owner. Use this to extract and store relevant information that will help handle future emails.",
@@ -19,14 +27,16 @@ export const contextUpdateTool = (env: Env) =>
       ),
     }),
     outputSchema: ContextUpdateOutputSchema,
-    execute: async ({ state }) => {
+    execute: async ({
+      state: inputState,
+    }): Promise<ToolResult<{ context: string }>> => {
       const startTime = Date.now();
       try {
         const model = await retrieveModel(env);
-        const message = state.messages[state.messages.length - 1];
+        const message = inputState.messages[inputState.messages.length - 1];
 
         const prompt = `Current context:
-        ${state.context || "(empty)"}
+        ${inputState.context || "(empty)"}
 
         ---
 
@@ -46,11 +56,16 @@ export const contextUpdateTool = (env: Env) =>
           prompt,
         });
 
+        const newContext = text.trim();
+
         log.info("[context-tool] updated", {
           durationMs: Date.now() - startTime,
         });
 
-        return { context: text.trim() };
+        return {
+          data: { context: newContext },
+          stateUpdates: { context: newContext },
+        };
       } catch (err) {
         log.error("[context-tool] failed", {
           error: err instanceof Error ? err.message : String(err),

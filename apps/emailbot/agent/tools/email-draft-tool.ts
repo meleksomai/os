@@ -3,6 +3,12 @@ import { z } from "zod";
 import { MemorySchema } from "../types";
 import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
+import type { ToolResult } from "../workflows/agent";
+
+const DraftOutputSchema = z.object({
+  data: z.string().describe("The draft reply email content"),
+  stateUpdates: z.record(z.string(), z.unknown()).optional(),
+});
 
 // Tool for generating email reply drafts
 export const generateReplyDraftTool = (env: Env) =>
@@ -14,8 +20,8 @@ export const generateReplyDraftTool = (env: Env) =>
         "The current agent memory state with messages and context"
       ),
     }),
-    outputSchema: z.string().describe("The draft reply email content"),
-    execute: async ({ state }) => {
+    outputSchema: DraftOutputSchema,
+    execute: async ({ state }): Promise<ToolResult<string>> => {
       const startTime = Date.now();
       try {
         const model = await retrieveModel(env);
@@ -53,7 +59,7 @@ export const generateReplyDraftTool = (env: Env) =>
           draft: output,
         });
 
-        return output;
+        return { data: output };
       } catch (err) {
         log.error("[draft-tool] failed", {
           error: err instanceof Error ? err.message : String(err),

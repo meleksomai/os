@@ -12,8 +12,8 @@ export const getEmailTools = (env: Env, state: Memory) => {
   };
 };
 
-export const getContextTools = (env: Env) => {
+export const getContextTools = (env: Env, state: Memory) => {
   return {
-    updateContext: contextUpdateTool(env),
+    updateContext: contextUpdateTool(env, state),
   };
 };

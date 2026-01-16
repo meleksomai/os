@@ -1,5 +1,6 @@
 import type { InferToolInput, InferToolOutput, ToolSet } from "ai";
 import { log } from "../utils/logger";
+import type { AgentExecutor, AgentResult } from "./agent";
 
 /**
  * Context passed to the run function
@@ -14,39 +15,46 @@ export interface WorkflowContext<TOOLS extends ToolSet> {
 /**
  * Settings for WorkflowAgent
  */
-export interface WorkflowAgentSettings<TOOLS extends ToolSet, OUTPUT> {
+export interface WorkflowAgentSettings<TOOLS extends ToolSet, INPUT, OUTPUT> {
   tools: TOOLS;
-  run: (context: WorkflowContext<TOOLS>) => Promise<OUTPUT>;
+  run: (
+    context: WorkflowContext<TOOLS>,
+    input: INPUT
+  ) => Promise<AgentResult<OUTPUT>>;
 }
 
 /**
- * WorkflowAgent - Manual tool orchestration with the same API as ToolLoopAgent
+ * WorkflowAgent - Manual tool orchestration implementing AgentExecutor
  *
  * Unlike ToolLoopAgent where the AI decides tool calls, WorkflowAgent lets you
  * define the exact sequence of tool executions in the `run` function.
  *
+ * Implements AgentExecutor for consistent interface across all agents.
+ *
  * @example
  * ```typescript
  * const agent = new WorkflowAgent({
- *   tools: getEmailTools(env),
- *   run: async ({ executeTool }) => {
- *     const classification = await executeTool("classifyEmail", { state });
- *     if (classification.action === "reply") {
- *       const draft = await executeTool("generateReplyDraft", { state });
- *       return { action: "replied", draft };
+ *   tools: getEmailTools(env, state),
+ *   run: async ({ executeTool }, input) => {
+ *     const classifyResult = await executeTool("classifyEmail", { state });
+ *     if (classifyResult.data.action === "reply") {
+ *       const draftResult = await executeTool("generateReplyDraft", { state });
+ *       return { output: { action: "replied", draft: draftResult.data } };
  *     }
- *     return { action: classification.action };
+ *     return { output: { action: "skipped" } };
  *   }
  * });
  *
- * const result = await agent.generate();
+ * const result = await agent.execute({});
  * ```
  */
-export class WorkflowAgent<TOOLS extends ToolSet, OUTPUT> {
+export class WorkflowAgent<TOOLS extends ToolSet, INPUT, OUTPUT>
+  implements AgentExecutor<INPUT, OUTPUT>
+{
   readonly version = "agent-v1";
-  private readonly settings: WorkflowAgentSettings<TOOLS, OUTPUT>;
+  private readonly settings: WorkflowAgentSettings<TOOLS, INPUT, OUTPUT>;
 
-  constructor(settings: WorkflowAgentSettings<TOOLS, OUTPUT>) {
+  constructor(settings: WorkflowAgentSettings<TOOLS, INPUT, OUTPUT>) {
     this.settings = settings;
   }
 
@@ -58,27 +66,11 @@ export class WorkflowAgent<TOOLS extends ToolSet, OUTPUT> {
   }
 
   /**
-   * Execute the workflow (non-streaming)
-   * Same signature as ToolLoopAgent.generate()
+   * Execute the workflow - implements AgentExecutor interface
    */
-  async generate(options?: {
-    abortSignal?: AbortSignal;
-    timeout?: number;
-  }): Promise<OUTPUT> {
+  async execute(input: INPUT): Promise<AgentResult<OUTPUT>> {
     const executeTool = this.createExecuteTool();
-    return this.settings.run({ executeTool });
-  }
-
-  /**
-   * Execute the workflow (streaming)
-   * Same signature as ToolLoopAgent.stream()
-   * Note: Workflows are synchronous by nature, so this just wraps generate()
-   */
-  async stream(options?: {
-    abortSignal?: AbortSignal;
-    timeout?: number;
-  }): Promise<OUTPUT> {
-    return this.generate(options);
+    return this.settings.run({ executeTool }, input);
   }
 
   /**

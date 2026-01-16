@@ -1,13 +1,12 @@
 import { getEmailTools } from "../tools";
 import type { Memory } from "../types";
 import { log } from "../utils/logger";
+import type { AgentExecutor, AgentResult } from "./agent";
 import { WorkflowAgent } from "./workflow-agent";
 
-/**
- * Output from the reply contact workflow
- */
-export interface ReplyContactOutput {
-  state?: Partial<Memory>;
+export interface ReplyAgentOutput {
+  action: "replied" | "skipped";
+  emailId?: string;
 }
 
 /**
@@ -21,12 +20,16 @@ export interface ReplyContactOutput {
  * @param env - Environment bindings
  * @param state - Current agent memory state
  */
-export const replyContactAgent = (env: Env, state: Memory) =>
+export const createReplyContactAgent = (
+  env: Env,
+  state: Memory
+): AgentExecutor<void, ReplyAgentOutput> =>
   new WorkflowAgent({
     tools: getEmailTools(env, state),
-    run: async ({ executeTool }): Promise<ReplyContactOutput | undefined> => {
+    run: async ({ executeTool }): Promise<AgentResult<ReplyAgentOutput>> => {
       // Step 1: Classify
-      const classification = await executeTool("classifyEmail", { state });
+      const classifyResult = await executeTool("classifyEmail", { state });
+      const classification = classifyResult.data;
 
       // Step 2: Decide
       if (classification.action !== "reply") {
@@ -34,13 +37,14 @@ export const replyContactAgent = (env: Env, state: Memory) =>
           action: classification.action,
           reason: "no reply needed",
         });
-        return;
+        return { output: { action: "skipped" } };
       }
 
       log.info("[reply-workflow] decision", { action: "reply" });
 
       // Step 3: Draft
-      const draft = await executeTool("generateReplyDraft", { state });
+      const draftResult = await executeTool("generateReplyDraft", { state });
+      const draft = draftResult.data;
       const originalEmail = state.messages.at(-1);
 
       if (!originalEmail) {
@@ -51,14 +55,18 @@ export const replyContactAgent = (env: Env, state: Memory) =>
       }
 
       // Step 4: Send (addresses resolved from state/env automatically)
-      await executeTool("sendEmail", {
+      const sendResult = await executeTool("sendEmail", {
         recipient: "contact",
         subject: originalEmail.subject,
         content: draft,
       });
 
       return {
-        state: {
+        output: {
+          action: "replied",
+          emailId: sendResult.data.id ?? undefined,
+        },
+        stateUpdates: {
           lastUpdated: new Date().toISOString(),
         },
       };

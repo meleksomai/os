@@ -3,6 +3,8 @@ import { getContextTools, getEmailTools } from "../tools";
 import type { Memory } from "../types";
 import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
+import { wrapToolsWithStateCapture } from "../utils/tool-wrapper";
+import type { AgentExecutor, AgentResult } from "./agent";
 
 /**
  * System prompt for the owner response agent
@@ -56,23 +58,54 @@ Analyze the owner's email and determine what actions to take. The owner may be:
 - When in doubt about sensitive matters, don't send
 `;
 
+export interface OwnerAgentInput {
+  prompt: string;
+}
+
+export interface OwnerAgentOutput {
+  text: string;
+}
+
 /**
- * Creates an owner response agent using ToolLoopAgent
+ * Creates an owner response agent that returns state updates in result
  *
  * @param env - Environment bindings
  * @param state - Current memory state (used for address resolution)
  */
-export const createOwnerResponseAgent = async (env: Env, state: Memory) => {
+export const createOwnerResponseAgent = async (
+  env: Env,
+  state: Memory
+): Promise<AgentExecutor<OwnerAgentInput, OwnerAgentOutput>> => {
   log.debug("[owner-agent] creating", { contact: state.contact });
 
   const model = await retrieveModel(env);
 
-  return new ToolLoopAgent({
-    model,
-    instructions: SYSTEM_PROMPT,
-    tools: {
-      ...getContextTools(env),
+  // Accumulator for state updates from tools
+  const stateUpdates: Partial<Memory> = {};
+
+  // Wrap tools to capture state updates
+  const tools = wrapToolsWithStateCapture(
+    {
+      ...getContextTools(env, state),
       ...getEmailTools(env, state),
     },
+    stateUpdates
+  );
+
+  const agent = new ToolLoopAgent({
+    model,
+    instructions: SYSTEM_PROMPT,
+    tools,
   });
+
+  return {
+    execute: async (input): Promise<AgentResult<OwnerAgentOutput>> => {
+      const { text } = await agent.generate({ prompt: input.prompt });
+      return {
+        output: { text },
+        stateUpdates:
+          Object.keys(stateUpdates).length > 0 ? stateUpdates : undefined,
+      };
+    },
+  };
 };

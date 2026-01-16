@@ -3,6 +3,7 @@ import { z } from "zod";
 import { MemorySchema } from "../types";
 import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
+import type { ToolResult } from "../workflows/agent";
 
 /**
  * Email intent classification
@@ -33,6 +34,11 @@ export type EmailClassification = z.infer<typeof EmailClassificationSchema>;
 
 // Tool for classifying emails
 
+const ClassifyOutputSchema = z.object({
+  data: EmailClassificationSchema,
+  stateUpdates: z.record(z.string(), z.unknown()).optional(),
+});
+
 export const classifyEmailTool = (env: Env) =>
   tool({
     description:
@@ -42,8 +48,8 @@ export const classifyEmailTool = (env: Env) =>
         "The current agent memory state with messages and context"
       ),
     }),
-    outputSchema: EmailClassificationSchema,
-    execute: async ({ state }) => {
+    outputSchema: ClassifyOutputSchema,
+    execute: async ({ state }): Promise<ToolResult<EmailClassification>> => {
       const startTime = Date.now();
       try {
         const model = await retrieveModel(env);
@@ -84,7 +90,7 @@ export const classifyEmailTool = (env: Env) =>
           result: output,
         });
 
-        return output;
+        return { data: output };
       } catch (err) {
         log.error("[classify-tool] failed", {
           error: err instanceof Error ? err.message : String(err),
