@@ -3,8 +3,8 @@ import type { Memory } from "./types";
 import { clearTranscript, log } from "./utils/logger";
 import { EmailParser } from "./utils/parser";
 import { sendTranscript } from "./utils/transcript-sender";
-import { createOwnerResponseAgent } from "./workflows/owner-response-agent";
-import { replySenderAgent } from "./workflows/reply-sender-workflow";
+import { createOwnerResponseAgent } from "./workflows/owner-loop-agent";
+import { replyContactAgent } from "./workflows/reply-contact-workflow";
 
 /**
  * HelloEmailAgent - AI-powered email routing assistant
@@ -120,7 +120,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       messages: [...this.state.messages, msg],
     });
 
-    const replyWorkflow = replySenderAgent(this.env, this.state);
+    const replyWorkflow = replyContactAgent(this.env, this.state);
     const result = await replyWorkflow.generate();
 
     if (result?.state) {

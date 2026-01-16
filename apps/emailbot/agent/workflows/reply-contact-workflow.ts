@@ -4,14 +4,14 @@ import { log } from "../utils/logger";
 import { WorkflowAgent } from "./workflow-agent";
 
 /**
- * Output from the reply sender workflow
+ * Output from the reply contact workflow
  */
-export interface ReplySenderOutput {
+export interface ReplyContactOutput {
   state?: Partial<Memory>;
 }
 
 /**
- * Creates a reply sender workflow agent
+ * Creates a reply contact workflow agent
  *
  * This workflow:
  * 1. Classifies the incoming email
@@ -21,10 +21,10 @@ export interface ReplySenderOutput {
  * @param env - Environment bindings
  * @param state - Current agent memory state
  */
-export const replySenderAgent = (env: Env, state: Memory) =>
+export const replyContactAgent = (env: Env, state: Memory) =>
   new WorkflowAgent({
     tools: getEmailTools(env, state),
-    run: async ({ executeTool }): Promise<ReplySenderOutput | undefined> => {
+    run: async ({ executeTool }): Promise<ReplyContactOutput | undefined> => {
       // Step 1: Classify
       const classification = await executeTool("classifyEmail", { state });
 
