@@ -28,6 +28,8 @@ export const EmailClassificationSchema = z.object({
   comments: z.string().min(1).max(500),
 });
 
+export type EmailClassification = z.infer<typeof EmailClassificationSchema>;
+
 // Tool for classifying emails
 
 export const classifyEmailTool = (env: Env) =>

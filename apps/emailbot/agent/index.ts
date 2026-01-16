@@ -4,6 +4,7 @@ import { getContextTools, getEmailTools } from "./tools";
 import type { Memory } from "./types";
 import { retrieveModel } from "./utils/model-provider";
 import { EmailParser } from "./utils/parser";
+import { replySenderAgent } from "./workflows/reply-sender-workflow";
 
 /**
  * HelloEmailAgent - AI-powered email routing assistant
@@ -45,11 +46,13 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     if (from === owner) {
       // Email from owner - store as context
       await this.handleOwnerEmail(email);
-      return;
+    } else {
+      // Email from external sender - full workflow
+      await this.handleIncomingEmail(email);
     }
 
-    // Email from external sender - full workflow
-    await this.handleIncomingEmail(email);
+    // Always forward to owner's address
+    await email.forward(this.env.EMAIL_ROUTING_DESTINATION);
   }
 
   /**
@@ -65,33 +68,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       messages: [...this.state.messages, msg],
     });
 
-    const currentState = this.state;
-    const updateState = this.setState.bind(this);
-
-    const result = await generateText({
-      model: await this.model(),
-      prompt: "",
-      tools: getContextTools(this.env),
-      onStepFinish({ toolResults }) {
-        for (const toolResult of toolResults) {
-          if (toolResult.dynamic) {
-            // Ignore dynamic tool results
-            continue;
-          }
-          switch (toolResult.toolName) {
-            case "updateContext":
-              const updatedContext = toolResult.output.context;
-              console.log("Updated context:", updatedContext);
-              updateState({
-                ...currentState,
-                lastUpdated: new Date(),
-                context: updatedContext,
-              });
-              break;
-          }
-        }
-      },
-    });
+    // TO BE IMPLEMENTED: context update workflow
   }
 
   /**
@@ -108,31 +85,18 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       messages: [...this.state.messages, msg],
     });
 
-    const currentState = this.state;
-    const updateState = this.setState.bind(this);
+    // Run reply-sender workflow
+    console.log("Running reply-sender workflow.");
+    const replyWorkflow = replySenderAgent(this.env, this.state);
+    const result = await replyWorkflow.generate();
 
-    const { steps } = await generateText({
-      model: await this.model(),
-      prompt: "",
-      tools: getEmailTools(this.env),
-      onStepFinish: async ({ toolResults }) => {
-        for (const toolResult of toolResults) {
-          if (toolResult.dynamic) {
-            // Ignore dynamic tool results
-            continue;
-          }
-          switch (toolResult.toolName) {
-            case "sendEmail":
-              // updateState({
-              //   ...currentState,
-              //   lastUpdated: new Date(),
-              //   messages: [...currentState.messages],
-              // });
-              break;
-          }
-        }
-      },
-    });
+    // Update state if modified
+    if (result?.state) {
+      this.setState({
+        ...this.state,
+        ...result.state,
+      });
+    }
   }
 
   private model() {

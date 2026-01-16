@@ -8,7 +8,6 @@ export const getEmailTools = (env: Env) => {
     classifyEmail: classifyEmailTool(env),
     generateReplyDraft: generateReplyDraftTool(env),
     sendEmail: sendEmailTool(env),
-    updateContext: contextUpdateTool(env),
   };
 };
 
