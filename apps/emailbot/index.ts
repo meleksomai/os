@@ -1,7 +1,7 @@
 import { routeAgentEmail } from "agents";
+import { HelloEmailAgent } from "./agent";
 import { createThreadBasedEmailResolver } from "./resolvers";
 
-// biome-ignore lint/performance/noBarrelFile: required
 export { HelloEmailAgent } from "./agent";
 
 export default {
@@ -9,8 +9,7 @@ export default {
     console.log("Received email message for routing:");
     await routeAgentEmail(message, env, {
       resolver: createThreadBasedEmailResolver(
-        "HelloEmailAgent",
-        env.EMAIL_ROUTING_DESTINATION,
+        HelloEmailAgent.name,
         env.EMAIL_LOOKUP_KV
       ),
     });
@@ -18,6 +17,6 @@ export default {
 
   fetch(request: Request) {
     console.log("Received fetch request:", request.url);
-    return new Response("HelloEmailAgent is running.");
+    return new Response(`${HelloEmailAgent.name} is running.`);
   },
 };

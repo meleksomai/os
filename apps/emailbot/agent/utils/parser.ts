@@ -49,7 +49,7 @@ export class EmailParser {
     }
 
     const message: Message = {
-      date: new Date(),
+      date: new Date().toISOString(),
       from: email.from,
       subject: parsed.subject || "(No Subject)",
       raw: parsed.html || parsed.text || "",

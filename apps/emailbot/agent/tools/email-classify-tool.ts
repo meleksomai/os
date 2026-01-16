@@ -1,4 +1,108 @@
-export default `For every incoming email, follow this process strictly and return ONLY valid JSON that conforms to EmailClassificationSchema.
+import { generateText, Output, tool } from "ai";
+import { z } from "zod";
+import { MemorySchema } from "../types";
+import { log } from "../utils/logger";
+import { retrieveModel } from "../utils/model-provider";
+import type { ToolResult } from "../workflows/agent";
+
+/**
+ * Email intent classification
+ */
+export const EmailIntentSchema = [
+  "scheduling",
+  "information_request",
+  "action_request",
+  "introduction_networking",
+  "sales_vendor",
+  "fyi_notification",
+  "sensitive_legal_financial",
+  "unknown_ambiguous",
+];
+
+/**
+ * Email classification schema and type
+ */
+export const EmailClassificationSchema = z.object({
+  intents: z.array(z.enum(EmailIntentSchema)).min(1),
+  risk: z.enum(["low", "medium", "high"]),
+  action: z.enum(["reply", "forward", "ignore"]),
+  requires_approval: z.boolean(),
+  comments: z.string().min(1).max(500),
+});
+
+export type EmailClassification = z.infer<typeof EmailClassificationSchema>;
+
+// Tool for classifying emails
+
+const ClassifyOutputSchema = z.object({
+  data: EmailClassificationSchema,
+  stateUpdates: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const classifyEmailTool = (env: Env) =>
+  tool({
+    description:
+      "Classify an email to determine its intent, risk level, and recommended action. Use this to triage incoming emails.",
+    inputSchema: z.object({
+      state: MemorySchema.describe(
+        "The current agent memory state with messages and context"
+      ),
+    }),
+    outputSchema: ClassifyOutputSchema,
+    execute: async ({ state }): Promise<ToolResult<EmailClassification>> => {
+      const startTime = Date.now();
+      try {
+        const model = await retrieveModel(env);
+
+        const message = state.messages[state.messages.length - 1];
+        const contextMessages = state.messages
+          .slice(0, -1)
+          .slice(-10)
+          .map((msg) => msg.raw)
+          .join("\n\n---\n\n");
+        const prompt = `Classify the following email:
+
+        from:${message?.from}
+        subject:${message?.subject}
+        content:
+        ${message?.raw}
+
+        ----------------------
+        Prior historical messages (last 10 messages sent prior to this email by the same sender):
+        ${contextMessages}
+
+        ----------------------
+        Please keep in mind the context provided below that may help with classification:
+        ${state.context}`;
+
+        const { output } = await generateText({
+          model,
+          system: SYSTEM_PROMPT,
+          output: Output.object({
+            schema: EmailClassificationSchema,
+          }),
+          prompt: prompt,
+        });
+
+        log.info("[classify-tool] completed", {
+          durationMs: Date.now() - startTime,
+          from: message?.from,
+          result: output,
+        });
+
+        return { data: output };
+      } catch (err) {
+        log.error("[classify-tool] failed", {
+          error: err instanceof Error ? err.message : String(err),
+        });
+        throw err;
+      }
+    },
+  });
+
+// ----------- System Prompt -----------
+
+const SYSTEM_PROMPT = `For every incoming email, follow this process strictly and return ONLY valid JSON that conforms to EmailClassificationSchema.
 
 ---
 

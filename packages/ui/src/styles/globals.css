@@ -7,6 +7,7 @@
 @source "../**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant inline-code (:not(pre) > &);
 
 @theme inline {
   --color-background: var(--background);

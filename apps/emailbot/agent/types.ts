@@ -6,45 +6,17 @@ import { z } from "zod";
 export type SenderType = "self" | "agent" | "external";
 
 /**
- * Email intent classification
- */
-export const EmailIntentSchema = z.enum([
-  "scheduling",
-  "information_request",
-  "action_request",
-  "introduction_networking",
-  "sales_vendor",
-  "fyi_notification",
-  "sensitive_legal_financial",
-  "unknown_ambiguous",
-]);
-
-export type EmailIntent = z.infer<typeof EmailIntentSchema>;
-
-/**
- * Email classification schema and type
- */
-export const EmailClassificationSchema = z.object({
-  intents: z.array(EmailIntentSchema).min(1),
-  risk: z.enum(["low", "medium", "high"]),
-  action: z.enum(["reply", "forward", "ignore"]),
-  requires_approval: z.boolean(),
-  comments: z.string().min(1).max(500),
-});
-
-export type EmailClassification = z.infer<typeof EmailClassificationSchema>;
-
-/**
  * Zod schema for Message validation
+ * Uses ISO date strings for JSON Schema compatibility
  */
 export const MessageSchema = z.object({
-  date: z.date(),
-  from: z.email(),
-  to: z.email(),
+  date: z.string().describe("ISO 8601 date string"),
+  from: z.string(),
+  to: z.string(),
   subject: z.string(),
   raw: z.string(),
   messageId: z.string().nullable(),
-  cc: z.array(z.email()).optional(),
+  cc: z.array(z.string()).optional(),
   inReplyTo: z.string().nullable().optional(),
   references: z.array(z.string()).optional(),
 });
@@ -53,12 +25,17 @@ export type Message = z.infer<typeof MessageSchema>;
 
 /**
  * Zod schema for Memory validation
+ * Uses ISO date strings for JSON Schema compatibility
  */
 export const MemorySchema = z.object({
-  lastUpdated: z.date().nullable(),
+  lastUpdated: z.string().nullable().describe("ISO 8601 date string or null"),
   messages: z.array(MessageSchema),
   context: z.string(),
   summary: z.string(),
+  contact: z
+    .string()
+    .nullable()
+    .describe("Email address of the external contact to reply to"),
 });
 
 export type Memory = z.infer<typeof MemorySchema>;

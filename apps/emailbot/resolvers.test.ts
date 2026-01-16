@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createThreadBasedEmailResolver } from "../../resolvers";
+import { createThreadBasedEmailResolver } from "./resolvers";
 
 describe("createThreadBasedEmailResolver", () => {
   const AGENT_NAME = "TestAgent";
@@ -22,11 +22,7 @@ describe("createThreadBasedEmailResolver", () => {
 
   describe("new thread from external sender", () => {
     it("should create KV mapping and route to external sender", async () => {
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: EXTERNAL_EMAIL,
@@ -55,11 +51,7 @@ describe("createThreadBasedEmailResolver", () => {
     });
 
     it("should normalize email addresses to lowercase", async () => {
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: "Friend@Example.COM",
@@ -89,11 +81,7 @@ describe("createThreadBasedEmailResolver", () => {
         EXTERNAL_EMAIL
       );
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: OWNER_EMAIL,
@@ -120,7 +108,7 @@ describe("createThreadBasedEmailResolver", () => {
       });
     });
 
-    it("should use References header to find root thread", async () => {
+    it("should use References header to find root thread if In-Reply-To is missing", async () => {
       const ROOT_THREAD = "<root@example.com>";
       const REPLY_1 = "<reply-1@example.com>";
       const REPLY_2 = "<reply-2@example.com>";
@@ -129,11 +117,7 @@ describe("createThreadBasedEmailResolver", () => {
         EXTERNAL_EMAIL
       );
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: OWNER_EMAIL,
@@ -161,11 +145,7 @@ describe("createThreadBasedEmailResolver", () => {
         EXTERNAL_EMAIL
       );
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: OWNER_EMAIL,
@@ -192,11 +172,7 @@ describe("createThreadBasedEmailResolver", () => {
       // Mock KV to return null (thread not found)
       (mockKV.get as ReturnType<typeof vi.fn>).mockResolvedValue(null);
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: EXTERNAL_EMAIL,
@@ -217,7 +193,9 @@ describe("createThreadBasedEmailResolver", () => {
       expect(mockKV.put).toHaveBeenCalledWith(
         THREAD_ID,
         EXTERNAL_EMAIL,
-        expect.any(Object)
+        expect.objectContaining({
+          expirationTtl: 60 * 60 * 24 * 90, // 90 days
+        })
       );
 
       expect(result?.agentId).toBe(EXTERNAL_EMAIL);
@@ -226,11 +204,7 @@ describe("createThreadBasedEmailResolver", () => {
 
   describe("missing thread ID", () => {
     it("should fallback to sender-based routing if no Message-ID", async () => {
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: EXTERNAL_EMAIL,
@@ -254,11 +228,7 @@ describe("createThreadBasedEmailResolver", () => {
 
   describe("owner initiates thread", () => {
     it("should handle owner sending initial email", async () => {
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: OWNER_EMAIL,
@@ -273,13 +243,15 @@ describe("createThreadBasedEmailResolver", () => {
       // Should create mapping with "unknown" as external person
       expect(mockKV.put).toHaveBeenCalledWith(
         THREAD_ID,
-        "unknown",
-        expect.any(Object)
+        OWNER_EMAIL,
+        expect.objectContaining({
+          expirationTtl: 60 * 60 * 24 * 90, // 90 days
+        })
       );
 
       expect(result).toEqual({
         agentName: AGENT_NAME,
-        agentId: "unknown",
+        agentId: OWNER_EMAIL,
       });
     });
   });
@@ -291,11 +263,7 @@ describe("createThreadBasedEmailResolver", () => {
       const THREAD_A = "<thread-a@example.com>";
       const THREAD_B = "<thread-b@example.com>";
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       // Alice's email
       const emailFromAlice = {
@@ -329,7 +297,9 @@ describe("createThreadBasedEmailResolver", () => {
       expect(mockKV.put).toHaveBeenCalledWith(
         THREAD_B,
         BOB,
-        expect.any(Object)
+        expect.objectContaining({
+          expirationTtl: 60 * 60 * 24 * 90, // 90 days
+        })
       );
       expect(resultBob?.agentId).toBe(BOB);
 
@@ -345,11 +315,7 @@ describe("createThreadBasedEmailResolver", () => {
         EXTERNAL_EMAIL
       );
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: OWNER_EMAIL,
@@ -372,11 +338,7 @@ describe("createThreadBasedEmailResolver", () => {
         EXTERNAL_EMAIL
       );
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: OWNER_EMAIL,
@@ -400,11 +362,7 @@ describe("createThreadBasedEmailResolver", () => {
         EXTERNAL_EMAIL
       );
 
-      const resolver = createThreadBasedEmailResolver(
-        AGENT_NAME,
-        OWNER_EMAIL,
-        mockKV
-      );
+      const resolver = createThreadBasedEmailResolver(AGENT_NAME, mockKV);
 
       const email = {
         from: OWNER_EMAIL,

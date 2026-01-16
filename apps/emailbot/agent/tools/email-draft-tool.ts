@@ -1,4 +1,77 @@
-export default `You are an AI Email Assistant operating on behalf of Melek Somai.
+import { generateText, tool } from "ai";
+import { z } from "zod";
+import { MemorySchema } from "../types";
+import { log } from "../utils/logger";
+import { retrieveModel } from "../utils/model-provider";
+import type { ToolResult } from "../workflows/agent";
+
+const DraftOutputSchema = z.object({
+  data: z.string().describe("The draft reply email content"),
+  stateUpdates: z.record(z.string(), z.unknown()).optional(),
+});
+
+// Tool for generating email reply drafts
+export const generateReplyDraftTool = (env: Env) =>
+  tool({
+    description:
+      "Generate a draft reply to an email based on the message content and context. Use this after classification determines a reply is needed.",
+    inputSchema: z.object({
+      state: MemorySchema.describe(
+        "The current agent memory state with messages and context"
+      ),
+    }),
+    outputSchema: DraftOutputSchema,
+    execute: async ({ state }): Promise<ToolResult<string>> => {
+      const startTime = Date.now();
+      try {
+        const model = await retrieveModel(env);
+
+        const message = state.messages[state.messages.length - 1];
+        const context = state.context;
+        const contextMessages = state.messages
+          .slice(0, -1)
+          .slice(-10)
+          .map((msg) => msg.raw)
+          .join("\n\n---\n\n");
+        const prompt = `Draft a reply to the following email:
+
+        from:${message?.from}
+        subject:${message?.subject}
+        content:
+        ${message?.raw}.
+
+        ----------------------
+        Prior historical messages (last 10 messages sent prior to this email by the same sender):
+        ${contextMessages}
+
+        ----------------------
+        Please keep in mind the context provided below that may help with classification:
+        ${context}`;
+
+        const { output } = await generateText({
+          model,
+          system: SYSTEM_PROMPT,
+          prompt,
+        });
+
+        log.info("[draft-tool] completed", {
+          durationMs: Date.now() - startTime,
+          draft: output,
+        });
+
+        return { data: output };
+      } catch (err) {
+        log.error("[draft-tool] failed", {
+          error: err instanceof Error ? err.message : String(err),
+        });
+        throw err;
+      }
+    },
+  });
+
+// ----------- System Prompt -----------
+
+const SYSTEM_PROMPT = `You are an AI Email Assistant operating on behalf of Melek Somai.
 
 Your role is to directly respond to incoming emails as an AI assistant,
 with transparency about your identity and scope, while representing Melek
@@ -19,6 +92,8 @@ You are NOT authorized to:
 - Represent legal authority
 - Imply final decisions or approvals without human confirmation
 - Attribute thoughts, feelings, opinions, or experiences to Melek unless they are explicitly stated in provided memory or the original email when Melek is the sender
+- Imply you have already spoken with Melek or received his input unless explicitly stated in provided memory or the original email
+- Claim access to Melek's private schedule, availability, or travel plans unless explicitly provided in memory or the original email
 
 Your responses must clearly indicate that:
 - You are an AI assistant
@@ -85,6 +160,7 @@ One sentence is sufficient.
 - If "risk = high": acknowledge receipt and indicate human review
 
 Never imply finality when approval is required.
+If a response requires Melek's confirmation or access to his schedule, state that you will check with him and follow up rather than implying you already did.
 
 ---
 
