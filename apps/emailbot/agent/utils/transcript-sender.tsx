@@ -1,5 +1,6 @@
 import GenericEmail from "@workspace/transactional/emails/generic";
 import { Resend } from "resend";
+import type { Memory } from "../types";
 import { getTranscript, log } from "./logger";
 
 const TRANSCRIPT_FOOTER =
@@ -8,6 +9,7 @@ const TRANSCRIPT_FOOTER =
 interface TranscriptEmailOptions {
   originalFrom: string;
   originalSubject: string;
+  state: Memory;
 }
 
 /**
@@ -26,6 +28,8 @@ export async function sendTranscript(
 
   const subject = `[Agent Log] Re: ${options.originalSubject}`;
 
+  const { state } = options;
+
   const content = `# Email Processing Transcript
 
 **Original email from:** ${options.originalFrom}
@@ -34,9 +38,21 @@ export async function sendTranscript(
 
 ---
 
+## Agent Activity
+
 ${transcript}
 
 ---
+
+## State
+
+**Contact:** ${state.contact || "not set"}
+**Messages:** ${state.messages.length}
+**Last Updated:** ${state.lastUpdated || "never"}
+
+### Context
+
+${state.context || "empty"}
 
 *This transcript shows what your AI assistant did when processing the email above.*
 `;

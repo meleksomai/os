@@ -32,6 +32,10 @@ export const MemorySchema = z.object({
   messages: z.array(MessageSchema),
   context: z.string(),
   summary: z.string(),
+  contact: z
+    .string()
+    .nullable()
+    .describe("Email address of the external contact to reply to"),
 });
 
 export type Memory = z.infer<typeof MemorySchema>;

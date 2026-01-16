@@ -16,6 +16,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     messages: [],
     context: "",
     summary: "",
+    contact: null,
   };
 
   // Services - directly instantiated, no magic
@@ -62,6 +63,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     await sendTranscript(this.env, {
       originalFrom: email.from,
       originalSubject: subject,
+      state: this.state,
     });
   }
 
@@ -81,9 +83,9 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       messages: [...this.state.messages, msg],
     });
 
-    const agent = await createOwnerResponseAgent(this.env);
+    const agent = await createOwnerResponseAgent(this.env, this.state);
     const { text } = await agent.generate({
-      prompt: `New email from owner:\n\nFrom: ${msg.from}\nSubject: ${msg.subject}\nContent:\n${msg.raw}`,
+      prompt: `New email from owner:\n\nFrom: ${msg.from}\nSubject: ${msg.subject}\n\nContent:\n${msg.raw}`,
     });
 
     this.setState({
@@ -102,6 +104,15 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     log.info("[reply-workflow] started");
 
     const msg = await this.parser.parse(email);
+
+    // Set contact if not already set (handles first message and migration of existing instances)
+    if (!this.state.contact) {
+      log.info("[reply-workflow] setting contact", { contact: msg.from });
+      this.setState({
+        ...this.state,
+        contact: msg.from,
+      });
+    }
 
     this.setState({
       ...this.state,

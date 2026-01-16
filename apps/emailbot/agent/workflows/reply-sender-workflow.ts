@@ -1,5 +1,5 @@
 import { getEmailTools } from "../tools";
-import type { Memory, Message } from "../types";
+import type { Memory } from "../types";
 import { log } from "../utils/logger";
 import { WorkflowAgent } from "./workflow-agent";
 
@@ -16,18 +16,15 @@ export interface ReplySenderOutput {
  * This workflow:
  * 1. Classifies the incoming email
  * 2. If action is "reply": generates a draft and sends it
- * 3. Returns the result with action taken, draft, and send result
+ * 3. Returns the result with action taken
  *
  * @param env - Environment bindings
  * @param state - Current agent memory state
- * @param fromAddress - Email address to send from
  */
 export const replySenderAgent = (env: Env, state: Memory) =>
   new WorkflowAgent({
-    tools: getEmailTools(env),
+    tools: getEmailTools(env, state),
     run: async ({ executeTool }): Promise<ReplySenderOutput | undefined> => {
-      let replyMessage: Message | null = null;
-
       // Step 1: Classify
       const classification = await executeTool("classifyEmail", { state });
 
@@ -53,26 +50,16 @@ export const replySenderAgent = (env: Env, state: Memory) =>
         throw new Error("No message to reply to");
       }
 
-      replyMessage = {
-        from: env.EMAIL_ROUTING_ADDRESS,
-        to: originalEmail.from,
-        subject: originalEmail.subject.startsWith("Re:")
-          ? originalEmail.subject
-          : `Re: ${originalEmail.subject}`,
-        raw: draft,
-        date: new Date().toISOString(),
-        messageId: "",
-        references: originalEmail.messageId
-          ? [originalEmail.messageId, ...(originalEmail.references || [])]
-          : [],
-      };
+      // Step 4: Send (addresses resolved from state/env automatically)
+      await executeTool("sendEmail", {
+        recipient: "contact",
+        subject: originalEmail.subject,
+        content: draft,
+      });
 
-      // Step 4: Send
-      await executeTool("sendEmail", replyMessage);
       return {
         state: {
           lastUpdated: new Date().toISOString(),
-          messages: [...state.messages, replyMessage],
         },
       };
     },
