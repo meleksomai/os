@@ -1,6 +1,7 @@
 import { generateText, tool } from "ai";
 import { z } from "zod";
 import { MemorySchema } from "../types";
+import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
 
 // Output schema for context update
@@ -19,6 +20,7 @@ export const contextUpdateTool = (env: Env) =>
     }),
     outputSchema: ContextUpdateOutputSchema,
     execute: async ({ state }) => {
+      const startTime = Date.now();
       try {
         const model = await retrieveModel(env);
         const message = state.messages[state.messages.length - 1];
@@ -44,9 +46,17 @@ export const contextUpdateTool = (env: Env) =>
           prompt,
         });
 
+        log.info("context.updated", {
+          contextLength: text.trim().length,
+          durationMs: Date.now() - startTime,
+        });
+
         return { context: text.trim() };
       } catch (err) {
-        console.error("Failed to update context:", err);
+        log.error("context.update_failed", {
+          error: err instanceof Error ? err.message : String(err),
+          durationMs: Date.now() - startTime,
+        });
         throw err;
       }
     },

@@ -1,12 +1,16 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import type { LanguageModel } from "ai";
+import { log } from "./logger";
 
 export async function retrieveModel(env: Env): Promise<LanguageModel> {
   const url = await env.AI.gateway(env.CLOUDFLARE_AI_GATEWAY_ID).getUrl(
     "openai"
   );
 
-  console.log("Creating language model...", url);
+  log.debug("model.initialized", {
+    gateway: env.CLOUDFLARE_AI_GATEWAY_ID,
+    model: "gpt-5.2",
+  });
 
   const model = createOpenAI({
     baseURL: url,

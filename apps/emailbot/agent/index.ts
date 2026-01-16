@@ -1,5 +1,6 @@
 import { Agent, type AgentEmail } from "agents";
 import type { Memory } from "./types";
+import { log } from "./utils/logger";
 import { EmailParser } from "./utils/parser";
 import { createOwnerResponseAgent } from "./workflows/owner-response-agent";
 import { replySenderAgent } from "./workflows/reply-sender-workflow";
@@ -34,22 +35,28 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
     const owner = this.env.EMAIL_ROUTING_DESTINATION.toLowerCase();
     const routing = this.env.EMAIL_ROUTING_ADDRESS.toLowerCase();
 
+    log.info("email.received", {
+      from: email.from,
+      to: email.to,
+      subject: email.headers.get("Subject") || "(no subject)",
+    });
+
     // Route based on sender
     if (from === routing) {
-      // Email from our own routing address - ignore to prevent loops
-      console.log("Email from self-agent. Ignoring to prevent loops.");
+      log.warn("email.loop_prevented", { from: email.from });
       return;
     }
 
+    const route = from === owner ? "owner" : "external";
+    log.info("email.routing", { from: email.from, route });
+
     if (from === owner) {
-      // Email from owner - store as context
       await this.handleOwnerEmail(email);
     } else {
-      // Email from external sender - full workflow
       await this.handleIncomingEmail(email);
     }
 
-    // Always forward to owner's address
+    log.info("email.forwarded", { to: this.env.EMAIL_ROUTING_DESTINATION });
     await email.forward(this.env.EMAIL_ROUTING_DESTINATION);
   }
 
@@ -58,7 +65,9 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
    * Uses ToolLoopAgent to decide actions: update context, act on behalf, etc.
    */
   private async handleOwnerEmail(email: AgentEmail): Promise<void> {
-    console.log("Email from owner. Processing with owner response agent.");
+    const startTime = Date.now();
+    log.info("workflow.started", { workflow: "owner-response" });
+
     const msg = await this.parser.parse(email);
 
     // Store the message first
@@ -68,10 +77,12 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       messages: [...this.state.messages, msg],
     });
 
+    log.debug("state.message_stored", {
+      messageCount: this.state.messages.length,
+    });
+
     // Run the owner response agent
     const agent = await createOwnerResponseAgent(this.env);
-
-    console.log("Running owner response agent...");
     const { text } = await agent.generate({
       prompt: `New email from owner:\n\nFrom: ${msg.from}\nSubject: ${msg.subject}\nContent:\n${msg.raw}`,
     });
@@ -81,15 +92,23 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       ...this.state,
       context: text.trim(),
     });
+
+    log.info("workflow.completed", {
+      workflow: "owner-response",
+      durationMs: Date.now() - startTime,
+      contextLength: text.trim().length,
+    });
   }
 
   /**
    * Handle emails from external senders
    */
   private async handleIncomingEmail(email: AgentEmail): Promise<void> {
+    const startTime = Date.now();
+    log.info("workflow.started", { workflow: "reply-sender" });
+
     // Parse and store message
     const msg = await this.parser.parse(email);
-    console.log("Storing email message in agent memory.");
 
     this.setState({
       ...this.state,
@@ -97,8 +116,11 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
       messages: [...this.state.messages, msg],
     });
 
+    log.debug("state.message_stored", {
+      messageCount: this.state.messages.length,
+    });
+
     // Run reply-sender workflow
-    console.log("Running reply-sender workflow.");
     const replyWorkflow = replySenderAgent(this.env, this.state);
     const result = await replyWorkflow.generate();
 
@@ -109,5 +131,10 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
         ...result.state,
       });
     }
+
+    log.info("workflow.completed", {
+      workflow: "reply-sender",
+      durationMs: Date.now() - startTime,
+    });
   }
 }

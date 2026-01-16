@@ -1,6 +1,7 @@
 import { generateText, tool } from "ai";
 import { z } from "zod";
 import { MemorySchema } from "../types";
+import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
 
 // Tool for generating email reply drafts
@@ -15,6 +16,7 @@ export const generateReplyDraftTool = (env: Env) =>
     }),
     outputSchema: z.string().describe("The draft reply email content"),
     execute: async ({ state }) => {
+      const startTime = Date.now();
       try {
         const model = await retrieveModel(env);
 
@@ -46,9 +48,17 @@ export const generateReplyDraftTool = (env: Env) =>
           prompt,
         });
 
+        log.debug("draft.completed", {
+          durationMs: Date.now() - startTime,
+          draftLength: output.length,
+        });
+
         return output;
       } catch (err) {
-        console.error("Failed to generate reply draft:", err);
+        log.error("draft.failed", {
+          error: err instanceof Error ? err.message : String(err),
+          durationMs: Date.now() - startTime,
+        });
         throw err;
       }
     },

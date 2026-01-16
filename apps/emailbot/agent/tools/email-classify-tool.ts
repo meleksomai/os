@@ -1,6 +1,7 @@
 import { generateText, Output, tool } from "ai";
 import { z } from "zod";
 import { MemorySchema } from "../types";
+import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
 
 /**
@@ -43,6 +44,7 @@ export const classifyEmailTool = (env: Env) =>
     }),
     outputSchema: EmailClassificationSchema,
     execute: async ({ state }) => {
+      const startTime = Date.now();
       try {
         const model = await retrieveModel(env);
 
@@ -76,9 +78,17 @@ export const classifyEmailTool = (env: Env) =>
           prompt: prompt,
         });
 
+        log.debug("classify.completed", {
+          durationMs: Date.now() - startTime,
+          from: message?.from,
+        });
+
         return output;
       } catch (err) {
-        console.error("Failed to classify email:", err);
+        log.error("classify.failed", {
+          error: err instanceof Error ? err.message : String(err),
+          durationMs: Date.now() - startTime,
+        });
         throw err;
       }
     },

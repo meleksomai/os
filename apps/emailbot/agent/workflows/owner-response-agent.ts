@@ -1,5 +1,6 @@
 import { stepCountIs, ToolLoopAgent } from "ai";
 import { getContextTools, getEmailTools } from "../tools";
+import { log } from "../utils/logger";
 import { retrieveModel } from "../utils/model-provider";
 
 /**
@@ -61,8 +62,12 @@ The owner's current context and preferences are provided in the message. Use thi
  * @param env - Environment bindings
  */
 export const createOwnerResponseAgent = async (env: Env) => {
+  log.debug("agent.creating", { agent: "owner-response", maxSteps: 5 });
+
+  const model = await retrieveModel(env);
+
   return new ToolLoopAgent({
-    model: await retrieveModel(env),
+    model,
     instructions: SYSTEM_PROMPT,
     tools: {
       ...getContextTools(env),

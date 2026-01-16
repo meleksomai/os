@@ -1,5 +1,6 @@
 import { getEmailTools } from "../tools";
 import type { Memory, Message } from "../types";
+import { log } from "../utils/logger";
 import { WorkflowAgent } from "./workflow-agent";
 
 /**
@@ -26,18 +27,33 @@ export const replySenderAgent = (env: Env, state: Memory) =>
     tools: getEmailTools(env),
     run: async ({ executeTool }): Promise<ReplySenderOutput | undefined> => {
       let replyMessage: Message | null = null;
+
       // 1. Classify email
       const classification = await executeTool("classifyEmail", { state });
 
+      log.info("email.classified", {
+        intents: classification.intents,
+        risk: classification.risk,
+        action: classification.action,
+        requiresApproval: classification.requires_approval,
+      });
+
       // 2. If reply, proceed to draft and send
       if (classification.action !== "reply") {
+        log.info("workflow.skipped", {
+          reason: `action is ${classification.action}`,
+        });
         return;
       }
+
       // 2.a. Generate draft
       const draft = await executeTool("generateReplyDraft", { state });
       const originalEmail = state.messages.at(-1);
 
+      log.info("email.draft_generated", { draftLength: draft.length });
+
       if (!originalEmail) {
+        log.error("workflow.error", { error: "No message to reply to" });
         throw new Error("No message to reply to");
       }
 
@@ -49,7 +65,7 @@ export const replySenderAgent = (env: Env, state: Memory) =>
           : `Re: ${originalEmail.subject}`,
         raw: draft,
         date: new Date().toISOString(),
-        messageId: "", // Will be filled in by email sender
+        messageId: "",
         references: originalEmail.messageId
           ? [originalEmail.messageId, ...(originalEmail.references || [])]
           : [],
