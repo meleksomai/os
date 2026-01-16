@@ -62,7 +62,7 @@ The owner's current context and preferences are provided in the message. Use thi
  * @param env - Environment bindings
  */
 export const createOwnerResponseAgent = async (env: Env) => {
-  log.debug("agent.creating", { agent: "owner-response", maxSteps: 5 });
+  log.debug("[owner-agent] creating", { maxSteps: 5 });
 
   const model = await retrieveModel(env);
 

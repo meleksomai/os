@@ -7,10 +7,7 @@ export async function retrieveModel(env: Env): Promise<LanguageModel> {
     "openai"
   );
 
-  log.debug("model.initialized", {
-    gateway: env.CLOUDFLARE_AI_GATEWAY_ID,
-    model: "gpt-5.2",
-  });
+  log.debug("model initialized", { model: "gpt-5.2" });
 
   const model = createOpenAI({
     baseURL: url,

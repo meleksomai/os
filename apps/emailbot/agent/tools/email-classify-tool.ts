@@ -78,16 +78,16 @@ export const classifyEmailTool = (env: Env) =>
           prompt: prompt,
         });
 
-        log.debug("classify.completed", {
+        log.info("[classify-tool] completed", {
           durationMs: Date.now() - startTime,
           from: message?.from,
+          result: output,
         });
 
         return output;
       } catch (err) {
-        log.error("classify.failed", {
+        log.error("[classify-tool] failed", {
           error: err instanceof Error ? err.message : String(err),
-          durationMs: Date.now() - startTime,
         });
         throw err;
       }

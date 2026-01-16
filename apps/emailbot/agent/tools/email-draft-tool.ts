@@ -48,16 +48,15 @@ export const generateReplyDraftTool = (env: Env) =>
           prompt,
         });
 
-        log.debug("draft.completed", {
+        log.info("[draft-tool] completed", {
           durationMs: Date.now() - startTime,
-          draftLength: output.length,
+          draft: output,
         });
 
         return output;
       } catch (err) {
-        log.error("draft.failed", {
+        log.error("[draft-tool] failed", {
           error: err instanceof Error ? err.message : String(err),
-          durationMs: Date.now() - startTime,
         });
         throw err;
       }

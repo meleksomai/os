@@ -28,32 +28,28 @@ export const replySenderAgent = (env: Env, state: Memory) =>
     run: async ({ executeTool }): Promise<ReplySenderOutput | undefined> => {
       let replyMessage: Message | null = null;
 
-      // 1. Classify email
+      // Step 1: Classify
       const classification = await executeTool("classifyEmail", { state });
 
-      log.info("email.classified", {
-        intents: classification.intents,
-        risk: classification.risk,
-        action: classification.action,
-        requiresApproval: classification.requires_approval,
-      });
-
-      // 2. If reply, proceed to draft and send
+      // Step 2: Decide
       if (classification.action !== "reply") {
-        log.info("workflow.skipped", {
-          reason: `action is ${classification.action}`,
+        log.info("[reply-workflow] decision", {
+          action: classification.action,
+          reason: "no reply needed",
         });
         return;
       }
 
-      // 2.a. Generate draft
+      log.info("[reply-workflow] decision", { action: "reply" });
+
+      // Step 3: Draft
       const draft = await executeTool("generateReplyDraft", { state });
       const originalEmail = state.messages.at(-1);
 
-      log.info("email.draft_generated", { draftLength: draft.length });
-
       if (!originalEmail) {
-        log.error("workflow.error", { error: "No message to reply to" });
+        log.error("[reply-workflow] error", {
+          error: "no message to reply to",
+        });
         throw new Error("No message to reply to");
       }
 
@@ -71,10 +67,8 @@ export const replySenderAgent = (env: Env, state: Memory) =>
           : [],
       };
 
-      // 2.b. Send email
+      // Step 4: Send
       await executeTool("sendEmail", replyMessage);
-
-      // 3. Return result
       return {
         state: {
           lastUpdated: new Date().toISOString(),

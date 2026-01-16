@@ -91,12 +91,12 @@ export class WorkflowAgent<TOOLS extends ToolSet, OUTPUT> {
     ): Promise<InferToolOutput<TOOLS[K]>> => {
       const tool = this.settings.tools[toolName];
       if (!tool?.execute) {
-        log.error("tool.not_found", { tool: toolName });
+        log.error("[workflow-agent] tool not found", { tool: toolName });
         throw new Error(`Tool "${toolName}" has no execute function`);
       }
 
       const startTime = Date.now();
-      log.debug("tool.executing", { tool: toolName });
+      log.debug("[workflow-agent] executing tool", { tool: toolName });
 
       try {
         const result = await tool.execute(input, {
@@ -104,17 +104,16 @@ export class WorkflowAgent<TOOLS extends ToolSet, OUTPUT> {
           toolCallId: `${toolName}-${Date.now()}`,
         });
 
-        log.debug("tool.completed", {
+        log.debug("[workflow-agent] tool done", {
           tool: toolName,
           durationMs: Date.now() - startTime,
         });
 
         return result;
       } catch (err) {
-        log.error("tool.failed", {
+        log.error("[workflow-agent] tool failed", {
           tool: toolName,
           error: err instanceof Error ? err.message : String(err),
-          durationMs: Date.now() - startTime,
         });
         throw err;
       }

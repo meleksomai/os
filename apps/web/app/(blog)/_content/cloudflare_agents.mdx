@@ -242,6 +242,18 @@ export type Memory = {
 
 The AI Assistant lifecycle is divided into three main phases: 1) _ingestion_, 2) _processing_, and 3) _action_.
 
+### Tools
+
+The AI Agent uses a set of tools to perform specific tasks. These tools include:
+
+- **Email Classification Tool**: Classifies incoming emails into categories (e.g., inquiry, complaint, follow-up) to determine the appropriate response strategy.
+- **Email Drafting Tool**: Generates draft responses based on the email content and context.
+- **Context Update Tool**: Updates the agent's memory based on new information from incoming emails
+- **Email Sending Tool**: Sends emails on behalf of the agent.
+
+> [!WARNING]  
+> Cloudflare email routing currently does not support sending multiple emails directly from Durable Objects. Therefore, the email sending tool uses an external SMTP service (e.g., SendGrid, Postmark) to send emails.
+
 ## Try it out
 
 Send me an email at `hello@somai.me` and you will be routed to the agent. It is early, but it already works.

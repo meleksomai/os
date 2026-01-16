@@ -46,16 +46,14 @@ export const contextUpdateTool = (env: Env) =>
           prompt,
         });
 
-        log.info("context.updated", {
-          contextLength: text.trim().length,
+        log.info("[context-tool] updated", {
           durationMs: Date.now() - startTime,
         });
 
         return { context: text.trim() };
       } catch (err) {
-        log.error("context.update_failed", {
+        log.error("[context-tool] failed", {
           error: err instanceof Error ? err.message : String(err),
-          durationMs: Date.now() - startTime,
         });
         throw err;
       }
