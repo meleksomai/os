@@ -24,7 +24,7 @@ describe("EmailParser", () => {
     expect(result.to).toBe("recipient@example.com");
     expect(result.subject).toBe("Test Subject");
     expect(result.messageId).toBe("test-message-id");
-    expect(result.date).toBeInstanceOf(Date);
+    expect(typeof result.date).toBe("string");
   });
 
   it("should parse email with plain text content", async () => {
