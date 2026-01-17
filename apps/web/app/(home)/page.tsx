@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getBlogEssays } from "@/app/(blog)/utils";
-import { ContactSection } from "./_components/section-contact";
+import { ContactForm } from "../../components/contact-form";
 import { EssaySection } from "./_components/section-essays";
 import IntroSection from "./_components/section-intro";
 
@@ -29,7 +29,6 @@ export default async function Page() {
           .filter((article) => article.metadata.featured)
           .map((article) => ({ ...article, Essay: undefined }))}
       />
-      <ContactSection />
     </div>
   );
 }

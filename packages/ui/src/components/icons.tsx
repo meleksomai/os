@@ -1,9 +1,13 @@
 import {
+  ArrowRight02Icon,
   ComputerIcon as ComputerIconPrimitive,
   Copy01Icon,
+  Loading02Icon,
   Location01Icon,
   Mail02Icon,
   Moon02Icon,
+  MultiplicationSignIcon,
+  SparklesIcon as SparklesIconPrimitive,
   Sun01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
@@ -50,6 +54,22 @@ export const SunIcon = (props: IconProps) => (
 
 export const MoonIcon = (props: IconProps) => (
   <BaseIcon icon={Moon02Icon} {...props} />
+);
+
+export const ArrowRightIcon = (props: IconProps) => (
+  <BaseIcon icon={ArrowRight02Icon} {...props} />
+);
+
+export const SparklesIcon = (props: IconProps) => (
+  <BaseIcon icon={SparklesIconPrimitive} {...props} />
+);
+
+export const LoadingIcon = (props: IconProps) => (
+  <BaseIcon icon={Loading02Icon} {...props} />
+);
+
+export const CloseIcon = (props: IconProps) => (
+  <BaseIcon icon={MultiplicationSignIcon} {...props} />
 );
 
 export const ComputerIcon = (props: IconProps) => (

@@ -1,0 +1,16 @@
+{
+  "name": "@workspace/testing",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "type": "module",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
+    "@vitejs/plugin-react": "^5.1.2",
+    "vitest": "^3.2.4"
+  }
+}
