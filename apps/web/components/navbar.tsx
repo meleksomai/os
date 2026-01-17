@@ -6,15 +6,11 @@ export default function Navbar() {
   return (
     <nav className="z-50 flex items-baseline space-x-6 py-12 transition-opacity duration-700">
       <div>
-        <div className="font-mono">
+        <Link className="font-mono" href="/">
           melek<span className="text-muted-foreground">somai </span>
-        </div>
+        </Link>
       </div>
       {[
-        {
-          title: "Home",
-          href: "/",
-        },
         {
           title: "Essays",
           href: "/essays",

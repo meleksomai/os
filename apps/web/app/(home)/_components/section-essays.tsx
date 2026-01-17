@@ -1,5 +1,6 @@
 "use client";
 import { Heading2, Heading3 } from "@workspace/ui/blocks/headings";
+import { ArrowRightIcon } from "@workspace/ui/components/icons";
 import { useReveal } from "@workspace/ui/hooks/use-reveal";
 import Link from "next/link";
 import type { Essay } from "@/app/(blog)/utils";
@@ -36,6 +37,25 @@ export function EssaySection({ essays }: { essays?: Omit<Essay, "Essay">[] }) {
               key={essay.slug}
             />
           ))}
+        </div>
+
+        <div
+          className={`mt-8 transition-all duration-700 md:mt-12 ${
+            isVisible
+              ? "translate-x-0 opacity-100"
+              : "-translate-x-12 opacity-0"
+          }`}
+          style={{
+            transitionDelay: `${(essays?.length ?? 0) * 150 + 200}ms`,
+          }}
+        >
+          <Link
+            className="group inline-flex items-center gap-2 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground md:text-base"
+            href="/essays"
+          >
+            Check All Essays
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </section>
