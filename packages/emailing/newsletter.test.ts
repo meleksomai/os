@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { subscribeContact } from "./subscription";
+import { subscribeContact } from "./newsletter";
 
 vi.mock("resend", () => ({
   Resend: vi.fn().mockImplementation(() => ({

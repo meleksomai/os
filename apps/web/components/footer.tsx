@@ -1,8 +1,11 @@
 import { ThemeSwitcher } from "@workspace/ui/blocks/theme-switcher";
+import { ContactForm } from "./contact-form";
+import { SubscribeSection } from "./subscribe";
 
 export default function Footer() {
   return (
     <footer className="border-border border-t py-12 sm:py-16">
+      <ContactForm />
       <div className="flex flex-row items-start justify-between gap-6 sm:gap-8 lg:items-center">
         <div className="space-y-2">
           <div className="text-muted-foreground text-sm">
