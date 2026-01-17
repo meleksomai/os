@@ -1,6 +1,5 @@
 import { ThemeSwitcher } from "@workspace/ui/blocks/theme-switcher";
 import { ContactForm } from "./contact-form";
-import { SubscribeSection } from "./subscribe";
 
 export default function Footer() {
   return (
