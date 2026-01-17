@@ -6,19 +6,24 @@
     "build": "email build",
     "dev": "email dev -p 3001",
     "export": "email export",
-    "start": "email start -p 3001"
+    "start": "email start -p 3001",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
-    "@react-email/components": "1.0.2",
+    "@react-email/components": "1.0.4",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "resend": "6.7.0"
   },
   "devDependencies": {
-    "@react-email/preview-server": "5.1.0",
+    "@workspace/testing": "workspace:*",
+    "@react-email/preview-server": "5.2.5",
+    "vitest": "3.2.4",
     "@types/node": "24.10.3",
     "@types/react": "19.2.3",
     "@types/react-dom": "19.2.3",
     "@workspace/typescript-config": "workspace:*",
-    "react-email": "5.1.0"
+    "react-email": "5.2.5"
   }
 }
