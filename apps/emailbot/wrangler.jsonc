@@ -22,8 +22,7 @@
     ]
   },
   "ai": {
-    "binding": "AI",
-    "remote": true
+    "binding": "AI"
   },
   "migrations": [
     {
