@@ -1,7 +1,11 @@
 import {
+  Alert02Icon,
+  AlertDiamondIcon,
   ArrowRight02Icon,
+  CheckmarkCircle02Icon,
   ComputerIcon as ComputerIconPrimitive,
   Copy01Icon,
+  InformationSquareIcon,
   Loading02Icon,
   Location01Icon,
   Mail02Icon,
@@ -47,6 +51,22 @@ export function GitHubIcon(props: React.ComponentProps<"svg">) {
     </svg>
   );
 }
+
+export const InfoIcon = (props: IconProps) => (
+  <BaseIcon icon={InformationSquareIcon} {...props} />
+);
+
+export const AlertIcon = (props: IconProps) => (
+  <BaseIcon icon={Alert02Icon} {...props} />
+);
+
+export const ErrorIcon = (props: IconProps) => (
+  <BaseIcon icon={AlertDiamondIcon} {...props} />
+);
+
+export const SuccessIcon = (props: IconProps) => (
+  <BaseIcon icon={CheckmarkCircle02Icon} {...props} />
+);
 
 export const SunIcon = (props: IconProps) => (
   <BaseIcon icon={Sun01Icon} {...props} />

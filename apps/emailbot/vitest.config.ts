@@ -11,8 +11,12 @@ export default defineWorkersProject({
     poolOptions: {
       workers: {
         singleWorker: true,
+        miniflare: {
+          compatibilityDate: "2025-12-23",
+          compatibilityFlags: ["nodejs_compat"],
+        },
         wrangler: {
-          configPath: "./wrangler.jsonc",
+          configPath: "./wrangler.test.jsonc",
         },
       },
     },

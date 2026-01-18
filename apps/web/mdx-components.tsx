@@ -1,3 +1,4 @@
+import { Callout } from "@workspace/ui/blocks/callout";
 import * as CodeBlock from "@workspace/ui/blocks/code-block";
 import {
   Heading1,
@@ -7,11 +8,12 @@ import {
   Heading5,
   Heading6,
 } from "@workspace/ui/blocks/headings";
+import { parseGitHubAlert } from "@workspace/ui/lib/gmf";
 import { cn } from "@workspace/ui/lib/utils";
 import type { MDXComponents } from "mdx/types";
 import Image, { type ImageProps } from "next/image";
 import Link from "next/link";
-import type { ComponentPropsWithoutRef } from "react";
+import { type ComponentPropsWithoutRef } from "react";
 
 type ParagraphProps = ComponentPropsWithoutRef<"p">;
 type AnchorProps = ComponentPropsWithoutRef<"a">;
@@ -21,9 +23,9 @@ type ListItemProps = ComponentPropsWithoutRef<"li">;
 function isFootnotesSection(props: React.HTMLAttributes<HTMLElement>) {
   // remark-gfm often emits: <section data-footnotes class="footnotes">
   // Some renderers use <div class="footnotes"> or <section class="footnotes">
-  const anyProps = props as any;
+  const anyProps = props as unknown;
   return (
-    anyProps["data-footnotes"] !== undefined ||
+    (anyProps as Record<string, unknown>)["data-footnotes"] !== undefined ||
     props.className?.split(" ").includes("footnotes") ||
     props.id === "footnotes"
   );
@@ -75,9 +77,24 @@ const components = {
   img: (props) => (
     <Image height={720} width={1200} {...(props as ImageProps)} />
   ),
-  blockquote: (props: ComponentPropsWithoutRef<"blockquote">) => (
-    <blockquote className="mt-6 border-l-2 pl-6 italic" {...props} />
-  ),
+  blockquote: ({
+    children,
+    ...props
+  }: ComponentPropsWithoutRef<"blockquote">) => {
+    // Parse GitHub-style alerts: > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
+    const alertInfo = parseGitHubAlert(children);
+
+    if (alertInfo) {
+      return (
+        <Callout className="my-4" type={alertInfo.type}>
+          {alertInfo.content}
+        </Callout>
+      );
+    }
+
+    // Default blockquote rendering when not a GitHub alert
+    return <Callout {...props}>{children}</Callout>;
+  },
   // Don't pass the tabindex prop from shiki, most browsers
   // now handle scroll containers focus out of the box
   pre: ({ tabIndex, ...props }) => <CodeBlock.Pre {...props} />,

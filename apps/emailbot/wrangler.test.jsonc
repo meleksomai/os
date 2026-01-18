@@ -1,0 +1,7 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "emailbot-test",
+  "main": "./index.ts",
+  "compatibility_date": "2025-12-23",
+  "compatibility_flags": ["nodejs_compat"]
+}

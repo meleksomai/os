@@ -13,16 +13,20 @@ export default async function Page({
     <article>
       <div className="flex flex-col">
         <div className="flex flex-col gap-4">
-          <Heading1>{metadata.title}</Heading1>
-          <Heading3 className="font-mono text-muted-foreground uppercase">
-            {metadata.subtitle}
-          </Heading3>
-          <div className="py-8 font-mono text-muted-foreground text-xs uppercase md:text-sm">
+          <div className="animate-fade-slide-up">
+            <Heading1>{metadata.title}</Heading1>
+          </div>
+          <div className="animate-fade-slide-up animation-delay-150">
+            <Heading3 className="font-mono text-muted-foreground uppercase">
+              {metadata.subtitle}
+            </Heading3>
+          </div>
+          <div className="animate-fade-slide-up animation-delay-300 py-8 font-mono text-muted-foreground text-xs uppercase md:text-sm">
             / {metadata.publishedAtFormatted} / {readingTime.text} /{" "}
             {readingTime.words} words
           </div>
         </div>
-        <div className="prose">
+        <div className="animate-fade-slide-up animation-delay-450 prose">
           <Essay />
         </div>
       </div>
