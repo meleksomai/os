@@ -6,9 +6,7 @@
     "build": "email build",
     "dev": "email dev -p 3001",
     "export": "email export",
-    "start": "email start -p 3001",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "start": "email start -p 3001"
   },
   "dependencies": {
     "@react-email/components": "1.0.4",
