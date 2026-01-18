@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import matter from "gray-matter";
 import type { JSX } from "react";
 
-import { formatPublishedAt, parsePublishedAt } from "../../lib/date";
+import { formatPublishedAt, parsePublishedAt } from "@/lib/date";
 
 export type Metadata = {
   title: string;
@@ -81,4 +82,32 @@ export async function getBlogEssay(slug: string) {
     throw new Error(`Post not found: ${slug}`);
   }
   return post;
+}
+
+export async function getRawEssayMarkdown(slug: string): Promise<string> {
+  // Reuse existing MDX parsing for metadata and reading time
+  const { metadata, readingTime } = await getBlogEssay(slug);
+
+  // Use gray-matter to properly parse the file
+  const contentDir = path.join(process.cwd(), "app", "(blog)", "_content");
+  const filePath = path.join(contentDir, `${slug}.mdx`);
+  const rawContent = fs.readFileSync(filePath, "utf-8");
+  const { content } = matter(rawContent);
+
+  // Strip import statements from body
+  const cleanedBody = content
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("import "))
+    .join("\n")
+    .trim();
+
+  // Build formatted markdown using existing metadata and reading time
+  return `# ${metadata.title} - ${metadata.subtitle}
+
+/ ${metadata.publishedAtFormatted} / ${readingTime.text} / ${readingTime.words} words
+
+---
+
+${cleanedBody}
+`;
 }
