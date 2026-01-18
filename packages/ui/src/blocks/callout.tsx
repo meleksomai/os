@@ -194,7 +194,7 @@ const calloutTitles: Record<CalloutType, string> = {
 interface CalloutProps extends VariantProps<typeof calloutVariants> {
   title?: string;
   showLabel?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }
 

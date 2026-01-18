@@ -6,15 +6,13 @@ publishedAt: 2026-01-02
 category: engineering
 ---
 
-import { Callout } from "@workspace/ui/blocks/callout";
 import { Quote } from "@workspace/ui/blocks/quote";
 import { ThemeImage } from "@workspace/ui/blocks/themed-image";
+import { RelativeTime } from "@workspace/ui/blocks/relative-time";
 import { GitHubIcon } from "@workspace/ui/components/icons";
 import { Highlight } from "@workspace/ui/blocks/highlight";
 
-<Callout>
-Over the holidays, I built an AI Assistant using Cloudflare Durable Objects. The source code is available <GitHubIcon className="inline-block w-4 h-4" /> [meleksomai/os](https://github.com/meleksomai/os) and you can try it by sending an email to [hello@somai.me](mailto:hello@somai.me). Building on that experience, this essay explores how agent-first systems are not merely a new feature layer atop existing tools, but a complete shift in the way we design and interact with systems.
-</Callout>
+> Over the holidays <RelativeTime date={"2025-12-24"} />, I built an AI Assistant using Cloudflare Durable Objects. The source code is available <GitHubIcon className="inline-block w-4 h-4" /> [meleksomai/os](https://github.com/meleksomai/os) and you can try it by sending an email to [hello@somai.me](mailto:hello@somai.me). Building on that experience, this essay explores how agent-first systems are not merely a new feature layer atop existing tools, but a complete shift in the way we design and interact with systems.
 
 Over the past few months, and more precisely following the release of [Claude Opus 4.5](https://www.anthropic.com/news/claude-opus-4-5) and [Gemini 3](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-pro), I have become increasingly convinced that the future of software lies in building *agent-first* systems.[^1] By these systems, I mean software in which the task to be performed *by* an end-user is further removed *from* the end-user. As current AI agents empowered by LLMs are increasingly capable of long-context reasoning, tool use, and multi-turn interaction, the tasks they can handle are becoming progressively _(and then suddenly)_ the property of the agent. Agents manage the intent interpretation, memory, decision-making, action execution, and ultimately *remove* further the user from the task itself. The shift could be thought of as analogous to the way modern high-level programming languages such as Python, JavaScript, and others abstract away garbage collection, memory allocation, etc. However, the similarity ends here.
 

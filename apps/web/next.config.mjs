@@ -34,7 +34,6 @@ const withMDX = createMDX({
     rehypePlugins: [
       ["rehype-pretty-code", options],
       "rehype-slug",
-      "rehype-callouts",
       ["rehype-katex", { strict: true, throwOnError: true }],
       [
         "rehype-autolink-headings",

@@ -6,7 +6,6 @@ publishedAt: 2026-01-16
 category: engineering
 ---
 
-import { Callout } from "@workspace/ui/blocks/callout";
 import { Quote } from "@workspace/ui/blocks/quote";
 import { ThemeImage } from "@workspace/ui/blocks/themed-image";
 import { RelativeTime } from "@workspace/ui/blocks/relative-time";
@@ -14,11 +13,9 @@ import { Highlight } from "@workspace/ui/blocks/highlight";
 
 import { GitHubIcon } from "@workspace/ui/components/icons";
 
-<Callout>
-The source code is available <GitHubIcon className="inline-block w-4 h-4" /> [meleksomai/os](https://github.com/meleksomai/os) and you can try interacting with the AI Assistant by sending an email to [hello@somai.me](mailto:hello@somai.me).
-</Callout>
+> The source code is available <GitHubIcon className="inline-block w-4 h-4" /> [meleksomai/os](https://github.com/meleksomai/os) and you can try interacting with the AI Assistant by sending an email to [hello@somai.me](mailto:hello@somai.me).
 
-As I argued in [my previous post](/essay/agents), I believe the future of software lies in agent-first systems. During the holidays <RelativeTime date={"2026-01-01"} />, I finally had time to explore what it would mean to build software around LLMs from first principles.[^1] Around the same time, I found myself confronting a backlog of emails requiring the usual tedious task of triaging, prioritizing, responding, scheduling, etc.
+As I argued in [my previous post](/essay/agents), I believe the future of software lies in agent-first systems. During the holidays <RelativeTime date={"2025-12-24"} />, I finally had time to explore what it would mean to build software around LLMs from first principles.[^1] Around the same time, I found myself confronting a backlog of emails requiring the usual tedious task of triaging, prioritizing, responding, scheduling, etc.
 
 [^1]: By building "_from first principles,_" I mean starting not from existing software patterns or human workflows, but from the fundamental capabilities and constraints of LLMs themselves. Most AI products today attempt to fit language models into interfaces designed for humans—dashboards, buttons, forms. The first-principles approach inverts this: what would software look like if we designed it around what an agent can naturally do? In the case of email, this meant asking: given that LLMs are stateless, context-dependent, and excel at language understanding, what architecture would allow an agent to operate autonomously within a protocol that was never designed for machines? The answer required rethinking memory, state, and interaction patterns from the ground up—not retrofitting AI into an inbox UI.
 
@@ -258,8 +255,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
 
 At the entry point, the agent receives an email and determines whether it is from me (the owner) or from an external contact. The agent then routes the email to the appropriate workflow: either the owner workflow or the external contact workflow. This separation isolates the logic for handling emails from me versus emails from others.
 
->[!INFO]
-> We could call this _defensive programming_ for AI agents—and that's exactly what it is. It is less prone to jailbreaking and unintended behavior if we separate the logic for handling emails from the owner versus external contacts using a deterministic routing.
+We could call this _defensive programming_ for AI agents—and that's exactly what it is. It is less prone to jailbreaking and unintended behavior if we separate the logic for handling emails from the owner versus external contacts using a deterministic routing.
 
 ```typescript title="snippet ./agent.ts" showLineNumbers {29-30, 33-34}
 import { Agent, type AgentEmail } from "agents";
@@ -576,7 +572,7 @@ The AI Agent uses a set of tools to perform specific tasks. These tools include:
 - **Context Update Tool**: Updates the agent's memory based on new information from incoming emails
 - **Email Sending Tool**: Sends emails on behalf of the agent.
 
-> [!WARNING]  
+> [!WARNING]
 > Cloudflare email routing currently does not support sending multiple emails directly from Durable Objects. Therefore, I used [Resend](https://resend.com/) as an external email sending service to send emails from the agent. This is a temporary workaround until Cloudflare adds support for sending emails directly from Durable Objects.
 
 ### Email Classification Tool
