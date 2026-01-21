@@ -1,3 +1,5 @@
+import { formatDistance } from "date-fns";
+
 const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 export function parsePublishedAt(publishedAt: string): Date {
@@ -31,24 +33,6 @@ export function formatPublishedAtWithRelative(
   now: Date = new Date()
 ): string {
   const fullDate = formatPublishedAt(date);
-  const diffMs = now.getTime() - date.getTime();
-
-  if (diffMs < 0) {
-    return fullDate;
-  }
-
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const diffMonths = Math.floor(diffDays / 30);
-  const diffYears = Math.floor(diffDays / 365);
-
-  let relative = "Today";
-  if (diffYears > 0) {
-    relative = `${diffYears}y ago`;
-  } else if (diffMonths > 0) {
-    relative = `${diffMonths}mo ago`;
-  } else if (diffDays > 0) {
-    relative = `${diffDays}d ago`;
-  }
-
+  const relative = formatDistance(date, now, { addSuffix: true });
   return `${fullDate} (${relative})`;
 }
