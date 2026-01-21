@@ -297,11 +297,7 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       date-fns:
-<<<<<<< Updated upstream
-        specifier: ^4.1.0
-=======
         specifier: 4.1.0
->>>>>>> Stashed changes
         version: 4.1.0
       motion:
         specifier: 12.23.26
