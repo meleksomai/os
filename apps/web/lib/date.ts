@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from "date-fns";
+import { formatDistance } from "date-fns";
 
 const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -28,8 +28,11 @@ export function formatPublishedAt(date: Date): string {
   }).format(date);
 }
 
-export function formatPublishedAtWithRelative(date: Date): string {
+export function formatPublishedAtWithRelative(
+  date: Date,
+  now: Date = new Date()
+): string {
   const fullDate = formatPublishedAt(date);
-  const relative = formatDistanceToNow(date, { addSuffix: true });
+  const relative = formatDistance(date, now, { addSuffix: true });
   return `${fullDate} (${relative})`;
 }
