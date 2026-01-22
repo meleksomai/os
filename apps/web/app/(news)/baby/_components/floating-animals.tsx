@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface FloatingItem {
   src: string;
@@ -153,17 +154,26 @@ const starPositions = [
   { x: 95, y: 92, size: 40 },
 ];
 
-const stars: FloatingItem[] = starPositions.map((star, i) => ({
-  src: "/images/baby/decorations/stars.svg",
-  alt: `Star ${i + 1}`,
-  size: star.size,
-  position: { x: star.x, y: star.y },
-  rotation: ((i * 37) % 60) - 30,
-  floatX: { range: 4 + (i % 5) * 2, duration: 10 + (i % 6) },
-  floatY: { range: 5 + (i % 4) * 2, duration: 8 + (i % 5) },
-  delay: (i * 0.15) % 3,
-  twinkle: { duration: 2 + (i % 4) * 1.5, delay: (i * 0.3) % 5 },
-}));
+// Mobile-friendly subset of stars (roughly 1/3 of total)
+const mobileStarIndices = [0, 4, 7, 11, 14, 19, 23, 27, 31, 35];
+
+const createStars = (positions: typeof starPositions): FloatingItem[] =>
+  positions.map((star, i) => ({
+    src: "/images/baby/decorations/stars.svg",
+    alt: `Star ${i + 1}`,
+    size: star.size,
+    position: { x: star.x, y: star.y },
+    rotation: ((i * 37) % 60) - 30,
+    floatX: { range: 4 + (i % 5) * 2, duration: 10 + (i % 6) },
+    floatY: { range: 5 + (i % 4) * 2, duration: 8 + (i % 5) },
+    delay: (i * 0.15) % 3,
+    twinkle: { duration: 2 + (i % 4) * 1.5, delay: (i * 0.3) % 5 },
+  }));
+
+const allStars = createStars(starPositions);
+const mobileStars = createStars(
+  starPositions.filter((_, i) => mobileStarIndices.includes(i))
+);
 
 // Decorations distributed across the page
 const decorations: FloatingItem[] = [
@@ -219,7 +229,7 @@ const decorations: FloatingItem[] = [
   },
 ];
 
-const floatingItems = [...animals, ...stars, ...decorations];
+const MOBILE_BREAKPOINT = 768;
 
 const keyframes = `
   @keyframes baby-float-x {
@@ -237,6 +247,21 @@ const keyframes = `
 `;
 
 export function FloatingAnimals() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const stars = isMobile ? mobileStars : allStars;
+  const floatingItems = [...animals, ...stars, ...decorations];
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: keyframes }} />

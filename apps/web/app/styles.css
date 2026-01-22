@@ -1,5 +1,10 @@
 @import "@workspace/ui/globals.css";
 
+/* Prevent horizontal scroll from full-width elements breaking out of containers */
+html {
+  overflow-x: hidden;
+}
+
 code[data-theme*=" "],
 code[data-theme*=" "] span {
   color: var(--shiki-light);
