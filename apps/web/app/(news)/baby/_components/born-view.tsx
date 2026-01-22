@@ -58,10 +58,6 @@ export function BornView() {
           </div>
         </div>
       </div>
-
-      <p className="font-serif text-lg italic text-muted-foreground">
-        Proud parents Imen &amp; Melek
-      </p>
     </div>
   );
 }

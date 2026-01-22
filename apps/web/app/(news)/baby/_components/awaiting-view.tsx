@@ -13,10 +13,6 @@ export function AwaitingView() {
       <div className="my-4">
         <Countdown />
       </div>
-
-      <p className="font-serif text-2xl italic text-muted-foreground">
-        Proud parents Imen &amp; Melek
-      </p>
     </div>
   );
 }
