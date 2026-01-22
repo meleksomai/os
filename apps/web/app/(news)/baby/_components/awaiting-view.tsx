@@ -1,5 +1,6 @@
 import BabyName from "./baby-name";
 import { Countdown } from "./countdown";
+import { Updates } from "./updates";
 
 export function AwaitingView() {
   return (
@@ -13,10 +14,6 @@ export function AwaitingView() {
       <div className="my-4">
         <Countdown />
       </div>
-
-      <p className="font-serif text-2xl italic text-muted-foreground">
-        Proud parents Imen &amp; Melek
-      </p>
     </div>
   );
 }
