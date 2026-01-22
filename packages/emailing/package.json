@@ -10,7 +10,7 @@
     "resend": "6.7.0"
   },
   "devDependencies": {
-    "@types/node": "24.10.3",
+    "@types/node": "24.10.4",
     "@workspace/testing": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "vitest": "3.2.4"

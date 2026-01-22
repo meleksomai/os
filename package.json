@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
-    "@playwright/test": "1.55.0",
+    "@playwright/test": "1.57.0",
     "@workspace/typescript-config": "workspace:*",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
