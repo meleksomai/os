@@ -1,3 +1,5 @@
+import { Quote } from "@workspace/ui/blocks/quote";
+import type { CSSProperties } from "react";
 import { getPublicWishes } from "@/actions/wishes";
 
 export async function WishesBanner() {
@@ -5,31 +7,46 @@ export async function WishesBanner() {
 
   if (wishes.length === 0) return null;
 
+  const hasMultipleWishes = wishes.length > 1;
+  const formatWishDate = (dateString: string) =>
+    new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(
+      new Date(dateString)
+    );
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 overflow-hidden border-t border-border/50 bg-background/80 backdrop-blur-sm">
-      <div className="animate-marquee flex whitespace-nowrap py-3">
-        {wishes.map((wish) => (
-          <span
-            className="mx-8 inline-flex items-center gap-2 text-sm"
+    <div
+      className="mx-auto flex max-w-4xl items-center justify-center py-3"
+      style={
+        {
+          "--item-count": wishes.length,
+          "--item-duration": "3s",
+        } as CSSProperties
+      }
+    >
+      <div className="relative h-24 w-[min(36rem,80vw)] max-w-full overflow-hidden md:h-28">
+        {wishes.map((wish, index) => (
+          <div
+            className={
+              hasMultipleWishes
+                ? "wish-rolodex-item"
+                : "wish-rolodex-item is-static"
+            }
             key={wish.id}
+            style={
+              {
+                "--item-index": index,
+              } as CSSProperties
+            }
           >
-            <span className="text-muted-foreground">{wish.name}:</span>
-            <span className="text-foreground">
-              &ldquo;{wish.message}&rdquo;
-            </span>
-          </span>
-        ))}
-        {/* Duplicate for seamless loop */}
-        {wishes.map((wish) => (
-          <span
-            className="mx-8 inline-flex items-center gap-2 text-sm"
-            key={`${wish.id}-dup`}
-          >
-            <span className="text-muted-foreground">{wish.name}:</span>
-            <span className="text-foreground">
-              &ldquo;{wish.message}&rdquo;
-            </span>
-          </span>
+            <Quote
+              author={wish.name}
+              className="max-w-full"
+              size="compact"
+              source={formatWishDate(wish.created_at)}
+            >
+              {wish.message}
+            </Quote>
+          </div>
         ))}
       </div>
     </div>

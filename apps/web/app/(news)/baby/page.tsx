@@ -20,15 +20,15 @@ export default async function BabyNewsPage() {
       <div className="flex items-center justify-center py-8 md:py-12 lg:py-16">
         <ThemeSwitcher />
       </div>
-      <div className="relative z-10 flex-row items-center justify-center py-16">
+      <div className="relative z-10 flex flex-col items-center justify-center py-16">
         {IS_BORN ? <BornView /> : <AwaitingView />}
         <p className="font-serif text-2xl italic text-muted-foreground py-4 md:py-8 text-center">
           Proud parents Imen &amp; Melek
         </p>
         {isShareWishesEnabled ? (
-          <div className="flex justify-center">
+          <div className="flex flex-col justify-center items-center">
             <SignBook />
-            <WishesBanner />
+            {/* <WishesBanner /> */}
           </div>
         ) : null}
         <Updates />
