@@ -6,7 +6,6 @@ import { BornView } from "./_components/born-view";
 import { FloatingAnimals } from "./_components/floating-animals";
 import { SignBook } from "./_components/signbook";
 import { Updates } from "./_components/updates";
-import { WishesBanner } from "./_components/wishes-banner";
 
 export default async function BabyNewsPage() {
   const IS_BORN = await isBabyBorn();
@@ -28,7 +27,6 @@ export default async function BabyNewsPage() {
         {isShareWishesEnabled ? (
           <div className="flex flex-col justify-center items-center">
             <SignBook />
-            {/* <WishesBanner /> */}
           </div>
         ) : null}
         <Updates />
