@@ -30,6 +30,6 @@
     "@types/react-dom": "19.2.3",
     "@workspace/typescript-config": "workspace:*",
     "vitest": "3.2.4",
-    "wrangler": "4.56.0"
+    "wrangler": "4.59.1"
   }
 }
