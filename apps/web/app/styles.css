@@ -137,3 +137,36 @@ pre [data-line].line--highlighted {
 .animation-delay-450 {
   animation-delay: 450ms;
 }
+
+/* Floating animals animations - nested elements allow independent X/Y timing for organic paths */
+@keyframes float-x {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(var(--float-x-range, 20px));
+  }
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--float-y-range, 15px));
+  }
+}
+
+.animate-float-x {
+  animation: float-x var(--float-x-duration, 8s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+  will-change: transform;
+}
+
+.animate-float-y {
+  animation: float-y var(--float-y-duration, 6s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+  will-change: transform;
+}
