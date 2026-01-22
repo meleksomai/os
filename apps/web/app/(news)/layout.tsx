@@ -7,7 +7,7 @@ export default function NewsLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="fixed inset-0 overflow-auto bg-background text-foreground">
+    <div className="fixed inset-0 overflow-y-auto overflow-x-hidden bg-background text-foreground">
       <div className="mx-auto max-w-4xl px-6 sm:px-8 lg:px-16">
         <Navbar />
         <div className="relative">{children}</div>

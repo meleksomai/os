@@ -240,7 +240,7 @@ export function FloatingAnimals() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: keyframes }} />
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none absolute top-0 left-1/2 h-full w-screen -translate-x-1/2">
         {floatingItems.map((item) => (
           <div
             className="absolute"
