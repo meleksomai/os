@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { isBabyBorn } from "@workspace/flags";
 import { ImageResponse } from "next/og";
 
 export const alt = "Sarah Somai - Coming Soon";
@@ -10,6 +11,7 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
+  const IS_BORN = await isBabyBorn();
   // Load fonts
   const geistRegular = await readFile(
     join(process.cwd(), "assets/Geist-Regular.ttf")
@@ -227,7 +229,7 @@ export default async function Image() {
             marginBottom: 24,
           }}
         >
-          We are looking forward
+          {IS_BORN ? "Welcome to the world" : "We are looking forward"}
         </p>
 
         <h1
@@ -260,7 +262,7 @@ export default async function Image() {
             marginTop: 32,
           }}
         >
-          Coming Soon
+          {IS_BORN ? "She's here!" : "Coming Soon"}
         </p>
 
         <p

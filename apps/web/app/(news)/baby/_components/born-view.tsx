@@ -1,3 +1,5 @@
+import BabyName from "./baby-name";
+
 interface BirthDetails {
   date: string;
   time: string;
@@ -19,11 +21,7 @@ export function BornView() {
         Welcome to the world
       </p>
 
-      <h1 className="font-serif text-5xl leading-tight sm:text-6xl md:text-7xl">
-        Sarah
-        <br />
-        <span className="text-muted-foreground">Somai</span>
-      </h1>
+      <BabyName />
 
       <div className="my-4 flex flex-col items-center gap-6">
         <p className="font-serif text-2xl italic text-foreground/80">

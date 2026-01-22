@@ -1,3 +1,4 @@
+import BabyName from "./baby-name";
 import { Countdown } from "./countdown";
 
 export function AwaitingView() {
@@ -7,17 +8,13 @@ export function AwaitingView() {
         We are looking forward
       </p>
 
-      <h1 className="font-serif text-5xl leading-tight sm:text-6xl md:text-7xl">
-        Sarah
-        <br />
-        <span className="text-muted-foreground">Somai</span>
-      </h1>
+      <BabyName />
 
       <div className="my-4">
         <Countdown />
       </div>
 
-      <p className="font-serif text-lg italic text-muted-foreground">
+      <p className="font-serif text-2xl italic text-muted-foreground">
         Proud parents Imen &amp; Melek
       </p>
     </div>

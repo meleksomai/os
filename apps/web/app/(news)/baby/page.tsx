@@ -1,11 +1,11 @@
+import { isBabyBorn } from "@workspace/flags";
 import { AwaitingView } from "./_components/awaiting-view";
 import { BornView } from "./_components/born-view";
 import { FloatingAnimals } from "./_components/floating-animals";
 
-// Toggle this to switch between views
-const IS_BORN = false;
+export default async function BabyNewsPage() {
+  const IS_BORN = await isBabyBorn();
 
-export default function BabyNewsPage() {
   return (
     <div className="relative min-h-[100vh]">
       <FloatingAnimals />
