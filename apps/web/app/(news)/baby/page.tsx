@@ -1,13 +1,16 @@
-import { isBabyBorn } from "@workspace/flags";
+import { enableShareWishes, isBabyBorn } from "@workspace/flags";
 import { ThemeSwitcher } from "@workspace/ui/blocks/theme-switcher";
 
 import { AwaitingView } from "./_components/awaiting-view";
 import { BornView } from "./_components/born-view";
 import { FloatingAnimals } from "./_components/floating-animals";
+import { SignBook } from "./_components/signbook";
 import { Updates } from "./_components/updates";
+import { WishesBanner } from "./_components/wishes-banner";
 
 export default async function BabyNewsPage() {
   const IS_BORN = await isBabyBorn();
+  const isShareWishesEnabled = await enableShareWishes();
 
   return (
     <div className="relative">
@@ -22,6 +25,12 @@ export default async function BabyNewsPage() {
         <p className="font-serif text-2xl italic text-muted-foreground py-4 md:py-8 text-center">
           Proud parents Imen &amp; Melek
         </p>
+        {isShareWishesEnabled ? (
+          <div className="flex justify-center">
+            <SignBook />
+            <WishesBanner />
+          </div>
+        ) : null}
         <Updates />
       </div>
     </div>

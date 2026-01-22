@@ -1,6 +1,5 @@
 import BabyName from "./baby-name";
 import { Countdown } from "./countdown";
-import { Updates } from "./updates";
 
 export function AwaitingView() {
   return (
