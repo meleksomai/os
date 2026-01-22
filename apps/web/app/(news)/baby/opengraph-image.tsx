@@ -241,7 +241,7 @@ export default async function Image() {
             lineHeight: 1.1,
           }}
         >
-          Sarah
+          Sarah Janet
         </h1>
         <h1
           style={{
