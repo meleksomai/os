@@ -1,5 +1,6 @@
 import { isBabyBorn } from "@workspace/flags";
 import { ThemeSwitcher } from "@workspace/ui/blocks/theme-switcher";
+
 import { AwaitingView } from "./_components/awaiting-view";
 import { BornView } from "./_components/born-view";
 import { FloatingAnimals } from "./_components/floating-animals";
