@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-const DUE_DATE = new Date("2025-01-26T00:00:00");
+// Due date: January 26, 2026 at midnight local time
+const DUE_DATE = new Date(2026, 0, 26, 0, 0, 0);
 
 interface TimeLeft {
   days: number;
@@ -12,7 +13,8 @@ interface TimeLeft {
 }
 
 function calculateTimeLeft(): TimeLeft | null {
-  const difference = DUE_DATE.getTime() - Date.now();
+  const now = new Date();
+  const difference = DUE_DATE.getTime() - now.getTime();
 
   if (difference <= 0) {
     return null;
@@ -29,7 +31,7 @@ function calculateTimeLeft(): TimeLeft | null {
 function TimeBlock({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm sm:h-20 sm:w-20">
+      <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-white/10 sm:h-20 sm:w-20">
         <span className="font-serif text-3xl sm:text-4xl">
           {String(value).padStart(2, "0")}
         </span>
@@ -65,7 +67,7 @@ export function Countdown() {
           ))}
         </div>
         <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
-          Status: In Progress
+          Scheduled Delivery
         </p>
       </div>
     );
@@ -93,7 +95,7 @@ export function Countdown() {
         <TimeBlock label="Sec" value={timeLeft.seconds} />
       </div>
       <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
-        Status: In Progress
+        Scheduled Delivery
       </p>
     </div>
   );

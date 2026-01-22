@@ -6,7 +6,7 @@ interface BirthDetails {
 }
 
 const BIRTH_DETAILS: BirthDetails = {
-  date: "January 26, 2025",
+  date: "January 26, 2026",
   time: "00:00",
   weight: "0.0 kg",
   height: "00 cm",

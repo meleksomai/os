@@ -11,6 +11,7 @@ interface FloatingItem {
   floatX: { range: number; duration: number };
   floatY: { range: number; duration: number };
   delay: number;
+  twinkle?: { duration: number; delay: number };
 }
 
 // Animals distributed across 300vh (y values 0-95 map to full height)
@@ -161,6 +162,7 @@ const stars: FloatingItem[] = starPositions.map((star, i) => ({
   floatX: { range: 4 + (i % 5) * 2, duration: 10 + (i % 6) },
   floatY: { range: 5 + (i % 4) * 2, duration: 8 + (i % 5) },
   delay: (i * 0.15) % 3,
+  twinkle: { duration: 2 + (i % 4) * 1.5, delay: (i * 0.3) % 5 },
 }));
 
 // Decorations distributed across the page
@@ -228,6 +230,10 @@ const keyframes = `
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(var(--fy, 15px)); }
   }
+  @keyframes baby-twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+  }
 `;
 
 export function FloatingAnimals() {
@@ -253,8 +259,12 @@ export function FloatingAnimals() {
                 width: item.size,
                 height: item.size,
                 transform: `rotate(${item.rotation}deg)`,
-                animation: `baby-float-y ${item.floatY.duration}s ease-in-out infinite`,
-                animationDelay: `${item.delay}s`,
+                animation: item.twinkle
+                  ? `baby-float-y ${item.floatY.duration}s ease-in-out infinite, baby-twinkle ${item.twinkle.duration}s ease-in-out infinite`
+                  : `baby-float-y ${item.floatY.duration}s ease-in-out infinite`,
+                animationDelay: item.twinkle
+                  ? `${item.delay}s, ${item.twinkle.delay}s`
+                  : `${item.delay}s`,
                 // @ts-expect-error CSS custom property
                 "--fy": `${item.floatY.range}px`,
               }}
