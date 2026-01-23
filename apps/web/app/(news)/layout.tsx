@@ -9,7 +9,7 @@ export default function RootLayout({
   const shouldInjectToolbar = process.env.NODE_ENV === "development";
 
   return (
-    <div className="mx-auto max-w-4xl px-6 sm:px-8 lg:px-16">
+    <div className="mx-auto ">
       <div className="relative bg-background text-foreground">{children}</div>
     </div>
   );

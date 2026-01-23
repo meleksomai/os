@@ -41,7 +41,7 @@ const animals: FloatingItem[] = [
     src: "/images/baby/animals/penguin.svg",
     alt: "Penguin",
     size: 80,
-    position: { x: 10, y: 35 },
+    position: { x: 20, y: 35 },
     rotation: 5,
     floatX: { range: 25, duration: 10 },
     floatY: { range: 18, duration: 7 },
@@ -71,7 +71,7 @@ const animals: FloatingItem[] = [
     src: "/images/baby/animals/turtle.svg",
     alt: "Turtle",
     size: 100,
-    position: { x: 50, y: 65 },
+    position: { x: 0, y: 65 },
     rotation: -5,
     floatX: { range: 12, duration: 12 },
     floatY: { range: 20, duration: 10 },
@@ -210,8 +210,8 @@ const decorations: FloatingItem[] = [
   {
     src: "/images/baby/decorations/biberon.svg",
     alt: "Baby Bottle",
-    size: 120,
-    position: { x: 8, y: 20 },
+    size: 100,
+    position: { x: 4, y: 20 },
     rotation: -15,
     floatX: { range: 14, duration: 9.5 },
     floatY: { range: 16, duration: 7.5 },
@@ -265,7 +265,7 @@ export function FloatingAnimals() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: keyframes }} />
-      <div className="pointer-events-none absolute top-0 left-1/2 h-full w-screen -translate-x-1/2">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {floatingItems.map((item) => (
           <div
             className="absolute"

@@ -5,6 +5,7 @@ import {
   CheckmarkCircle02Icon,
   ComputerIcon as ComputerIconPrimitive,
   Copy01Icon,
+  FavouriteIcon,
   InformationSquareIcon,
   Loading02Icon,
   Location01Icon,
@@ -54,6 +55,10 @@ export function GitHubIcon(props: React.ComponentProps<"svg">) {
 
 export const InfoIcon = (props: IconProps) => (
   <BaseIcon icon={InformationSquareIcon} {...props} />
+);
+
+export const LoveIcon = (props: IconProps) => (
+  <BaseIcon icon={FavouriteIcon} {...props} />
 );
 
 export const AlertIcon = (props: IconProps) => (
