@@ -12,14 +12,12 @@ export default async function BabyNewsPage() {
   const isShareWishesEnabled = await enableShareWishes();
 
   return (
-    <div className="relative">
-      <FloatingAnimals />
-
-      {/* Content scrolls with page, centered in first viewport */}
-      <div className="flex items-center justify-center py-8 md:py-12 lg:py-16">
+    <div className="min-h-screen overflow-hidden px-4">
+      <div className="flex items-center justify-end py-8 md:py-12 lg:py-16">
         <ThemeSwitcher />
       </div>
-      <div className="relative z-10 flex flex-col items-center justify-center py-16">
+      <FloatingAnimals />
+      <div className="relative z-10 flex flex-col items-center justify-center py-20 md:py-24 lg:py-32">
         {IS_BORN ? <BornView /> : <AwaitingView />}
         <p className="font-serif text-2xl italic text-muted-foreground py-4 md:py-8 text-center">
           Proud parents Imen &amp; Melek
@@ -30,6 +28,7 @@ export default async function BabyNewsPage() {
           </div>
         ) : null}
         <Updates />
+        {/* Content scrolls with page, centered in first viewport */}
       </div>
     </div>
   );

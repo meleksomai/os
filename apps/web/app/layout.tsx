@@ -36,13 +36,7 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} ${fontSerif.variable} font-sans antialiased`}
       >
         <Providers>
-          <div className="mx-auto max-w-4xl px-6 sm:px-8 lg:px-16">
-            <Navbar />
-            <div className="relative bg-background text-foreground">
-              {children}
-            </div>
-            <Footer />
-          </div>
+          {children}
           {!!shouldInjectToolbar && <VercelToolbar />}
         </Providers>
       </body>

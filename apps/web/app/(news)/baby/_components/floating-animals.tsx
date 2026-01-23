@@ -40,8 +40,8 @@ const animals: FloatingItem[] = [
   {
     src: "/images/baby/animals/penguin.svg",
     alt: "Penguin",
-    size: 60,
-    position: { x: 10, y: 25 },
+    size: 80,
+    position: { x: 10, y: 35 },
     rotation: 5,
     floatX: { range: 25, duration: 10 },
     floatY: { range: 18, duration: 7 },
@@ -70,8 +70,8 @@ const animals: FloatingItem[] = [
   {
     src: "/images/baby/animals/turtle.svg",
     alt: "Turtle",
-    size: 55,
-    position: { x: 25, y: 55 },
+    size: 100,
+    position: { x: 50, y: 65 },
     rotation: -5,
     floatX: { range: 12, duration: 12 },
     floatY: { range: 20, duration: 10 },
@@ -98,7 +98,7 @@ const animals: FloatingItem[] = [
     delay: 1.2,
   },
   {
-    src: "/images/baby/animals/unicoen.svg",
+    src: "/images/baby/animals/unicorn.svg",
     alt: "Unicorn",
     size: 75,
     position: { x: 55, y: 88 },
@@ -180,8 +180,8 @@ const decorations: FloatingItem[] = [
   {
     src: "/images/baby/decorations/ballon-blue.svg",
     alt: "Blue Balloon",
-    size: 65,
-    position: { x: 92, y: 15 },
+    size: 100,
+    position: { x: 72, y: 15 },
     rotation: 5,
     floatX: { range: 12, duration: 9 },
     floatY: { range: 30, duration: 7 },
@@ -190,7 +190,7 @@ const decorations: FloatingItem[] = [
   {
     src: "/images/baby/decorations/balloon-yellow.svg",
     alt: "Yellow Balloon",
-    size: 60,
+    size: 190,
     position: { x: 3, y: 45 },
     rotation: -8,
     floatX: { range: 15, duration: 10 },
@@ -200,7 +200,7 @@ const decorations: FloatingItem[] = [
   {
     src: "/images/baby/decorations/baloon-pink.svg",
     alt: "Pink Balloon",
-    size: 55,
+    size: 150,
     position: { x: 88, y: 60 },
     rotation: 10,
     floatX: { range: 18, duration: 11 },
@@ -210,8 +210,8 @@ const decorations: FloatingItem[] = [
   {
     src: "/images/baby/decorations/biberon.svg",
     alt: "Baby Bottle",
-    size: 50,
-    position: { x: 8, y: 82 },
+    size: 120,
+    position: { x: 8, y: 20 },
     rotation: -15,
     floatX: { range: 14, duration: 9.5 },
     floatY: { range: 16, duration: 7.5 },
