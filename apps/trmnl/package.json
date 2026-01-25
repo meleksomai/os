@@ -1,0 +1,21 @@
+{
+  "name": "trmnl",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "cf-typegen": "wrangler types",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "chanfana": "3.0.0",
+    "hono": "4.11.5",
+    "zod": "4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.4",
+    "@types/service-worker-mock": "2.0.4",
+    "wrangler": "4.60.0"
+  }
+}
