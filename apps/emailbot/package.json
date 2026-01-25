@@ -1,5 +1,5 @@
 {
-  "name": "backend-email",
+  "name": "emailbot",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,7 +13,7 @@
     "@ai-sdk/openai": "3.0.1",
     "@workspace/transactional": "workspace:*",
     "agents": "0.3.0",
-    "ai": "6.0.3",
+    "ai": "6.0.49",
     "ai-gateway-provider": "3.0.1",
     "mimetext": "3.0.27",
     "postal-mime": "2.7.1",
@@ -30,6 +30,6 @@
     "@types/react-dom": "19.2.3",
     "@workspace/typescript-config": "workspace:*",
     "vitest": "3.2.4",
-    "wrangler": "4.56.0"
+    "wrangler": "4.60.0"
   }
 }
