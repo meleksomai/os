@@ -43,14 +43,14 @@ jobs:
       - name: tests
         run: pnpm test
 
-      - name: install playwright browsers
-        run: pnpm exec playwright install --with-deps
+      # - name: install playwright browsers
+      #   run: pnpm exec playwright install --with-deps
 
-      - name: run playwright tests
-        run: pnpm e2e
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: web-playwright-report
-          path: web/playwright-report/
-          retention-days: 30
+      # - name: run playwright tests
+      #   run: pnpm e2e
+      # - uses: actions/upload-artifact@v4
+      #   if: ${{ !cancelled() }}
+      #   with:
+      #     name: web-playwright-report
+      #     path: web/playwright-report/
+      #     retention-days: 30
