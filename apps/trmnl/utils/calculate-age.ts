@@ -7,6 +7,7 @@ export interface AgeCalculation {
   dob: string;
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: fine for this function
 export function calculateAge(dateOfBirth: string): AgeCalculation {
   const dob = new Date(dateOfBirth);
   const today = new Date();

@@ -1,6 +1,7 @@
 "use client";
 
 import copy from "clipboard-copy";
+// biome-ignore lint/performance/noNamespaceImport: fine
 import * as React from "react";
 
 import { Button } from "../components/button";
@@ -8,7 +9,10 @@ import { CheckIcon, CopyIcon } from "../components/icons";
 import { ScrollArea, ScrollBar } from "../components/scroll-area";
 import { cn } from "../lib/utils";
 
-type CodeBlockCtx = { codeId: string; titleId: string };
+interface CodeBlockCtx {
+  codeId: string;
+  titleId: string;
+}
 const CodeBlockContext = React.createContext<CodeBlockCtx>({
   codeId: "",
   titleId: "",
@@ -25,9 +29,8 @@ export function Root({
 
   return (
     <CodeBlockContext.Provider value={context}>
-      <div
+      <figure
         aria-labelledby={titleId}
-        role="figure"
         {...props}
         className={cn(
           // From .CodeBlockRoot :contentReference[oaicite:1]{index=1}
@@ -76,7 +79,7 @@ export function Panel({
       className={cn(
         // From .CodeBlockPanel :contentReference[oaicite:2]{index=2}
         "flex h-9 items-center justify-between whitespace-nowrap px-3 text-xs leading-none",
-        "rounded-t-md border-b border-border bg-muted text-muted-foreground",
+        "rounded-t-md border-border border-b bg-muted text-muted-foreground",
         // Scroll: overflow-x, hide scrollbars
         "overflow-x-auto overflow-y-hidden overscroll-x-contain",
         "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
@@ -88,7 +91,7 @@ export function Panel({
       <div
         className={cn(
           // From .CodeBlockPanelTitle :contentReference[oaicite:3]{index=3}
-          "text-sm font-normal text-foreground/80"
+          "font-normal text-foreground/80 text-sm"
         )}
         id={titleId}
       >
@@ -141,7 +144,7 @@ export function Pre({
         {...props}
         className={cn(
           // From .CodeBlockPre :contentReference[oaicite:5]{index=5}
-          "cursor-text rounded-md bg-background text-xs leading-5 text-foreground outline-none",
+          "cursor-text rounded-md bg-background text-foreground text-xs leading-5 outline-none",
           "py-2",
           // Scroll behavior inside the <pre>
           "flex overflow-auto overscroll-x-contain",

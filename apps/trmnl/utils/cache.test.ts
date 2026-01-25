@@ -151,7 +151,7 @@ describe("cache", () => {
 
   describe("ONE_DAY constant", () => {
     it("equals 86400 seconds", () => {
-      expect(ONE_DAY).toBe(86400);
+      expect(ONE_DAY).toBe(86_400);
     });
   });
 });

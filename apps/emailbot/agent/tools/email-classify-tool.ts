@@ -54,7 +54,7 @@ export const classifyEmailTool = (env: Env) =>
       try {
         const model = await retrieveModel(env);
 
-        const message = state.messages[state.messages.length - 1];
+        const message = state.messages.at(-1);
         const contextMessages = state.messages
           .slice(0, -1)
           .slice(-10)
@@ -81,7 +81,7 @@ export const classifyEmailTool = (env: Env) =>
           output: Output.object({
             schema: EmailClassificationSchema,
           }),
-          prompt: prompt,
+          prompt,
         });
 
         log.info("[classify-tool] completed", {

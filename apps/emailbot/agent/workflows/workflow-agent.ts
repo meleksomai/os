@@ -68,7 +68,7 @@ export class WorkflowAgent<TOOLS extends ToolSet, INPUT, OUTPUT>
   /**
    * Execute the workflow - implements AgentExecutor interface
    */
-  async execute(input: INPUT): Promise<AgentResult<OUTPUT>> {
+  execute(input: INPUT): Promise<AgentResult<OUTPUT>> {
     const executeTool = this.createExecuteTool();
     return this.settings.run({ executeTool }, input);
   }

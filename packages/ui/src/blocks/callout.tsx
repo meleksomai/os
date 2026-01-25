@@ -9,27 +9,27 @@ import {
 import { cn } from "../lib/utils";
 
 const calloutVariants = cva(
-  "flex gap-3 rounded-lg border px-4 py-3 flex-1 min-w-0 text-sm leading-relaxed [&_[data-slot=icon]]:mt-1.5 [&_[data-slot=icon]]:size-4 [&_[data-slot=icon]]:shrink-0 [&_[data-slot=title]]:font-medium",
+  "flex min-w-0 flex-1 gap-3 rounded-lg border px-4 py-3 text-sm leading-relaxed [&_[data-slot=icon]]:mt-1.5 [&_[data-slot=icon]]:size-4 [&_[data-slot=icon]]:shrink-0 [&_[data-slot=title]]:font-medium",
   {
     variants: {
       type: {
-        note: "border-blue-200 dark:border-blue-800/60 [&_[data-slot=icon]]:text-blue-500 dark:[&_[data-slot=icon]]:text-blue-400 text-blue-700 dark:text-blue-300",
+        note: "border-blue-200 text-blue-700 dark:border-blue-800/60 dark:text-blue-300 [&_[data-slot=icon]]:text-blue-500 dark:[&_[data-slot=icon]]:text-blue-400",
         default:
-          "border-gray-200 dark:border-gray-700 [&_[data-slot=icon]]:text-gray-500 dark:[&_[data-slot=icon]]:text-gray-400 text-gray-600 dark:text-gray-400 [&_[data-slot=title]]:text-gray-700 dark:[&_[data-slot=title]]:text-gray-300",
+          "border-gray-200 text-gray-600 dark:border-gray-700 dark:text-gray-400 [&_[data-slot=icon]]:text-gray-500 dark:[&_[data-slot=icon]]:text-gray-400 [&_[data-slot=title]]:text-gray-700 dark:[&_[data-slot=title]]:text-gray-300",
         secondary:
-          "border-gray-300 dark:border-gray-600 [&_[data-slot=icon]]:text-gray-500 dark:[&_[data-slot=icon]]:text-gray-400 text-gray-600 dark:text-gray-400 [&_[data-slot=title]]:text-gray-700 dark:[&_[data-slot=title]]:text-gray-300",
-        tip: "border-green-200 dark:border-green-800/60 [&_[data-slot=icon]]:text-green-500 dark:[&_[data-slot=icon]]:text-green-400 text-green-700 dark:text-green-300",
+          "border-gray-300 text-gray-600 dark:border-gray-600 dark:text-gray-400 [&_[data-slot=icon]]:text-gray-500 dark:[&_[data-slot=icon]]:text-gray-400 [&_[data-slot=title]]:text-gray-700 dark:[&_[data-slot=title]]:text-gray-300",
+        tip: "border-green-200 text-green-700 dark:border-green-800/60 dark:text-green-300 [&_[data-slot=icon]]:text-green-500 dark:[&_[data-slot=icon]]:text-green-400",
         success:
-          "border-green-200 dark:border-green-800/60 [&_[data-slot=icon]]:text-green-500 dark:[&_[data-slot=icon]]:text-green-400 text-green-700 dark:text-green-300",
+          "border-green-200 text-green-700 dark:border-green-800/60 dark:text-green-300 [&_[data-slot=icon]]:text-green-500 dark:[&_[data-slot=icon]]:text-green-400",
         important:
-          "border-violet-200 dark:border-violet-800/60 [&_[data-slot=icon]]:text-violet-500 dark:[&_[data-slot=icon]]:text-violet-400 text-violet-700 dark:text-violet-300",
-        cyan: "border-cyan-200 dark:border-cyan-800/60 [&_[data-slot=icon]]:text-cyan-500 dark:[&_[data-slot=icon]]:text-cyan-400 text-cyan-700 dark:text-cyan-300",
+          "border-violet-200 text-violet-700 dark:border-violet-800/60 dark:text-violet-300 [&_[data-slot=icon]]:text-violet-500 dark:[&_[data-slot=icon]]:text-violet-400",
+        cyan: "border-cyan-200 text-cyan-700 dark:border-cyan-800/60 dark:text-cyan-300 [&_[data-slot=icon]]:text-cyan-500 dark:[&_[data-slot=icon]]:text-cyan-400",
         warning:
-          "border-amber-200 dark:border-amber-700/60 [&_[data-slot=icon]]:text-amber-500 dark:[&_[data-slot=icon]]:text-amber-400 text-amber-700 dark:text-amber-300",
+          "border-amber-200 text-amber-700 dark:border-amber-700/60 dark:text-amber-300 [&_[data-slot=icon]]:text-amber-500 dark:[&_[data-slot=icon]]:text-amber-400",
         caution:
-          "border-red-200 dark:border-red-800/60 [&_[data-slot=icon]]:text-red-500 dark:[&_[data-slot=icon]]:text-red-400 text-red-700 dark:text-red-300",
+          "border-red-200 text-red-700 dark:border-red-800/60 dark:text-red-300 [&_[data-slot=icon]]:text-red-500 dark:[&_[data-slot=icon]]:text-red-400",
         error:
-          "border-red-200 dark:border-red-800/60 [&_[data-slot=icon]]:text-red-500 dark:[&_[data-slot=icon]]:text-red-400 text-red-700 dark:text-red-300",
+          "border-red-200 text-red-700 dark:border-red-800/60 dark:text-red-300 [&_[data-slot=icon]]:text-red-500 dark:[&_[data-slot=icon]]:text-red-400",
       },
       variant: {
         outline: "",
@@ -98,7 +98,7 @@ const calloutVariants = cva(
         type: "note",
         variant: "fill",
         className:
-          "bg-blue-100 dark:bg-blue-950/60 border-blue-200 dark:border-blue-800 [&_[data-slot=icon]]:text-blue-600",
+          "border-blue-200 bg-blue-100 dark:border-blue-800 dark:bg-blue-950/60 [&_[data-slot=icon]]:text-blue-600",
       },
       {
         type: "default",
@@ -116,43 +116,43 @@ const calloutVariants = cva(
         type: "tip",
         variant: "fill",
         className:
-          "bg-green-100 dark:bg-green-950/60 border-green-200 dark:border-green-800 [&_[data-slot=icon]]:text-green-600",
+          "border-green-200 bg-green-100 dark:border-green-800 dark:bg-green-950/60 [&_[data-slot=icon]]:text-green-600",
       },
       {
         type: "success",
         variant: "fill",
         className:
-          "bg-green-100 dark:bg-green-950/60 border-green-200 dark:border-green-800 [&_[data-slot=icon]]:text-green-600",
+          "border-green-200 bg-green-100 dark:border-green-800 dark:bg-green-950/60 [&_[data-slot=icon]]:text-green-600",
       },
       {
         type: "important",
         variant: "fill",
         className:
-          "bg-violet-100 dark:bg-violet-950/60 border-violet-200 dark:border-violet-800 [&_[data-slot=icon]]:text-violet-600",
+          "border-violet-200 bg-violet-100 dark:border-violet-800 dark:bg-violet-950/60 [&_[data-slot=icon]]:text-violet-600",
       },
       {
         type: "cyan",
         variant: "fill",
         className:
-          "bg-cyan-100 dark:bg-cyan-950/60 border-cyan-200 dark:border-cyan-800 [&_[data-slot=icon]]:text-cyan-600",
+          "border-cyan-200 bg-cyan-100 dark:border-cyan-800 dark:bg-cyan-950/60 [&_[data-slot=icon]]:text-cyan-600",
       },
       {
         type: "warning",
         variant: "fill",
         className:
-          "bg-amber-100 dark:bg-amber-950/60 border-amber-200 dark:border-amber-700 [&_[data-slot=icon]]:text-amber-600",
+          "border-amber-200 bg-amber-100 dark:border-amber-700 dark:bg-amber-950/60 [&_[data-slot=icon]]:text-amber-600",
       },
       {
         type: "caution",
         variant: "fill",
         className:
-          "bg-red-100 dark:bg-red-950/60 border-red-200 dark:border-red-800 [&_[data-slot=icon]]:text-red-600",
+          "border-red-200 bg-red-100 dark:border-red-800 dark:bg-red-950/60 [&_[data-slot=icon]]:text-red-600",
       },
       {
         type: "error",
         variant: "fill",
         className:
-          "bg-red-100 dark:bg-red-950/60 border-red-200 dark:border-red-800 [&_[data-slot=icon]]:text-red-600",
+          "border-red-200 bg-red-100 dark:border-red-800 dark:bg-red-950/60 [&_[data-slot=icon]]:text-red-600",
       },
     ],
     defaultVariants: {

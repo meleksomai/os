@@ -1,4 +1,4 @@
-import { Memory } from "../types";
+import type { Memory } from "../types";
 
 /**
  * Result from any agent execution

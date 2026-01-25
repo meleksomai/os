@@ -26,7 +26,7 @@ export const generateReplyDraftTool = (env: Env) =>
       try {
         const model = await retrieveModel(env);
 
-        const message = state.messages[state.messages.length - 1];
+        const message = state.messages.at(-1);
         const context = state.context;
         const contextMessages = state.messages
           .slice(0, -1)

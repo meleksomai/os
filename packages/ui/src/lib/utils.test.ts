@@ -8,6 +8,6 @@ describe("cn()", () => {
   });
 
   it("filters falsy values", () => {
-    expect(cn("p-2", false && "p-4", undefined)).toBe("p-2");
+    expect(cn("p-2", false, undefined)).toBe("p-2");
   });
 });

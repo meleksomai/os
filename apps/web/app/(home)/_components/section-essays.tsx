@@ -50,7 +50,7 @@ export function EssaySection({ essays }: { essays?: Omit<Essay, "Essay">[] }) {
           }}
         >
           <Link
-            className="group inline-flex items-center gap-2 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground md:text-base"
+            className="group inline-flex items-center gap-2 font-mono text-muted-foreground text-sm transition-colors hover:text-foreground md:text-base"
             href="/essays"
           >
             Check All Essays

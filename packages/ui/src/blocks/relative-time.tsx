@@ -22,7 +22,7 @@ export function RelativeTime({ date, className }: RelativeTimeProps) {
     };
 
     // Update every minute
-    const interval = setInterval(updateRelativeTime, 60000);
+    const interval = setInterval(updateRelativeTime, 60_000);
 
     return () => clearInterval(interval);
   }, [dateObj]);
@@ -40,7 +40,7 @@ export function RelativeTime({ date, className }: RelativeTimeProps) {
       <TooltipTrigger>
         <span
           className={cn(
-            "cursor-help border-b-2 border-dashed border-muted-foreground/50 hover:border-primary transition-colors",
+            "cursor-help border-muted-foreground/50 border-b-2 border-dashed transition-colors hover:border-primary",
             className
           )}
         >

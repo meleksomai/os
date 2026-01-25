@@ -42,6 +42,7 @@ export const sendEmailTool = (env: Env, state: Memory) =>
       "Send an email. Choose recipient: contact (reply to external person), owner (notify Melek), both (reply + cc owner).",
     inputSchema: SendEmailInputSchema,
     outputSchema: SendOutputSchema,
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: it is what it is
     async execute(input): Promise<ToolResult<SendEmailData>> {
       const startTime = Date.now();
       const from = env.EMAIL_ROUTING_ADDRESS;
@@ -60,6 +61,8 @@ export const sendEmailTool = (env: Env, state: Memory) =>
         case "both":
           to = state.contact ?? undefined;
           cc = env.EMAIL_ROUTING_DESTINATION;
+          break;
+        default:
           break;
       }
 

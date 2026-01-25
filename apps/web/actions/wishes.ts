@@ -13,7 +13,7 @@ export async function submitWish(formData: FormData): Promise<void> {
   const message = formData.get("message") as string;
   const isPublic = formData.get("isPublic") === "on";
 
-  if (!name || !email || !message) {
+  if (!(name && email && message)) {
     throw new Error("Missing required fields");
   }
 

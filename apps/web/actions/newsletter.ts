@@ -14,7 +14,7 @@ export async function subscribeToNewsletter(
   _prevState: SubscribeState,
   formData: FormData
 ): Promise<SubscribeState> {
-  const email = formData.get("email");
+  const email = await formData.get("email");
 
   if (!email || typeof email !== "string") {
     return { success: false, message: "Please enter a valid email" };

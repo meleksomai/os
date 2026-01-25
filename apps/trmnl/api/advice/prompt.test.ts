@@ -42,6 +42,7 @@ describe("prompt", () => {
     const result = prompt(age);
 
     // Should contain one of the topics (in quotes)
+    // biome-ignore lint/performance/useTopLevelRegex: test regex usage
     expect(result).toMatch(/"[\w\s]+"/);
   });
 
@@ -119,8 +120,9 @@ describe("prompt", () => {
         new Date(`2024-03-${String(i).padStart(2, "0")}T12:00:00Z`)
       );
       const result = prompt(age);
+      // biome-ignore lint/performance/useTopLevelRegex: test regex usage
       const match = result.match(/"([^"]+)"/);
-      if (match && match[1]) {
+      if (match?.[1]) {
         topics.add(match[1]);
       }
     }

@@ -125,6 +125,7 @@ describe("logger", () => {
       const transcript = getTranscript();
 
       // Should contain time in HH:MM:SS format
+      // biome-ignore lint/performance/useTopLevelRegex: unit testing
       expect(transcript).toMatch(/\d{2}:\d{2}:\d{2}/);
     });
   });

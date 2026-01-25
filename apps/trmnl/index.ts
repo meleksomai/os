@@ -7,7 +7,7 @@ import adviceRoute from "./api/advice/route";
 const app = new Hono<{ Bindings: Env }>();
 
 // Middleware for Bearer Token Authentication
-app.use(async (c, next) => {
+app.use((c, next) => {
   const auth = bearerAuth({
     token: c.env.API_TOKEN,
   });

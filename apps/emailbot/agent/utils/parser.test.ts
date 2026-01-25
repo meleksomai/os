@@ -1,5 +1,5 @@
 import type { AgentEmail } from "agents";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { EmailParser } from "./parser";
 
 describe("EmailParser", () => {

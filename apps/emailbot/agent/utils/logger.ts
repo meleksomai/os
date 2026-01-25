@@ -56,6 +56,9 @@ export function createLogger(namespace: string) {
       case "error":
         console.error(output);
         break;
+      default:
+        console.log(output);
+        break;
     }
   };
 

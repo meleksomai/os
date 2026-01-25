@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: to be resolved */
 "use client";
 
 import NextImage, { type ImageProps as NextImageProps } from "next/image";
@@ -72,7 +73,7 @@ export function ThemeImage({
           {...props}
           {...imageSizingProps}
           alt={alt ?? ""}
-          className="object-contain hidden dark:block"
+          className="hidden object-contain dark:block"
           src={darkSrc!}
         />
       </span>

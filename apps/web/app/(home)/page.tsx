@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getBlogEssays } from "@/app/(blog)/utils";
-import { ContactForm } from "../../components/contact-form";
 import { EssaySection } from "./_components/section-essays";
 import IntroSection from "./_components/section-intro";
 

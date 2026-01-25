@@ -1,7 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import type { LanguageModel } from "ai";
 
-export async function retrieveModel(env: Env): Promise<LanguageModel> {
+export function retrieveModel(env: Env): LanguageModel {
   // const url = await env.AI.gateway(env.AI_GATEWAY_ID).getUrl("openai");
 
   const model = createOpenAI({

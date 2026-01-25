@@ -1,5 +1,5 @@
+import path from "node:path";
 import { defineWorkersProject } from "@cloudflare/vitest-pool-workers/config";
-import path from "path";
 
 export default defineWorkersProject({
   environments: {

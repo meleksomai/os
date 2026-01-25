@@ -38,8 +38,8 @@ export const GenericEmail = ({
           >
             {content || ""}
           </Markdown>
-          <Hr className="border-[#cccccc] my-5" />
-          <Text className="text-[#8898aa] text-[12px]"></Text>
+          <Hr className="my-5 border-[#cccccc]" />
+          <Text className="text-[#8898aa] text-[12px]" />
           <Markdown
             markdownCustomStyles={{
               p: {

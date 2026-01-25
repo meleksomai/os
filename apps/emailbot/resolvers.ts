@@ -22,7 +22,7 @@ export function createThreadBasedEmailResolver<Env>(
   agentName: string,
   store: KVNamespace
 ): EmailResolver<Env> {
-  return async (email: ForwardableEmailMessage, env: Env) => {
+  return async (email: ForwardableEmailMessage, _env: Env) => {
     // Determine the thread ID (use first message in thread)
 
     const state = await evaluateState(email, store);
@@ -30,6 +30,7 @@ export function createThreadBasedEmailResolver<Env>(
     switch (state.type) {
       case "NEW_THREAD":
         // Map new thread ID to external person's email
+        // biome-ignore lint/style/noNonNullAssertion: fine
         await store.put(state.threadId!, state.instanceId, {
           expirationTtl: 60 * 60 * 24 * 90, // 90 days
         });
@@ -86,13 +87,12 @@ export async function evaluateState(
       instanceId: existingMapping,
       threadId,
     });
-  } else {
-    return Promise.resolve({
-      type: "NEW_THREAD",
-      instanceId: email.from.toLocaleLowerCase(),
-      threadId,
-    });
   }
+  return Promise.resolve({
+    type: "NEW_THREAD",
+    instanceId: email.from.toLocaleLowerCase(),
+    threadId,
+  });
 }
 
 /**
@@ -110,6 +110,7 @@ export function extractThreadId(email: ForwardableEmailMessage): string | null {
 
   if (references) {
     // References contains space-separated message IDs, oldest first
+    // biome-ignore lint/performance/useTopLevelRegex: fine
     const refList = references.split(/[\s,]+/).filter((r) => r.trim());
     if (refList.length > 0) {
       return refList[0] || null; // Return the root message ID

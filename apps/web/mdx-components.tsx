@@ -1,4 +1,5 @@
 import { Callout } from "@workspace/ui/blocks/callout";
+// biome-ignore lint/performance/noNamespaceImport: needed for MDX components
 import * as CodeBlock from "@workspace/ui/blocks/code-block";
 import {
   Heading1,
@@ -13,7 +14,7 @@ import { cn } from "@workspace/ui/lib/utils";
 import type { MDXComponents } from "mdx/types";
 import Image, { type ImageProps } from "next/image";
 import Link from "next/link";
-import { type ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 
 type ParagraphProps = ComponentPropsWithoutRef<"p">;
 type AnchorProps = ComponentPropsWithoutRef<"a">;
@@ -102,7 +103,7 @@ const components = {
     <CodeBlock.Code
       className={cn(
         className,
-        " inline-code:bg-slate-100  dark:inline-code:bg-slate-800 inline-code:rounded inline-code:px-[0.3em] inline-code:py-[0.2em] inline-code:text-[0.9em]"
+        "inline-code:rounded inline-code:bg-slate-100 inline-code:px-[0.3em] inline-code:py-[0.2em] inline-code:text-[0.9em] dark:inline-code:bg-slate-800"
       )}
       {...props}
     />
@@ -127,7 +128,7 @@ const components = {
       {...props}
       className={[
         // your styling
-        "align-super text-[0.7em] leading-none text-muted-foreground hover:text-foreground",
+        "align-super text-[0.7em] text-muted-foreground leading-none hover:text-foreground",
         className,
       ]
         .filter(Boolean)
@@ -144,7 +145,7 @@ const components = {
           {...props}
           className={[
             "mt-10 border-t pt-6",
-            "mt-8 text-sm text-muted-foreground ",
+            "mt-8 text-muted-foreground text-sm",
             className,
           ]}
         />

@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { formatPublishedAtWithRelative } from "@/lib/date";
 
 interface Update {
@@ -20,11 +19,11 @@ export function Updates() {
   if (updates.length === 0) return null;
 
   return (
-    <div className="mt-12 w-full text-start ">
-      <h3 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+    <div className="mt-12 w-full text-start">
+      <h3 className="mb-4 font-mono text-muted-foreground text-xs uppercase tracking-widest">
         Latest Updates
       </h3>
-      <div className="font-mono text-sm space-y-4 md:space-y-6">
+      <div className="space-y-4 font-mono text-sm md:space-y-6">
         {updates.map((update) => (
           <div className="gap-3 py-1" key={update.date.toISOString()}>
             <p className="shrink-0 text-muted-foreground text-xs">

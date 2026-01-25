@@ -264,6 +264,7 @@ export function FloatingAnimals() {
 
   return (
     <>
+      {/** biome-ignore lint/security/noDangerouslySetInnerHtml: fine */}
       <style dangerouslySetInnerHTML={{ __html: keyframes }} />
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {floatingItems.map((item) => (

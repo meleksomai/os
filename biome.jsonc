@@ -1,16 +1,25 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/core", "ultracite/next"],
-  "linter": {
+  "files": {
     "includes": [
-      "./web/**",
-      "./packages/markdoc/**",
-      // "./packages/ui/**",
-      "./cli/**"
-    ],
+      "!**/node_modules",
+      "!**/dist",
+      "!**/.biome",
+      "!**/.next",
+      "!**/out",
+      // Liquid templates
+      "!**/*.liquid.html"
+    ]
+  },
+  "linter": {
+    "includes": ["./apps/**", "./packages/**"],
     "rules": {
       "performance": {
         "noBarrelFile": "off"
+      },
+      "style": {
+        "useBlockStatements": "off"
       }
     }
   }

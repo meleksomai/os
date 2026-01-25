@@ -9,6 +9,8 @@ export class EmailParser {
   /**
    * Parse raw email into structured Message
    */
+
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: it is what it is
   async parse(email: AgentEmail): Promise<Message> {
     const rawEmail = await email.getRaw();
 
@@ -29,6 +31,7 @@ export class EmailParser {
           typeof recipient === "object" &&
           "address" in recipient
         ) {
+          // biome-ignore lint/style/noNonNullAssertion: fine
           cc.push(recipient.address!);
         }
       }
@@ -44,6 +47,7 @@ export class EmailParser {
       email.headers.get("References") || parsed.references;
     if (referencesHeader) {
       // References can be space or comma separated message IDs
+      // biome-ignore lint/performance/useTopLevelRegex: fine
       const refList = referencesHeader.split(/[\s,]+/).filter((r) => r.trim());
       references.push(...refList);
     }

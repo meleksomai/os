@@ -16,17 +16,17 @@ export default async function Page({
           <div className="animate-fade-slide-up">
             <Heading1>{metadata.title}</Heading1>
           </div>
-          <div className="animate-fade-slide-up animation-delay-150">
+          <div className="animation-delay-150 animate-fade-slide-up">
             <Heading3 className="font-mono text-muted-foreground uppercase">
               {metadata.subtitle}
             </Heading3>
           </div>
-          <div className="animate-fade-slide-up animation-delay-300 py-8 font-mono text-muted-foreground text-xs uppercase md:text-sm">
+          <div className="animation-delay-300 animate-fade-slide-up py-8 font-mono text-muted-foreground text-xs uppercase md:text-sm">
             / {metadata.publishedAtFormatted} / {readingTime.text} /{" "}
             {readingTime.words} words
           </div>
         </div>
-        <div className="animate-fade-slide-up animation-delay-450 prose">
+        <div className="animation-delay-450 prose animate-fade-slide-up">
           <Essay />
         </div>
       </div>

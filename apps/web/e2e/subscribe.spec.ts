@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/performance/useTopLevelRegex: unit testing */
 import { expect, test } from "@playwright/test";
 
 test.describe("Newsletter Subscription", () => {
@@ -84,7 +85,7 @@ test.describe("Newsletter Subscription", () => {
 
     // Wait for success message
     await expect(page.getByText(/you're on the list/i)).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
   });
 
@@ -98,7 +99,7 @@ test.describe("Newsletter Subscription", () => {
     await submitButton.click();
 
     await expect(page.getByText("myemail@example.com")).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
   });
 
@@ -115,7 +116,7 @@ test.describe("Newsletter Subscription", () => {
 
     await expect(
       page.getByRole("button", { name: /subscribe another email/i })
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("can reset form after success", async ({ page }) => {
@@ -129,7 +130,7 @@ test.describe("Newsletter Subscription", () => {
 
     // Wait for success
     await expect(page.getByText(/you're on the list/i)).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
 
     // Click reset button
@@ -162,7 +163,7 @@ test.describe("Newsletter Subscription", () => {
 
     // Wait for error message
     await expect(page.getByText(/something went wrong/i)).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
   });
 
@@ -196,7 +197,7 @@ test.describe("Newsletter Subscription", () => {
 
     // Wait for error
     await expect(page.getByText(/something went wrong/i)).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
 
     // Click try again - use force to handle potential overlay issues

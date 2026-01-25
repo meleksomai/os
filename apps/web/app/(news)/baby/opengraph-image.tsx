@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/correctness/useImageSize: this is fine */
+/** biome-ignore-all lint/performance/noImgElement: this is fine */
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { isBabyBorn } from "@workspace/flags";

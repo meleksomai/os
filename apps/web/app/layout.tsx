@@ -2,8 +2,6 @@ import { Geist, Geist_Mono, Lora } from "next/font/google";
 
 import "./styles.css";
 import { VercelToolbar } from "@vercel/toolbar/next";
-import Footer from "@/components/footer";
-import Navbar from "@/components/navbar";
 import { Providers } from "@/components/providers";
 
 const fontSans = Geist({

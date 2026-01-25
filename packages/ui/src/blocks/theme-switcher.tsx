@@ -23,9 +23,9 @@ const themes = [
     label: "Dark theme",
   },
 ];
-export type ThemeSwitcherProps = {
+export interface ThemeSwitcherProps {
   className?: string;
-};
+}
 export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false); // set to false initially to prevent hydration mismatch
@@ -66,7 +66,7 @@ export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
           >
             {isActive && (
               <motion.div
-                className="absolute inset-0 rounded-full bg-secondary -z-10"
+                className="absolute inset-0 -z-10 rounded-full bg-secondary"
                 layoutId="activeTheme"
                 transition={{ type: "spring", duration: 0.5 }}
               />

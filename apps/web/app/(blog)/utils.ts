@@ -5,7 +5,7 @@ import type { JSX } from "react";
 
 import { formatPublishedAt, parsePublishedAt } from "@/lib/date";
 
-export type Metadata = {
+export interface Metadata {
   title: string;
   subtitle: string;
   featured: boolean;
@@ -14,9 +14,9 @@ export type Metadata = {
   audio?: string;
   image?: string;
   category: string;
-};
+}
 
-export type Essay = {
+export interface Essay {
   slug: string;
   metadata: Metadata;
   readingTime: {
@@ -25,7 +25,7 @@ export type Essay = {
     words: number;
   };
   Essay: () => JSX.Element;
-};
+}
 
 const mdxRegex = /\.mdx$/;
 
@@ -38,7 +38,6 @@ function getMDXSlugs(dir: string) {
 
 async function readMDXFile(slug: string): Promise<Essay> {
   const {
-    // biome-ignore lint/nursery/noShadow: fine
     default: Essay,
     metadata,
     readingTime,

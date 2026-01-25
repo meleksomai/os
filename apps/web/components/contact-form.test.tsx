@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+/** biome-ignore-all lint/performance/useTopLevelRegex: unit testing */
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the action
@@ -115,7 +116,7 @@ describe("ContactForm", () => {
   });
 
   describe("button states", () => {
-    it("subscribe another email button has correct type", async () => {
+    it("subscribe another email button has correct type", () => {
       render(<ContactForm />);
 
       // Find all buttons with type="button" (not submit)

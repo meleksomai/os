@@ -10,7 +10,6 @@ import {
 } from "@workspace/ui/components/icons";
 import { useReveal } from "@workspace/ui/hooks/use-reveal";
 import { cn } from "@workspace/ui/lib/utils";
-import type React from "react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { subscribeToNewsletter } from "@/actions/newsletter";
 
@@ -90,7 +89,7 @@ export function ContactForm() {
           </div>
           <p
             className={cn(
-              "mt-8 mb-2 text-base text-muted-foreground md:text-lg transition-all duration-700",
+              "mt-8 mb-2 text-base text-muted-foreground transition-all duration-700 md:text-lg",
               isVisible
                 ? "translate-x-0 opacity-100"
                 : "-translate-x-14 opacity-0"
@@ -119,7 +118,7 @@ export function ContactForm() {
               )}
             >
               <form action={formAction}>
-                <div className="w-full sm:w-md flex flex-col gap-3 sm:flex-row sm:gap-0 sm:items-center sm:border sm:border-border sm:bg-background sm:p-1.5 sm:pl-5">
+                <div className="flex w-full flex-col gap-3 sm:w-md sm:flex-row sm:items-center sm:gap-0 sm:border sm:border-border sm:bg-background sm:p-1.5 sm:pl-5">
                   <input
                     className={cn(
                       "flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground/60",
@@ -139,7 +138,7 @@ export function ContactForm() {
 
                   <button
                     className={cn(
-                      "flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium transition-all duration-300",
+                      "flex items-center justify-center gap-2 px-6 py-3 font-medium text-sm transition-all duration-300",
                       "bg-foreground text-background",
                       "hover:bg-foreground/90 active:scale-[0.98]",
                       "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-foreground",
@@ -159,7 +158,7 @@ export function ContactForm() {
                   </button>
                 </div>
               </form>
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="mt-2 text-muted-foreground text-xs">
                 No spam, just updates. Unsubscribe anytime.
               </p>
             </div>
@@ -180,16 +179,16 @@ export function ContactForm() {
                       className={cn(
                         "h-5 w-5",
                         displayState === "success" &&
-                          "animate-in zoom-in duration-300"
+                          "zoom-in animate-in duration-300"
                       )}
                       strokeWidth={2.5}
                     />
                   </div>
                   <div className="flex-1">
-                    <p className="text-lg font-semibold text-foreground">
+                    <p className="font-semibold text-foreground text-lg">
                       You're on the list!
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-muted-foreground text-sm">
                       We'll send updates to{" "}
                       <span className="font-medium text-foreground">
                         {email}
@@ -199,7 +198,7 @@ export function ContactForm() {
                 </div>
 
                 <button
-                  className="group mt-4 flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="group mt-4 flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground"
                   onClick={handleReset}
                   type="button"
                 >
@@ -225,23 +224,23 @@ export function ContactForm() {
                       className={cn(
                         "h-5 w-5",
                         displayState === "error" &&
-                          "animate-in zoom-in duration-300"
+                          "zoom-in animate-in duration-300"
                       )}
                       strokeWidth={2.5}
                     />
                   </div>
                   <div className="flex-1">
-                    <p className="text-lg font-semibold text-foreground">
+                    <p className="font-semibold text-foreground text-lg">
                       Something went wrong
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-muted-foreground text-sm">
                       {actionState.message || "Please try again in a moment"}
                     </p>
                   </div>
                 </div>
 
                 <button
-                  className="group mt-4 flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="group mt-4 flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground"
                   onClick={handleReset}
                   type="button"
                 >

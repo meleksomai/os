@@ -1,4 +1,9 @@
-import { cloneElement, isValidElement, ReactElement, ReactNode } from "react";
+import {
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
 const GITHUB_ALERT_REGEX = /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/i;
 
@@ -52,6 +57,7 @@ function removeAlertMarker(node: ReactNode, marker: RegExp): ReactNode {
           // If the result is a React element without a key, clone it with a key
           if (isValidElement(result) && result.key === null) {
             return cloneElement(result as ReactElement, {
+              // biome-ignore lint/suspicious/noArrayIndexKey: acceptable here
               key: `alert-child-${index}`,
             });
           }
@@ -61,6 +67,7 @@ function removeAlertMarker(node: ReactNode, marker: RegExp): ReactNode {
       // Ensure existing elements have keys
       if (isValidElement(child) && child.key === null) {
         return cloneElement(child as ReactElement, {
+          // biome-ignore lint/suspicious/noArrayIndexKey: acceptable here
           key: `alert-child-${index}`,
         });
       }

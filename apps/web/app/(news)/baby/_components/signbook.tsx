@@ -52,7 +52,7 @@ export function SignBook() {
         {submitted ? (
           <div className="py-8 text-center">
             <p className="text-lg">Thank you for your wishes!</p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-muted-foreground text-sm">
               Your message has been received.
             </p>
           </div>
@@ -102,13 +102,13 @@ export function SignBook() {
                     type="checkbox"
                   />
                   <Label
-                    className="text-xs text-muted-foreground"
+                    className="text-muted-foreground text-xs"
                     htmlFor="isPublic"
                   >
                     Share publicly on the page
                   </Label>
                 </div>
-                <p className="text-xs text-muted-foreground/70 pl-6">
+                <p className="pl-6 text-muted-foreground/70 text-xs">
                   Public messages are reviewed before being displayed
                 </p>
               </div>

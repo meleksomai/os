@@ -36,7 +36,7 @@ function TimeBlock({ value, label }: { value: number; label: string }) {
           {String(value).padStart(2, "0")}
         </span>
       </div>
-      <span className="mt-2 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+      <span className="mt-2 font-mono text-muted-foreground text-xs uppercase tracking-wider">
         {label}
       </span>
     </div>
@@ -66,7 +66,7 @@ export function Countdown() {
             <TimeBlock key={label} label={label} value={0} />
           ))}
         </div>
-        <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
+        <p className="font-mono text-muted-foreground text-sm uppercase tracking-widest">
           Scheduled Delivery
         </p>
       </div>
@@ -76,10 +76,10 @@ export function Countdown() {
   if (!timeLeft) {
     return (
       <div className="flex flex-col items-center gap-4">
-        <p className="font-serif text-2xl italic text-foreground/80">
+        <p className="font-serif text-2xl text-foreground/80 italic">
           Anytime soon...
         </p>
-        <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
+        <p className="font-mono text-muted-foreground text-sm uppercase tracking-widest">
           Status: In Progress
         </p>
       </div>
@@ -94,7 +94,7 @@ export function Countdown() {
         <TimeBlock label="Min" value={timeLeft.minutes} />
         <TimeBlock label="Sec" value={timeLeft.seconds} />
       </div>
-      <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground">
+      <p className="font-mono text-muted-foreground text-sm uppercase tracking-widest">
         Scheduled Delivery
       </p>
     </div>

@@ -17,7 +17,7 @@ const ContextUpdateOutputSchema = z.object({
     .optional(),
 });
 
-export const contextUpdateTool = (env: Env, state: Memory) =>
+export const contextUpdateTool = (env: Env, _state: Memory) =>
   tool({
     description:
       "Update the agent's context based on a new email from the owner. Use this to extract and store relevant information that will help handle future emails.",
@@ -33,7 +33,7 @@ export const contextUpdateTool = (env: Env, state: Memory) =>
       const startTime = Date.now();
       try {
         const model = await retrieveModel(env);
-        const message = inputState.messages[inputState.messages.length - 1];
+        const message = inputState.messages.at(-1);
 
         const prompt = `Current context:
         ${inputState.context || "(empty)"}

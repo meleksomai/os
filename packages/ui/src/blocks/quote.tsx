@@ -12,10 +12,10 @@ export function Quote({ children, author, source, className }: QuoteProps) {
   return (
     <figure className={cn("my-12 max-w-4xl", className)}>
       <blockquote className="relative">
-        <span className="absolute -left-4 md:-left-5 text-4xl md:text-5xl font-serif">
+        <span className="absolute -left-4 font-serif text-4xl md:-left-5 md:text-5xl">
           “
         </span>
-        <div className="text-2xl md:text-3xl leading-10 font-normal font-serif text-balance">
+        <div className="text-balance font-normal font-serif text-2xl leading-10 md:text-3xl">
           {children}
         </div>
       </blockquote>

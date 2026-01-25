@@ -16,7 +16,7 @@ export const CACHE_KEYS = {
 } as const;
 
 // TTL in seconds
-export const ONE_DAY = 86400;
+export const ONE_DAY = 86_400;
 
 // Simple get with validation
 export async function getAdvice(kv: KVNamespace): Promise<Advice | null> {

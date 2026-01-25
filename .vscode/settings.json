@@ -34,5 +34,8 @@
   },
   "files.associations": {
     "wrangler.json": "jsonc"
+  },
+  "[liquid]": {
+    "editor.defaultFormatter": "Shopify.theme-check-vscode"
   }
 }

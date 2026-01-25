@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: unit testing */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { cronJob } from "./cron";
 

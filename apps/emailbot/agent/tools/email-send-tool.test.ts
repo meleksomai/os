@@ -14,7 +14,7 @@ vi.mock("resend", () => ({
 
 // Import mocked Resend to control behavior per test
 import { Resend } from "resend";
-import { ToolResult } from "../workflows/agent";
+import type { ToolResult } from "../workflows/agent";
 
 const mockEnv: Env = {
   EMAIL_ROUTING_ADDRESS: "agent@example.com",
