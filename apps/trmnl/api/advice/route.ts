@@ -1,20 +1,22 @@
-import { generateText } from "ai";
 import { Hono } from "hono";
-import { calculateAge } from "@/utils/calculate-age";
-import { retrieveModel } from "@/utils/model";
-import { prompt } from "./prompt";
+import { generateAndCacheAdvice } from "@/api/advice/utils";
+import { getAdvice } from "@/utils/cache";
 
 const advice = new Hono<{ Bindings: Env }>();
 
 advice.get("/", async (c) => {
-  // Retrieve the information from the KV
-  const cached = await c.env.TRMNL_CACHE_KV.get("advice-latest");
+  const data = await getAdvice(c.env.TRMNL_CACHE_KV);
 
-  // Parse the cached data
-  const data = JSON.parse(cached || "{}");
+  if (!data) {
+    return c.json({ error: "No advice available" }, 404);
+  }
 
-  // Return the result as JSON
   return c.json(data);
+});
+
+advice.get("/refresh", async (c) => {
+  const newAdvice = await generateAndCacheAdvice(c.env);
+  return c.json(newAdvice);
 });
 
 export default advice;

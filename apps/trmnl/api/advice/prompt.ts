@@ -1,27 +1,46 @@
-import { AgeCalculation } from "../../utils/calculate-age";
+import type { AgeCalculation } from "@/utils/calculate-age";
 
-// Usage in your prompt
-export const prompt = (
-  age: AgeCalculation
-) => `You are a knowledgeable parenting advisor specializing in child development and evidence-based parenting practices.
+/** Parenting topics to rotate through for comprehensive coverage */
+const TOPICS = [
+  "sleep habits and routines",
+  "nutrition and feeding",
+  "emotional regulation",
+  "motor skill development",
+  "language and communication",
+  "social development",
+  "cognitive stimulation",
+  "safety and childproofing",
+  "bonding and attachment",
+  "play and learning",
+  "health and wellness",
+  "discipline and boundaries",
+  "independence and self-care",
+  "sensory development",
+  "routine and transitions",
+] as const;
 
-INPUT:
-- Child's date of birth: ${age.dob}
-- Current date: ${new Date().toISOString().split("T")[0]}
-- Child's current age: ${age.description} (${age.totalMonths} months total)
+/** Select a topic based on current date (deterministic per day, rotates through all topics) */
+function getTodaysTopic(): string {
+  const today = new Date();
+  const dayOfYear = Math.floor(
+    (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
+  const index = dayOfYear % TOPICS.length;
+  return TOPICS[index] ?? TOPICS[0];
+}
 
-TASK:
-Provide parenting advice specifically tailored to this child's current developmental stage. Your advice should:
-1. Be age-appropriate and developmentally relevant
-2. Draw from evidence-based parenting research, pediatric guidelines, and child development science
-3. Focus on 2-3 key areas most relevant to this age (e.g., sleep, nutrition, emotional regulation, motor skills, social development, language acquisition)
-4. Be practical and actionable for parents
-5. Include insights that reflect current best practices in child development
+export const prompt = (age: AgeCalculation) => {
+  const topic = getTodaysTopic();
 
-REQUIREMENTS:
-- Use reputable sources such as: AAP (American Academy of Pediatrics), CDC, peer-reviewed research, established parenting researchers (e.g., Gottman Institute, Dr. Becky Kennedy, Janet Lansbury)
-- Provide specific, actionable guidance rather than generic advice
-- Consider the progressive nature of parenting - how this stage builds on previous ones and prepares for future ones
-- Be supportive and non-judgmental in tone
+  return `You are a parenting advisor. Give ONE brief, actionable tip about "${topic}" for a ${age.description} child.
 
-Ensure all sources are real to reputable organizations or research.`;
+RULES:
+- Maximum 50 words
+- Be specific to this age
+- Evidence-based (AAP, CDC, or established research)
+- Practical and actionable
+- No greetings, sign-offs, or fluff
+
+Respond with just the tip, nothing else.`;
+};
