@@ -9,5 +9,14 @@
   },
   "ai": {
     "binding": "AI"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "TRMNL_CACHE_KV",
+      "id": "a0ae385ba769493ea82b1a58c298c7d7"
+    }
+  ],
+  "triggers": {
+    "crons": ["0 3 * * *"]
   }
 }

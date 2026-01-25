@@ -7,23 +7,14 @@ import { prompt } from "./prompt";
 const advice = new Hono<{ Bindings: Env }>();
 
 advice.get("/", async (c) => {
-  // Calculate age
-  const age = calculateAge(c.env.BABY_DOB);
+  // Retrieve the information from the KV
+  const cached = await c.env.TRMNL_CACHE_KV.get("advice-latest");
 
-  // Generate parenting advice using the model
-  const model = await retrieveModel(c.env);
-
-  const { text } = await generateText({
-    model: model,
-    prompt: prompt(age),
-  });
+  // Parse the cached data
+  const data = JSON.parse(cached || "{}");
 
   // Return the result as JSON
-  return c.json({
-    date: new Date().toISOString(),
-    summary: text,
-    age: age.description,
-  });
+  return c.json(data);
 });
 
 export default advice;
