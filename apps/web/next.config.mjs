@@ -5,6 +5,17 @@ import createWithVercelToolbar from "@vercel/toolbar/plugins/next";
 const nextConfig = {
   transpilePackages: ["@workspace/ui"],
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  images: {
+    remotePatterns: [
+      // Vercel Blob Storage
+      {
+        hostname: "*.blob.vercel-storage.com",
+        protocol: "https",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 /** @type {import('rehype-pretty-code').Options} */
