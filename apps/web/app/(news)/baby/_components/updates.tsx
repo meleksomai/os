@@ -9,9 +9,9 @@ interface Update {
 
 const updates: Update[] = [
   {
-    date: new Date("2026-01-22T10:00:00"),
+    date: new Date("2026-01-26T10:45:00"),
     message:
-      "We delayed the scheduled delivery to avoid any risk to infecting the baby with a cold I caught. New estimated delivery date is now January 26th.",
+      "We are heading to the hospital for delivery. Mommy is doing great and we can't wait to meet our little one! We will keep you updated.",
   },
 ];
 

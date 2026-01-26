@@ -79,9 +79,6 @@ export function Countdown() {
         <p className="font-serif text-2xl text-foreground/80 italic">
           Anytime soon...
         </p>
-        <p className="font-mono text-muted-foreground text-sm uppercase tracking-widest">
-          Status: In Progress
-        </p>
       </div>
     );
   }
