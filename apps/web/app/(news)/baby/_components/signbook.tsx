@@ -68,18 +68,12 @@ export function SignBook() {
             <div className="mt-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Your name</Label>
-                <Input id="name" name="name" placeholder="John Doe" required />
+                <Input id="name" name="name" required />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  placeholder="john@example.com"
-                  required
-                  type="email"
-                />
+                <Input id="email" name="email" required type="email" />
               </div>
 
               <div className="space-y-2">

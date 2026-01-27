@@ -1,23 +1,24 @@
+"use client";
+
+import { ExpandableImage } from "@workspace/ui/blocks/expandable-image";
 import BabyName from "./baby-name";
 
 interface BirthDetails {
   date: string;
   time: string;
   weight: string;
-  height: string;
 }
 
 const BIRTH_DETAILS: BirthDetails = {
-  date: "January 26, 2026",
-  time: "00:00",
-  weight: "0.0 kg",
-  height: "00 cm",
+  date: "January 27, 2026",
+  time: "03:35 P.M.",
+  weight: "3.0 kg",
 };
 
 export function BornView() {
   return (
-    <div className="flex flex-col items-center gap-8 text-center">
-      <p className="font-mono text-muted-foreground text-sm uppercase tracking-widest">
+    <div className="flex w-full max-w-2xl flex-col items-center gap-8 text-center">
+      <p className="font-mono text-2xl text-muted-foreground uppercase tracking-widest">
         Welcome to the world
       </p>
 
@@ -49,15 +50,14 @@ export function BornView() {
               Weight
             </span>
           </div>
-
-          <div className="flex flex-col items-center">
-            <span className="font-serif text-xl">{BIRTH_DETAILS.height}</span>
-            <span className="font-mono text-muted-foreground text-xs uppercase tracking-wider">
-              Height
-            </span>
-          </div>
         </div>
       </div>
+
+      <ExpandableImage
+        alt="Baby Sarah Janet Somai shortly after birth"
+        className="rounded-lg"
+        src="https://7civhc6kzuyy90te.public.blob.vercel-storage.com/baby/baby_mon-DRtNwVBsw2DW1rciuXGI4goGpcfHp1"
+      />
     </div>
   );
 }

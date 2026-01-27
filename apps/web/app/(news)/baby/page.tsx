@@ -1,14 +1,11 @@
-import { enableShareWishes, isBabyBorn } from "@workspace/flags";
+import { enableShareWishes } from "@workspace/flags";
 import { ThemeSwitcher } from "@workspace/ui/blocks/theme-switcher";
 import { LoveIcon } from "@workspace/ui/components/icons";
-import { AwaitingView } from "./_components/awaiting-view";
 import { BornView } from "./_components/born-view";
 import { FloatingAnimals } from "./_components/floating-animals";
 import { SignBook } from "./_components/signbook";
-import { Updates } from "./_components/updates";
 
 export default async function BabyNewsPage() {
-  const IS_BORN = await isBabyBorn();
   const isShareWishesEnabled = await enableShareWishes();
 
   return (
@@ -17,8 +14,8 @@ export default async function BabyNewsPage() {
         <ThemeSwitcher />
       </div>
       <FloatingAnimals />
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center justify-center gap-12 px-6 py-20 sm:px-8 md:py-24 lg:px-16 lg:py-32">
-        {IS_BORN ? <BornView /> : <AwaitingView />}
+      <div className="relative z-10 mx-auto flex w-full flex-col items-center justify-center gap-12 px-6 py-20 sm:px-8 md:py-24 lg:px-16 lg:py-32">
+        <BornView />
         <p className="py-4 text-center font-serif text-2xl text-muted-foreground italic md:py-8">
           Proud parents Imen &amp; Melek
         </p>
@@ -27,9 +24,6 @@ export default async function BabyNewsPage() {
             <SignBook />
           </div>
         ) : null}
-        <div className="pt-12 md:pt-18">
-          <Updates />
-        </div>
       </div>
       <footer className="relative z-10 mt-auto px-6 py-8 text-center sm:px-8 lg:px-16">
         <p className="font-mono text-muted-foreground text-xs">

@@ -80,16 +80,18 @@ export function ExpandableImage({ src, alt, caption }: ExpandableImageProps) {
     };
   }, [isExpanded]);
 
-  const expandedRect = getExpandedRect();
+  const expandedRect = isAnimating ? getExpandedRect() : null;
   const currentRect = isExpanded ? expandedRect : thumbnailRect;
 
   return (
     <>
-      <figure className="mt-4">
+      <figure className="mt-4 w-full max-w-lg">
         {/** biome-ignore lint/a11y/useSemanticElements: fine */}
         <div
           aria-label="Expand image"
-          className="relative aspect-4/3 w-full max-w-md cursor-zoom-in overflow-hidden rounded-lg bg-muted"
+          className={
+            "relative aspect-4/3 w-full cursor-zoom-in overflow-hidden rounded-[12px] bg-muted"
+          }
           onClick={handleExpand}
           onKeyDown={(e) => e.key === "Enter" && handleExpand()}
           ref={thumbnailRef}
@@ -142,7 +144,7 @@ export function ExpandableImage({ src, alt, caption }: ExpandableImageProps) {
             />
           </div>
 
-          {caption && (
+          {caption && expandedRect && (
             <p
               className={`fixed left-0 w-full text-center font-mono text-muted-foreground text-sm transition-opacity duration-300 ${
                 isExpanded ? "opacity-100 delay-150" : "opacity-0"
