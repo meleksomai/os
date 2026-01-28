@@ -86,26 +86,6 @@ export function SignBook() {
                   rows={3}
                 />
               </div>
-
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <input
-                    className="size-4 accent-primary"
-                    id="isPublic"
-                    name="isPublic"
-                    type="checkbox"
-                  />
-                  <Label
-                    className="text-muted-foreground text-xs"
-                    htmlFor="isPublic"
-                  >
-                    Share publicly on the page
-                  </Label>
-                </div>
-                <p className="pl-6 text-muted-foreground/70 text-xs">
-                  Public messages are reviewed before being displayed
-                </p>
-              </div>
             </div>
 
             <AlertDialogFooter className="mt-6">

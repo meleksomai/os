@@ -160,6 +160,9 @@ importers:
       '@workspace/flags':
         specifier: workspace:*
         version: link:../../packages/flags
+      '@workspace/ntfy':
+        specifier: workspace:*
+        version: link:../../packages/ntfy
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -323,6 +326,18 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+
+  packages/ntfy:
+    devDependencies:
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.10.9)(jiti@2.6.1)(jsdom@27.0.0)(lightningcss@1.30.2)(msw@2.12.7(@types/node@24.10.9)(typescript@5.9.3))(yaml@2.8.2)
 
   packages/testing:
     devDependencies:

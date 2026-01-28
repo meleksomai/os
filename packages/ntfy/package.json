@@ -1,0 +1,19 @@
+{
+  "name": "@workspace/ntfy",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

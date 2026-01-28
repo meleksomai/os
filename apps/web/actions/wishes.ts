@@ -3,6 +3,9 @@
 import type { PublicWish } from "@workspace/database";
 import { db } from "@workspace/database";
 import { enableShareWishes } from "@workspace/flags";
+import { publish } from "@workspace/ntfy";
+
+const NTFY_TOPIC = process.env.NTFY_WISHES_ID;
 
 export async function submitWish(formData: FormData): Promise<void> {
   const isShareWishesEnabled = await enableShareWishes();
@@ -23,6 +26,15 @@ export async function submitWish(formData: FormData): Promise<void> {
     message,
     isPublic,
   });
+
+  if (NTFY_TOPIC) {
+    await publish({
+      topic: NTFY_TOPIC,
+      title: `New wish from ${name} (${email})`,
+      message,
+      tags: ["baby", "heart"],
+    });
+  }
 }
 
 export async function getPublicWishes(): Promise<PublicWish[]> {

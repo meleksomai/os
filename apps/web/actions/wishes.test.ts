@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.hoisted(() => {
+  process.env.NTFY_WISHES_ID = "baby-wishes";
+});
+
 vi.mock("@workspace/flags", () => ({
   enableShareWishes: vi.fn(),
 }));
@@ -13,13 +17,19 @@ vi.mock("@workspace/database", () => ({
   },
 }));
 
+vi.mock("@workspace/ntfy", () => ({
+  publish: vi.fn(),
+}));
+
 import { db } from "@workspace/database";
 import { enableShareWishes } from "@workspace/flags";
+import { publish } from "@workspace/ntfy";
 import { getPublicWishes, submitWish } from "./wishes";
 
 const mockSubmit = vi.mocked(db.wishes.submit);
 const mockReadPublic = vi.mocked(db.wishes.readPublic);
 const mockEnableShareWishes = vi.mocked(enableShareWishes);
+const mockPublish = vi.mocked(publish);
 
 function createFormData(data: {
   name?: string;
@@ -39,6 +49,7 @@ describe("wishes actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockEnableShareWishes.mockResolvedValue(true);
+    mockPublish.mockResolvedValue(new Response());
   });
 
   describe("submitWish", () => {
@@ -59,6 +70,12 @@ describe("wishes actions", () => {
         email: "john@example.com",
         message: "Congratulations!",
         isPublic: true,
+      });
+      expect(mockPublish).toHaveBeenCalledWith({
+        topic: "baby-wishes",
+        title: "New wish from John Doe (john@example.com)",
+        message: "Congratulations!",
+        tags: ["baby", "heart"],
       });
     });
 
@@ -93,6 +110,7 @@ describe("wishes actions", () => {
       ).rejects.toThrow("Missing required fields");
 
       expect(mockSubmit).not.toHaveBeenCalled();
+      expect(mockPublish).not.toHaveBeenCalled();
     });
 
     it("throws error when email is missing", async () => {
@@ -106,6 +124,7 @@ describe("wishes actions", () => {
       ).rejects.toThrow("Missing required fields");
 
       expect(mockSubmit).not.toHaveBeenCalled();
+      expect(mockPublish).not.toHaveBeenCalled();
     });
 
     it("throws error when message is missing", async () => {
@@ -119,6 +138,7 @@ describe("wishes actions", () => {
       ).rejects.toThrow("Missing required fields");
 
       expect(mockSubmit).not.toHaveBeenCalled();
+      expect(mockPublish).not.toHaveBeenCalled();
     });
 
     it("propagates database errors", async () => {
@@ -148,6 +168,7 @@ describe("wishes actions", () => {
       );
 
       expect(mockSubmit).not.toHaveBeenCalled();
+      expect(mockPublish).not.toHaveBeenCalled();
     });
   });
 
