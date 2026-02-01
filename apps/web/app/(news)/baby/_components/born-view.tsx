@@ -55,7 +55,7 @@ export function BornView() {
 
       <ExpandableImage
         alt="Baby Sarah Janet Somai shortly after birth"
-        src="https://7civhc6kzuyy90te.public.blob.vercel-storage.com/baby/baby_mon-DRtNwVBsw2DW1rciuXGI4goGpcfHp1"
+        src="https://7civhc6kzuyy90te.public.blob.vercel-storage.com/baby/sarah_picture_day_4-QlM8M6oeFbaT8283NXnCQLJUEfBw5z"
       />
     </div>
   );
