@@ -1,7 +1,10 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: to be resolved */
 "use client";
 
-import NextImage, { type ImageProps as NextImageProps } from "next/image";
+import {
+  Image as NextImage,
+  type ImageProps as NextImageProps,
+} from "../components/image";
 import { cn } from "../lib/utils";
 
 type ThemeImageProps = Omit<NextImageProps, "src" | "fill"> & {

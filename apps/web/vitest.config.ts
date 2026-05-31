@@ -7,14 +7,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "."),
+      "@": path.resolve(import.meta.dirname, "src"),
     },
   },
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     include: ["**/*.test.ts", "**/*.test.tsx"],
-    exclude: ["node_modules", "dist", "e2e", ".next", ".turbo"],
+    exclude: ["node_modules", "dist", "e2e", ".output", ".nitro", ".turbo"],
     globals: true,
   },
 });

@@ -2,26 +2,19 @@
   "name": "@workspace/flags",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
-  },
-  "peerDependencies": {
-    "next": "15.1.7"
-  },
-  "dependencies": {
-    "@vercel/toolbar": "0.1.41",
-    "@workspace/ui": "workspace:*",
-    "flags": "4.0.2",
-    "react": "19.2.3",
-    "zod": "4.2.1"
   },
   "devDependencies": {
     "@types/node": "24.10.4",
-    "@types/react": "19.2.3",
-    "@types/react-dom": "19.2.3",
     "@workspace/typescript-config": "workspace:*",
-    "next": "16.1.4",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
   }
 }
