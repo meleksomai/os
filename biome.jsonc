@@ -8,6 +8,10 @@
       "!**/.biome",
       "!**/.next",
       "!**/out",
+      // TanStack Start build output + generated route tree
+      "!**/.output",
+      "!**/.nitro",
+      "!**/routeTree.gen.ts",
       // Liquid templates
       "!**/*.liquid.html"
     ]
@@ -22,5 +26,21 @@
         "useBlockStatements": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      // TanStack Router file-based routes encode URL segments via literal dots
+      // and the `[.]` escape (e.g. essay.$slug[.]md.ts, sitemap[.]xml.ts), which
+      // the kebab-case filename rule cannot express. The names are mandated by
+      // the route generator.
+      "includes": ["./apps/web/src/routes/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ]
 }

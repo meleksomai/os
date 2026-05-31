@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../components/button";
 import { CloseIcon } from "../components/icons";
+import { Image } from "../components/image";
 
 export interface ExpandableImageProps {
   src: string;

@@ -1,0 +1,111 @@
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@workspace/ui/components/alert-dialog";
+import { Button } from "@workspace/ui/components/button";
+import { LoadingIcon } from "@workspace/ui/components/icons";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { useState } from "react";
+import { submitWishFn } from "@/lib/wishes";
+
+const THANK_YOU_DURATION_MS = 2000;
+
+export function SignBook() {
+  const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (formData: FormData) => {
+    setIsSubmitting(true);
+    try {
+      await submitWishFn({ data: formData });
+      setSubmitted(true);
+      setTimeout(() => {
+        setOpen(false);
+        setSubmitted(false);
+      }, THANK_YOU_DURATION_MS);
+    } catch {
+      // Handle error silently
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <AlertDialog onOpenChange={setOpen} open={open}>
+      <AlertDialogTrigger
+        render={
+          <Button className="mt-8" size="xl">
+            Share your wishes
+          </Button>
+        }
+      />
+      <AlertDialogContent className="max-w-md">
+        {submitted ? (
+          <div className="py-8 text-center">
+            <p className="text-lg">Thank you for your wishes!</p>
+            <p className="mt-2 text-muted-foreground text-sm">
+              Your message has been received.
+            </p>
+          </div>
+        ) : (
+          <form action={handleSubmit}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Share your wishes</AlertDialogTitle>
+              <AlertDialogDescription>
+                Send your warm wishes to baby Sarah and her parents.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <div className="mt-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Your name</Label>
+                <Input id="name" name="name" required />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" name="email" required type="email" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="message">Your message</Label>
+                <Textarea
+                  id="message"
+                  name="message"
+                  placeholder="Write your wishes here..."
+                  required
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <AlertDialogFooter className="mt-6">
+              <AlertDialogCancel disabled={isSubmitting}>
+                Cancel
+              </AlertDialogCancel>
+              <Button disabled={isSubmitting} type="submit">
+                {isSubmitting ? (
+                  <>
+                    <LoadingIcon className="animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send wishes"
+                )}
+              </Button>
+            </AlertDialogFooter>
+          </form>
+        )}
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

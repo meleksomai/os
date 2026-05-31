@@ -72,7 +72,10 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "pnpm run start",
+    /* Nitro node-server reads PORT. On CI build first, then start. */
+    command: process.env.CI
+      ? "pnpm run build && PORT=3000 pnpm run start"
+      : "PORT=3000 pnpm run start",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },

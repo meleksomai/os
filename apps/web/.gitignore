@@ -1,5 +1,13 @@
 .vercel
 
+# TanStack Start / Vite / Nitro build output
+.output
+.nitro
+.vinxi
+dist
+# NOTE: src/routeTree.gen.ts is committed on purpose — `check-types` (tsc) runs
+# before `build` in CI and router.tsx imports it, so it must exist on a fresh checkout.
+
 # Playwright
 node_modules/
 /test-results/

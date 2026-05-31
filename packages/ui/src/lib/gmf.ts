@@ -44,7 +44,7 @@ function removeAlertMarker(node: ReactNode, marker: RegExp): ReactNode {
     // Skip whitespace-only strings
     if (node.trim().length === 0) return node;
     const replaced = node.replace(marker, "");
-    return replaced !== node ? replaced : node;
+    return replaced === node ? node : replaced;
   }
 
   if (Array.isArray(node)) {
