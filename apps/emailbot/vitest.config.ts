@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/noGlobalDirnameFilename: config typechecks as CommonJS where import.meta is unavailable */
 import path from "node:path";
 import { defineWorkersProject } from "@cloudflare/vitest-pool-workers/config";
 

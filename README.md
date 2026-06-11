@@ -12,7 +12,7 @@ This monorepo contains my personal website and the first pieces of an agentic, A
 
 Key pieces:
 
-- **Web app**: Next.js App Router site for essays, research, and portfolio content.
+- **Web app**: TanStack Start site for essays, research, and portfolio content, served from Cloudflare Workers.
 - **Agent runtime**: Cloudflare Worker using the `agents` runtime with Durable Objects for stateful, per-identity agents.
 - **Shared packages**: UI components, transactional email renderer, and shared TypeScript configs.
 
@@ -20,7 +20,7 @@ Key pieces:
 
 ```bash
 apps/
-  web/          # Next.js website (somai.me)
+  web/          # TanStack Start website (somai.me)
   agent/        # Cloudflare Email Routing agent worker
 packages/
   ui/           # Shared UI components + styles
@@ -31,10 +31,10 @@ packages/
 
 ## Tech stack
 
-- Next.js 16 + React 19
-- Tailwind CSS + shadcn/ui + Radix
+- TanStack Start + TanStack Router + React 19
+- Tailwind CSS + shadcn/ui + Base UI
 - Cloudflare Workers + Durable Objects
-- Vercel (web), Wrangler (agent)
+- Wrangler (web + agent)
 - Turborepo + pnpm
 - Biome via Ultracite (format/lint)
 

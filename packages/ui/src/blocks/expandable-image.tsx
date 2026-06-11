@@ -1,4 +1,4 @@
-import Image from "next/image";
+/** biome-ignore-all lint/correctness/useImageSize: images fill a CSS-sized container */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../components/button";
 import { CloseIcon } from "../components/icons";
@@ -98,10 +98,9 @@ export function ExpandableImage({ src, alt, caption }: ExpandableImageProps) {
           role="button"
           tabIndex={0}
         >
-          <Image
+          <img
             alt={alt}
-            className="object-cover transition-transform duration-300 hover:scale-105"
-            fill
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-105"
             src={src || "/placeholder.svg"}
           />
         </div>
@@ -134,12 +133,9 @@ export function ExpandableImage({ src, alt, caption }: ExpandableImageProps) {
               height: currentRect.height,
             }}
           >
-            <Image
+            <img
               alt={alt}
               className="h-full w-full object-cover"
-              fill
-              priority
-              sizes="(max-width: 900px) 90vw, 900px"
               src={src || "/placeholder.svg"}
             />
           </div>

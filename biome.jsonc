@@ -1,17 +1,31 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/core", "ultracite/next"],
+  "extends": ["ultracite/core", "ultracite/react"],
   "files": {
     "includes": [
       "!**/node_modules",
       "!**/dist",
       "!**/.biome",
-      "!**/.next",
+      "!**/.wrangler",
       "!**/out",
+      "!**/routeTree.gen.ts",
       // Liquid templates
       "!**/*.liquid.html"
     ]
   },
+  "overrides": [
+    {
+      // TanStack Router file-based routes use $params, [.] escapes, and {$param} patterns
+      "includes": ["apps/web/src/routes/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ],
   "linter": {
     "includes": ["./apps/**", "./packages/**"],
     "rules": {
