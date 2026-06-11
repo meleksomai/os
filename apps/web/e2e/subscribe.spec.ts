@@ -1,18 +1,10 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: unit testing */
 import { expect, test } from "@playwright/test";
+import { mockServerFn } from "./helpers/server-fn";
+
+const SUCCESS = { success: true, message: "Thanks for subscribing!" };
 
 test.describe("Newsletter Subscription", () => {
-  test.beforeEach(async ({ page }) => {
-    // Mock Resend API to prevent actual API calls
-    await page.route("**/api.resend.com/**", (route) => {
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ id: "contact_mock_123" }),
-      });
-    });
-  });
-
   test("contact form section is visible on homepage", async ({ page }) => {
     await page.goto("/");
 
@@ -50,15 +42,8 @@ test.describe("Newsletter Subscription", () => {
   });
 
   test("shows loading state when submitting", async ({ page }) => {
-    // Delay the response to see loading state
-    await page.route("**/api.resend.com/**", async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ id: "contact_mock_123" }),
-      });
-    });
+    // Delay the mocked RPC response to observe the loading state
+    await mockServerFn(page, { result: SUCCESS, delayMs: 500 });
 
     await page.goto("/");
 
@@ -75,6 +60,8 @@ test.describe("Newsletter Subscription", () => {
   test("shows success message after successful subscription", async ({
     page,
   }) => {
+    await mockServerFn(page, { result: SUCCESS });
+
     await page.goto("/");
 
     const emailInput = page.locator('input[type="email"]');
@@ -90,6 +77,8 @@ test.describe("Newsletter Subscription", () => {
   });
 
   test("displays submitted email in success message", async ({ page }) => {
+    await mockServerFn(page, { result: SUCCESS });
+
     await page.goto("/");
 
     const emailInput = page.locator('input[type="email"]');
@@ -106,6 +95,8 @@ test.describe("Newsletter Subscription", () => {
   test("shows subscribe another email button after success", async ({
     page,
   }) => {
+    await mockServerFn(page, { result: SUCCESS });
+
     await page.goto("/");
 
     const emailInput = page.locator('input[type="email"]');
@@ -120,6 +111,8 @@ test.describe("Newsletter Subscription", () => {
   });
 
   test("can reset form after success", async ({ page }) => {
+    await mockServerFn(page, { result: SUCCESS });
+
     await page.goto("/");
 
     const emailInput = page.locator('input[type="email"]');
@@ -143,15 +136,33 @@ test.describe("Newsletter Subscription", () => {
     await expect(page.locator('input[type="email"]')).toBeVisible();
   });
 
-  test("shows error message when API fails", async ({ page }) => {
-    // Mock API failure
-    await page.route("**/api.resend.com/**", (route) => {
-      route.fulfill({
-        status: 500,
-        contentType: "application/json",
-        body: JSON.stringify({ error: "Internal server error" }),
-      });
+  test("shows server-side validation error without any mocks", async ({
+    page,
+  }) => {
+    // No RPC mock and no Resend env vars on the preview server: the real
+    // server function runs and deterministically reports that subscriptions
+    // are unavailable. This exercises the full client → worker round trip.
+    await page.goto("/");
+
+    const emailInput = page.locator('input[type="email"]');
+    await emailInput.fill("test@example.com");
+
+    const submitButton = page.getByRole("button", { name: /get updates/i });
+    await submitButton.click();
+
+    await expect(
+      page.getByText("Something went wrong", { exact: true })
+    ).toBeVisible({
+      timeout: 10_000,
     });
+    await expect(
+      page.getByText(/subscription temporarily unavailable/i)
+    ).toBeVisible();
+  });
+
+  test("shows error message when API fails", async ({ page }) => {
+    // Mock RPC failure
+    await mockServerFn(page, { status: 500 });
 
     await page.goto("/");
 
@@ -162,7 +173,9 @@ test.describe("Newsletter Subscription", () => {
     await submitButton.click();
 
     // Wait for error message
-    await expect(page.getByText(/something went wrong/i)).toBeVisible({
+    await expect(
+      page.getByText("Something went wrong", { exact: true })
+    ).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -170,20 +183,16 @@ test.describe("Newsletter Subscription", () => {
   test("can retry after error", async ({ page }) => {
     // First request fails
     let requestCount = 0;
-    await page.route("**/api.resend.com/**", (route) => {
+    await page.route("**/_serverFn/**", async (route) => {
       requestCount++;
       if (requestCount === 1) {
-        route.fulfill({
+        await route.fulfill({
           status: 500,
           contentType: "application/json",
           body: JSON.stringify({ error: "Internal server error" }),
         });
       } else {
-        route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ id: "contact_mock_123" }),
-        });
+        await route.continue();
       }
     });
 
@@ -196,7 +205,9 @@ test.describe("Newsletter Subscription", () => {
     await submitButton.click();
 
     // Wait for error
-    await expect(page.getByText(/something went wrong/i)).toBeVisible({
+    await expect(
+      page.getByText("Something went wrong", { exact: true })
+    ).toBeVisible({
       timeout: 10_000,
     });
 

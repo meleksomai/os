@@ -1,70 +1,64 @@
-# somai.me
+# web — somai.me
 
-Welcome to the GitHub repository for my personal website [somai.me](https://somai.me)! I created this site to serve as a portfolio showcasing my projects, research publications, and experiences. It is also a playground to experiment with new web technologies.
+The personal website [somai.me](https://www.somai.me), built with [TanStack Start](https://tanstack.com/start) and deployed to [Cloudflare Workers](https://workers.cloudflare.com/).
 
-## Technologies Used
+## Stack
 
-- **[Next.js 16](https://nextjs.org/)**: The latest version of the React framework, leveraging the App Router and React Server Components.
-- **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework for rapid UI development.
-- **[shadcn/ui](https://ui.shadcn.com/)**: Beautifully designed components built with Radix UI and Tailwind CSS.
-- **[Biome](https://biomejs.dev/)**: A fast formatter and linter, replacing ESLint and Prettier (via [Ultracite](https://github.com/ultracite/ultracite)).
-- **[Radix UI](https://www.radix-ui.com/)**: Unstyled, accessible components for building high-quality design systems.
-- **[Motion](https://motion.dev/)**: A modern animation library for React (formerly Framer Motion).
-- **[MDX](https://mdxjs.com/)**: Markdown for the component era, allowing React components inside Markdown.
-- **[Turborepo](https://turbo.build/)**: High-performance build system for JavaScript and TypeScript monorepos.
-- **[pnpm](https://pnpm.io/)**: Fast, disk space efficient package manager.
-- **[Vercel](https://vercel.com/)**: For hosting and deployment
+- **[TanStack Start](https://tanstack.com/start)** — full-stack React framework (SSR, server functions, server routes) on Vite.
+- **[TanStack Router](https://tanstack.com/router)** — type-safe file-based routing (`src/routes`).
+- **[Cloudflare Workers](https://workers.cloudflare.com/)** — runtime and hosting via `@cloudflare/vite-plugin` + Wrangler.
+- **[MDX](https://mdxjs.com/)** — essays in `content/*.mdx` compiled with the same remark/rehype pipeline as before (GFM footnotes, TOC, reading time, KaTeX, rehype-pretty-code/Shiki).
+- **[Tailwind CSS v4](https://tailwindcss.com/)** + `@workspace/ui` for the design system.
+- **[Satori](https://github.com/vercel/satori) + resvg** — Open Graph images pre-generated at build time (`scripts/generate-og.mjs` → `public/og/`).
 
-## Getting Started
+## Commands
 
-If you're interested in running this project locally, follow the steps below:
+```bash
+pnpm dev          # generate OG images + vite dev server on :3000 (workerd runtime)
+pnpm build        # generate OG images + production build into dist/
+pnpm start        # serve the production build on :4173 (vite preview, workerd)
+pnpm test         # vitest unit tests
+pnpm e2e          # Playwright tests against the production build (run build first)
+pnpm check-types  # tsc
+pnpm deploy       # build + wrangler deploy
+```
 
-### Prerequisites
+## Environment
 
-Make sure you have the following software installed on your system:
+Server-side features read these variables (locally from `.dev.vars`, in production from Worker secrets — see `.dev.vars.example`):
 
-- [Node.js](https://nodejs.org/) (Latest LTS recommended)
-- [Git](https://git-scm.com/)
-- [pnpm](https://pnpm.io/)
+| Variable                    | Used by                          |
+| --------------------------- | -------------------------------- |
+| `RESEND_API_KEY`            | Newsletter subscription (Resend) |
+| `RESEND_SEGMENT_GENERAL`    | Resend audience id               |
+| `SUPABASE_URL`              | Baby signbook wishes             |
+| `SUPABASE_SERVICE_ROLE_KEY` | Baby signbook wishes             |
+| `NTFY_WISHES_ID`            | ntfy.sh wish notifications       |
 
-### Installation
+The site renders fully without any of them; the newsletter form reports "Subscription temporarily unavailable" when Resend is not configured.
 
-1. Clone the repository to your local machine:
+## Cloudflare deployment
 
-   ```bash
-   git clone https://github.com/meleksomai/website.git
-   ```
+`wrangler.jsonc` defines the Worker (`somai-me`). `vite build` emits the Worker bundle and static assets into `dist/` plus a resolved config at `dist/server/wrangler.json`, and `wrangler deploy` picks it up automatically.
 
-2. Move into the project directory:
+For Cloudflare Workers Builds (git integration):
 
-   ```bash
-   cd website
-   ```
+- **Root directory**: `apps/web`
+- **Build command**: `pnpm turbo build --filter=web` (or `pnpm run build`)
+- **Deploy command**: `pnpm exec wrangler deploy`
 
-3. Install the project dependencies:
+## Route map
 
-   ```bash
-   pnpm i
-   ```
+| URL                                              | Source                                  |
+| ------------------------------------------------ | --------------------------------------- |
+| `/`, `/essays`, `/essay/:slug`, `/papers`        | `src/routes/_site.*` (navbar + footer)  |
+| `/baby`                                          | `src/routes/baby.tsx`                   |
+| `/essay/:slug/md`, `/essay/:slug.md`             | server routes serving raw markdown      |
+| `/essay/:slug` with `Accept: text/markdown`      | content negotiation on the essay route  |
+| `/sitemap.xml`, `/robots.txt`                    | server routes                           |
+| OG images                                        | `/og/*.png` (build-time generated)      |
 
-4. Start the development server:
+## Tests
 
-   ```bash
-   pnpm dev
-   ```
-
-Now the project should be up and running at [http://localhost:3000](http://localhost:3000)!
-
-## Contributing
-
-While this is primarily a personal project, contributions or suggestions are always welcome. If you have any ideas for improvements or have noticed any bugs, please open an issue.
-
-## License
-
-This project is open source and available under the [MIT License](LICENCE).
-
-## Acknowledgements
-
-I'd like to thank everyone who has inspired, supported, and helped me throughout my journey. Your encouragement and guidance have been invaluable.
-
-Happy Coding! 🚀
+- `src/**/*.test.ts(x)` — unit tests (vitest + jsdom), including regression tests for the essay catalog, raw-markdown rendition, sitemap entries, and SEO meta builder.
+- `e2e/*.spec.ts` — Playwright integration/regression suite: page smoke tests, internal link crawl, sitemap/robots, markdown content negotiation, SEO meta + OG image checks, 404s, theme switching, newsletter and signbook flows.

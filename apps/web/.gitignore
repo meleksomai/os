@@ -1,4 +1,11 @@
-.vercel
+# Build output
+dist/
+.wrangler/
+.tanstack/
+
+# Generated OG images (baby.png is a committed static asset)
+public/og/*
+!public/og/baby.png
 
 # Playwright
 node_modules/
@@ -7,4 +14,9 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Environment
 .env*.local
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
