@@ -1,0 +1,95 @@
+---
+title: The Healthcare AI Benchmarking Conundrum
+subtitle: Why benchmarking the engine is not the same as evaluating the system
+featured: true
+publishedAt: 2026-06-18
+category: healthcare
+---
+
+import { Quote } from "@workspace/ui/blocks/quote";
+import { RelativeTime } from "@workspace/ui/blocks/relative-time";
+
+<RelativeTime date={"2026-06-12"} />, [Nature Medicine](https://www.nature.com/nm/) published a brief communication from Eric Oermann's group at NYU Langone with a deliberately provocative title: _General-purpose large language models outperform specialized clinical AI tools on medical benchmarks_.[^1] The paper shows that, across three evaluation benchmarks, the leading frontier models at the time the research was performed[^2] (Gemini 3.1 Pro, GPT-5.2, and Claude Opus 4.6) outperformed two prominent specialized healthcare AI tools: [OpenEvidence](https://www.openevidence.com/), the AI clinical search engine now used by a large share of US physicians (about 65%, by some accounts), and [UpToDate Expert AI](https://www.wolterskluwer.com/en/solutions/uptodate/ai-clinical-decision-support), Wolters Kluwer's AI layer over its long-standing clinical reference, which for decades has been the bible that medical professionals turn to for knowledge retrieval.
+
+[^1]: _Vishwanath, Krithik, Anton Alyakin, Mrigayu Ghosh, Ali Hage, Sean N. Neifert, Cordelia Orillac, Nataniel J. Mandelberg, et al._ 2026. **General-Purpose Large Language Models Outperform Specialized Clinical AI Tools on Medical Benchmarks.** Nature Medicine, June, 1-5. https://www.nature.com/articles/s41591-026-04431-5
+
+[^2]: Because of how academic publishing works, the paper appeared roughly six months after it was submitted. At the current pace of AI progress, that lag is the equivalent of decades. At the time of writing, only days after publication, we are already three model releases ahead (Claude Opus 4.7, Opus 4.8, and now Fable), each markedly more capable and more powerful than the one tested. I suspect that the gap of the results today would be even wider, and even more in favor of the frontier models.
+
+
+Right out of the gate, the reception was immediate and divided. [Some](https://x.com/EricTopol/status/2065430578997203374) [folks](https://x.com/nabeelqu/status/2065440481127866598) [amplified](https://x.com/emollick/status/2065444925483692192) it as further proof that general models are simply better, yet another instance of Sutton's "bitter lesson"[^3] that the brute scale of AI models beats any hand-crafted or domain-specific AI architecture. [Others](https://x.com/iScienceLuvr/status/2065747452033151421) [questioned](https://x.com/katy_beckermann/status/2065815558939869217) the methodology, and whether the study demonstrates clinical superiority or merely that frontier models are better at recalling answers they had already seen. OpenEvidence [issued its own rebuttal](https://x.com/EvidenceOpen/status/2065941584517173292) contesting the methodology and the authors' potential conflicts of interest.
+
+[^3]: Sutton, Richard. 2019. “The Bitter Lesson.” March 13, 2019. http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+
+Regardless of which side you land on, the paper's results and the broader debate it sets off matter less than what the comparison itself quietly assumes: that the tension between frontier LLMs and healthcare AI products is real and worth evaluating.
+
+## AI as engine vs AI as product
+
+The paper's whole comparison rests on the assumption that a frontier model and a clinical AI product like OpenEvidence or UpToDate Expert AI are the same kind of AI, one that can and should be evaluated side by side against a given healthcare benchmark. The premise is reasonable, and you'd expect any healthcare AI product to outperform a general model on a medical test. But it assumes, by the same token, that OpenEvidence and UpToDate Expert AI are equivalent, or at least comparable, to a frontier model in the way the term "AI" generally implies. Today's AI ecosystem is more nuanced than that. Although OpenEvidence is marketed as an AI company and UpToDate is moving toward AI-first products, neither is a frontier AI lab, at least for now.[^4] In the traditional sense, frontier labs build LLM foundation models and release them as APIs with certain guardrails, or through their own user interfaces (ChatGPT, Claude, Codex, and so on). That API model enables new players and incumbents alike to build products that use the LLM as an engine and wrap a [harness](https://www.somai.me/essay/agents) around it (memory, retrieval, context, skills, MCP, and so on) to deliver a custom workflow and experience.
+
+[^4]: Cursor's near-failure, despite its success, is a cautionary tale: to escape the gravity of the frontier labs, a vertical AI company may eventually have to become one.
+
+### OpenEvidence architecture
+
+OpenEvidence has not fully disclosed its architecture, but by [its founder's own account](https://open.spotify.com/episode/5VaTXcjrgGjcwXODBD4dMW?si=4aaf117d462147a7), it is not a single large model. It is a cooperative ensemble of roughly half a dozen smaller, specialized models, retrieval and ranking among them, trained exclusively on peer-reviewed medical literature, both public and proprietary (such as the [New England Journal of Medicine](https://www.nejm.org/)), and deliberately kept off the open internet.
+
+This "medical data only" strategy carries a scaling constraint. The peer-reviewed medical corpus is several orders of magnitude smaller than the web-scale data behind frontier models, and training from scratch on it alone tops out, at compute-optimality, in the low billions to low tens of billions of parameters. That is far below today's frontier models, which are believed to run into the tens of trillions, though exact figures are undisclosed. Synthetic data and additional training epochs can stretch the effective dataset, but only so far. State-of-the-art performance, in other words, is by design not the goal. OpenEvidence's models are meant instead to be cheap, efficient, and good at the narrow tasks they were trained for. It would be prohibitively expensive, and pointless, to run a frontier-grade reasoning model over medical papers at scale.
+
+So why build from scratch at all, rather than reach for an existing small, cheap, general-purpose model like [Google Gemini Flash](https://deepmind.google/models/gemini/flash/), [Amazon Nova Lite](https://aws.amazon.com/nova/models/), or open-source options like [Kimi](https://developers.cloudflare.com/workers-ai/models/kimi-k2.6/) and [Qwen](https://github.com/qwenLM/qwen3), all an order of magnitude cheaper? The answer lies in the founders' lineage. In 2023, before OpenEvidence existed, its co-founders Daniel Nadler (now CEO) and Zach Ziegler (now CTO) were among the authors of a paper, _Do We Still Need Clinical Language Models?_,[^5] whose central finding was that small, specialized clinical models can match or beat far larger general-purpose LLMs on domain-specific tasks. That conviction carried into OpenEvidence's design, alongside a second bet the company makes publicly: that training only on vetted, peer-reviewed sources is itself a safeguard, because the open medical internet is anything but curated. Unlike code on GitHub, medical content online is awash in misinformation and unfounded claims, and you do not want your model recommending a treatment protocol that was never peer-reviewed or vetted by a medical society.
+
+[^5]: _Lehman, Eric, Evan Hernandez, Diwakar Mahajan, Jonas Wulff, Micah J. Smith, Zachary Ziegler, Daniel Nadler, Peter Szolovits, Alistair Johnson, and Emily Alsentzer._ 2023. **Do We Still Need Clinical Language Models?** arXiv [Cs.CL]. arXiv. https://doi.org/10.48550/arXiv.2302.08091.
+
+### UpToDate Expert AI architecture
+
+UpToDate Expert AI is even more opaque about its architecture. Based on [its recent expanded collaboration with OpenAI](https://www.wolterskluwer.com/en/news/wolters-kluwer-and-openai-expand-enterprise-ai-collaboration-to-advance-trusted-expert-ai), UpToDate Expert AI appears to be an OpenAI foundation model grounded through retrieval on UpToDate's curated content and wrapped in an expert-in-the-loop governance layer. Unlike OpenEvidence, it is not a medical model trained from scratch. Its underperformance in the study, then, could reflect either a much older base model at the time of testing, or an implementation deliberately constrained to answer narrowly and only from grounded content. Most probably, it is both. In the paper, UpToDate refused 19% of queries, far more than any other model: roughly one in five questions the system declined to answer.
+
+### So, what are we comparing?
+
+Given those technical and architectural distinctions, you might call the comparison unfair, and you would be right. But that judgment rests on another assumption: that any clinician using OpenEvidence or UpToDate Expert AI grasps the distinction and does not mistake those tools for the equivalent of OpenAI, Claude, or Gemini frontier models when posing out-of-context questions. It also implies that those healthcare AI tools will stay put in the technology stack and offer providers nothing beyond retrieving, summarizing, and assisting with medical knowledge. The recent launch of [DeepConsult](https://www.openevidence.com/announcements/openevidence-the-fastest-growing-application-for-physicians-in-history-announces-dollar210-million-round-at-dollar35-billion-valuation), and OpenEvidence's expected release of more features integrated into the clinical workflow, tell a different story.
+
+So if you are in the camp that holds any healthcare AI product should be compared to the best-in-class regardless of its intended use, because a user can prompt it about anything absent specific guardrails, then yes, these tools should be measured against any other AI product, frontier lab models included. And that is also fair.
+
+## Benchmarking performance vs evaluating clinical value
+
+Another critique of the paper is that the benchmarks it uses are limited, biased, and to a certain extent misleading. These benchmarks do not measure clinical value, or at best they do a very poor job of it. What they measure instead is how closely each system imitates the answer the benchmark's author already had in mind. HealthBench[^4], one of the three, deserves its own scrutiny, because it does more work in the headline than it justifies in the paper. First of all, it is the benchmark OpenAI built, and it is the single evaluation on which OpenAI's model wins outright. Interestingly, the authors themselves flag the conflict and quietly relegate HealthBench to supplementary evidence; yet it is precisely the HealthBench result that got the most attention. 
+
+This points to a deeper issue: we are measuring the wrong thing. The benchmarks capture performance on knowledge questions, but performance is not the same as the utility or quality a tool delivers in improving care. We have to be more careful about what we measure and move past raw performance. With the clear shift toward [agentic systems](https://www.somai.me/essay/agents) built on sophisticated harness architectures and adaptable skills, an LLM is better understood as an engine that needs a chassis and a set of tools to be operable. On that view, raw performance is not a measure of quality. What matters is whether a model, at a given level of performance and placed in the right architecture and harness, can produce the appropriate outcome. The focus on LLM benchmarking ignores precisely this complexity of building robust systems inside real clinical workflows.
+
+[^4]: _Arora, Rahul K., Jason Wei, Rebecca Soskin Hicks, Preston Bowman, Joaquin Quiñonero-Candela, Foivos Tsimpourlas, Michael Sharman, et al._ 2025. **HealthBench: Evaluating Large Language Models towards Improved Human Health.** arXiv [Cs.CL]. arXiv. https://doi.org/10.48550/arXiv.2505.08775.
+
+Satya Nadella, CEO of Microsoft, puts it nicely in his recent [X post](https://x.com/satyanadella/status/2066182223213293753).
+
+<Quote author="Satya Nadella" source="A frontier without an ecosystem is not stable">
+[T]he real opportunity is not in picking the best model but instead in building a learning loop on top of models where human capital and token capital compound. 
+</Quote>
+
+## Healthcare AI maturity
+
+A related problem follows from that observation: the healthcare industry still conflates the LLM, the AI model as an _engine_, with the AI _product_ that bakes one or more LLMs into a workflow to complete a clinical task or deliver medical guidance. The ecosystem itself is nascent, noisy, and largely run by companies like [Abridge](https://www.abridge.com/), OpenEvidence, [Nabla](https://www.nabla.com/), and [Epic](https://www.epic.com/), to name a few, that ship AI products with little public information about their architecture, their underlying models, their harness, or any performance figures that could be compared across them.
+
+These companies are all racing to disrupt the healthcare technology stack, or to defend it in Epic's case, with features ranging from ambient scribing to record summarization to revenue-cycle automation. Their architectures are proprietary and constantly shifting, as each company pivots and adapts its stack to keep up with both AI progress and market demand. Yet despite astronomical growth in recent months, there is a paucity of peer-reviewed evidence evaluating the performance, safety, and accuracy of these tools. So we are left with a conundrum: the pace of AI tools outstrips the industry's ability to give them even a usable taxonomy, let alone to evaluate and monitor them.
+
+In my view, this is, more than anything, a shortcoming of the companies building the tools. OpenEvidence, Abridge, UpToDate, and others are exceptionally well-resourced, with hundreds of millions of dollars in funding and valuations in the billions, and can afford, and _must_, build research labs rigorous enough to match the scale of their AI growth. Publishing a few studies a year at best is not the same as keeping pace with, and eventually leading, your own product development through rigorous research.
+
+I put the onus on the companies because health systems are not equipped to carry it: their AI governance committees are thin, functioning more as a checkpoint than a true evaluator, while independent and academic research labs have no access to the internal architecture and are forced into black-box evaluation, exactly what produces the inferences and assumptions on display in this paper. 
+
+Without that internal rigor built into each product, there is little evidence of these products' quality beyond external work like this, however well or ill-executed. Unfortunately, it is more likely than not that many of these new companies simply lack the research talent and rigor to compete with frontier labs on this front. Regardless, the industry as a whole has to take this seriously if we want a thriving and safe healthcare AI ecosystem. 
+
+## Vertical AI in Healthcare
+
+The significance of these findings, or the lack thereof, raises the question of whether vertical AI has any lasting advantage over frontier models in healthcare. It also raises the broader question of whether software-as-a-service (SaaS) can survive at all if frontier models take over the entire stack.
+
+If the interface of the future is as simple as a prompt through which we interact with agentic systems, what is the place of vertical SaaS products? Will they compete to be the interface and the product, or will they be relegated to the back office: the MCP service you connect to, or the API your frontier model calls on your behalf? This is not unique to healthcare; it reflects a broader ecosystem increasingly coalescing around agentic systems.
+
+You see this unfolding in industries like financial services, with [Ramp agents](https://ramp.com/blog/ramp-agents-announcement) versus [Claude for Financial Services](https://www.anthropic.com/news/claude-for-financial-services) versus [ChatGPT for finance](https://chatgpt.com/business/ai-for-finance/); and in legal, with [Legora](https://legora.com) and [Harvey](https://www.harvey.ai/) versus the [Claude for Legal](https://www.linkedin.com/posts/winston-weinberg_claude-for-legal-validates-what-we-have-long-activity-7460015303872335872-lZb0/) offering. As model capabilities evolve, the open question is whether the value gap between the raw LLM engine and a finished service stays wide enough to leave room for a thriving SaaS and software industry.
+
+## In Summary
+
+My mentor [Charles Safran](https://dci.bidmc.org/people/charles-w-safran) always used to say that “_research results are only good for starting a conversation_.” Independent, real-world evaluation of clinical AI is precisely what the field has been missing, and this paper did the unglamorous work of measuring rather than asserting. The RCQ benchmark in particular (real physician queries, blinded clinicians, free of training-set contamination) points in the right direction, even if its use here is minimal, and is exactly the kind of instrument we should want far more of. My disagreement is not with the _measurement_. It is with the _frame_.
+
+<Quote author="Charles Safran">
+Research results are only good for starting a conversation
+</Quote>
+
+The frame asks which AI is better, frontier model or clinical tool, as if the two sit on a single axis. They do not. A frontier model is an engine. A clinical product is an engine bolted into a chassis, with retrieval, guardrails, context, memory, and a workflow wrapped around it. Benchmarking the engine tells you about the engine. It tells you almost nothing about whether the system around it makes a clinician's decision safer or more accurate at the point of care, which is the only thing that should count as _quality_. We keep benchmarking the engine and reporting the score as a verdict on how safe and good the entire product is. To extend the analogy: no one but an enthusiast or a race driver chooses a vehicle on engine performance alone.
+
+So the more useful question is not whether OpenEvidence beats Gemini on MedQA, but what an AI product must own to be worth building once the engine underneath it is a commodity anyone can leverage. The answer, increasingly, is the rails: the proprietary data, the clinical workflow, the evaluation loop, the harness that turns a general model into something verifiable and safe inside a specific care environment. The companies that win will not be the ones with the best score this quarter, but the ones that build the system and the evidence that make a model trustworthy in the clinic. Until OpenEvidence, UpToDate, Epic, and the rest treat that evidence as a first-class product rather than a press release, we will keep mistaking a leaderboard for a clinical fact. That is a more interesting, and far less comfortable, conclusion than the headline.
