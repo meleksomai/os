@@ -5,6 +5,14 @@ body {
   overflow-x: clip;
 }
 
+/* Wrap long unbreakable tokens (e.g. bare URLs in footnotes) so they don't
+   force the prose column wider than the viewport on narrow screens.
+   `anywhere` (not `break-word`) is required so the long token also shrinks
+   the element's min-content size used by the surrounding flex layout. */
+.prose {
+  overflow-wrap: anywhere;
+}
+
 code[data-theme*=" "],
 code[data-theme*=" "] span {
   color: var(--shiki-light);

@@ -8,6 +8,8 @@
       "!**/.biome",
       "!**/.next",
       "!**/out",
+      // Git worktrees live under .claude/worktrees and carry their own root config
+      "!**/.claude/worktrees",
       // Liquid templates
       "!**/*.liquid.html"
     ]
