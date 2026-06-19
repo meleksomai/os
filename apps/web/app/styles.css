@@ -5,6 +5,12 @@ body {
   overflow-x: clip;
 }
 
+/* Wrap long unbreakable tokens (e.g. bare URLs in footnotes) so they don't
+   force the prose column wider than the viewport on narrow screens */
+.prose {
+  overflow-wrap: break-word;
+}
+
 code[data-theme*=" "],
 code[data-theme*=" "] span {
   color: var(--shiki-light);
