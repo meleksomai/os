@@ -40,7 +40,7 @@ export function RelativeTime({ date, className }: RelativeTimeProps) {
       <TooltipTrigger>
         <span
           className={cn(
-            "cursor-help border-muted-foreground/50 border-b-2 border-dashed transition-colors hover:border-primary",
+            "cursor-help underline decoration-gray-200 decoration-dotted underline-offset-3 transition-colors hover:decoration-gray-700 dark:decoration-gray-700 dark:hover:decoration-gray-200",
             className
           )}
         >
