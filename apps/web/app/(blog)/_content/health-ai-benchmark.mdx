@@ -8,17 +8,18 @@ category: healthcare
 
 import { Quote } from "@workspace/ui/blocks/quote";
 import { RelativeTime } from "@workspace/ui/blocks/relative-time";
+import { XIcon } from "@workspace/ui/components/icons";
 
 <RelativeTime date={"2026-06-12"} />, [Nature Medicine](https://www.nature.com/nm/) published a brief communication from Eric Oermann's group at NYU Langone with a deliberately provocative title: _General-purpose large language models outperform specialized clinical AI tools on medical benchmarks_.[^1] The paper shows that, across three evaluation benchmarks, the leading frontier models at the time the research was performed[^2] (Gemini 3.1 Pro, GPT-5.2, and Claude Opus 4.6) outperformed two prominent specialized healthcare AI tools: [OpenEvidence](https://www.openevidence.com/), the AI clinical search engine now used by a large share of US physicians (about 65%, by some accounts), and [UpToDate Expert AI](https://www.wolterskluwer.com/en/solutions/uptodate/ai-clinical-decision-support), Wolters Kluwer's AI layer over its long-standing clinical reference, which for decades has been the bible that medical professionals turn to for knowledge retrieval.
 
-[^1]: _Vishwanath, Krithik, Anton Alyakin, Mrigayu Ghosh, Ali Hage, Sean N. Neifert, Cordelia Orillac, Nataniel J. Mandelberg, et al._ 2026. **General-Purpose Large Language Models Outperform Specialized Clinical AI Tools on Medical Benchmarks.** Nature Medicine, June, 1-5. https://www.nature.com/articles/s41591-026-04431-5
+[^1]: Vishwanath, Krithik, Anton Alyakin, Mrigayu Ghosh, Ali Hage, Sean N. Neifert, Cordelia Orillac, Nataniel J. Mandelberg, et al. 2026. _General-Purpose Large Language Models Outperform Specialized Clinical AI Tools on Medical Benchmarks._ Nature Medicine, June, 1-5. https://www.nature.com/articles/s41591-026-04431-5
 
 [^2]: Because of how academic publishing works, the paper appeared roughly six months after it was submitted. At the current pace of AI progress, that lag is the equivalent of decades. At the time of writing, only days after publication, we are already three model releases ahead (Claude Opus 4.7, Opus 4.8, and now Fable), each markedly more capable and more powerful than the one tested. I suspect that the gap of the results today would be even wider, and even more in favor of the frontier models.
 
 
 Right out of the gate, the reception was immediate and divided. [Some](https://x.com/EricTopol/status/2065430578997203374) [folks](https://x.com/nabeelqu/status/2065440481127866598) [amplified](https://x.com/emollick/status/2065444925483692192) it as further proof that general models are simply better, yet another instance of Sutton's "bitter lesson"[^3] that the brute scale of AI models beats any hand-crafted or domain-specific AI architecture. [Others](https://x.com/iScienceLuvr/status/2065747452033151421) [questioned](https://x.com/katy_beckermann/status/2065815558939869217) the methodology, and whether the study demonstrates clinical superiority or merely that frontier models are better at recalling answers they had already seen. OpenEvidence [issued its own rebuttal](https://x.com/EvidenceOpen/status/2065941584517173292) contesting the methodology and the authors' potential conflicts of interest.
 
-[^3]: Sutton, Richard. 2019. “The Bitter Lesson.” March 13, 2019. http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+[^3]: Sutton, Richard. 2019. _The Bitter Lesson._ March 13, 2019. http://www.incompleteideas.net/IncIdeas/BitterLesson.html
 
 Regardless of which side you land on, the paper's results and the broader debate it sets off matter less than what the comparison itself quietly assumes: that the tension between frontier LLMs and healthcare AI products is real and worth evaluating.
 
@@ -36,7 +37,7 @@ This "medical data only" strategy carries a scaling constraint. The peer-reviewe
 
 So why build from scratch at all, rather than reach for an existing small, cheap, general-purpose model like [Google Gemini Flash](https://deepmind.google/models/gemini/flash/), [Amazon Nova Lite](https://aws.amazon.com/nova/models/), or open-source options like [Kimi](https://developers.cloudflare.com/workers-ai/models/kimi-k2.6/) and [Qwen](https://github.com/qwenLM/qwen3), all an order of magnitude cheaper? The answer lies in the founders' lineage. In 2023, before OpenEvidence existed, its co-founders Daniel Nadler (now CEO) and Zach Ziegler (now CTO) were among the authors of a paper, _Do We Still Need Clinical Language Models?_,[^5] whose central finding was that small, specialized clinical models can match or beat far larger general-purpose LLMs on domain-specific tasks. That conviction carried into OpenEvidence's design, alongside a second bet the company makes publicly: that training only on vetted, peer-reviewed sources is itself a safeguard, because the open medical internet is anything but curated. Unlike code on GitHub, medical content online is awash in misinformation and unfounded claims, and you do not want your model recommending a treatment protocol that was never peer-reviewed or vetted by a medical society.
 
-[^5]: _Lehman, Eric, Evan Hernandez, Diwakar Mahajan, Jonas Wulff, Micah J. Smith, Zachary Ziegler, Daniel Nadler, Peter Szolovits, Alistair Johnson, and Emily Alsentzer._ 2023. **Do We Still Need Clinical Language Models?** arXiv [Cs.CL]. arXiv. https://doi.org/10.48550/arXiv.2302.08091.
+[^5]: Lehman, Eric, Evan Hernandez, Diwakar Mahajan, Jonas Wulff, Micah J. Smith, Zachary Ziegler, Daniel Nadler, Peter Szolovits, Alistair Johnson, and Emily Alsentzer. 2023. _Do We Still Need Clinical Language Models?_ arXiv [Cs.CL]. arXiv. https://doi.org/10.48550/arXiv.2302.08091.
 
 ### UpToDate Expert AI architecture
 
@@ -52,11 +53,11 @@ So if you are in the camp that holds any healthcare AI product should be compare
 
 Another critique of the paper is that the benchmarks it uses are limited, biased, and to a certain extent misleading. These benchmarks do not measure clinical value, or at best they do a very poor job of it. What they measure instead is how closely each system imitates the answer the benchmark's author already had in mind. HealthBench[^6], one of the three, deserves its own scrutiny, because it does more work in the headline than it justifies in the paper. First of all, it is the benchmark OpenAI built, and it is the single evaluation on which OpenAI's model wins outright. Interestingly, the authors themselves flag the conflict and quietly relegate HealthBench to supplementary evidence; yet it is precisely the HealthBench result that got the most attention. 
 
-[^6]: _Arora, Rahul K., Jason Wei, Rebecca Soskin Hicks, Preston Bowman, Joaquin Quiñonero-Candela, Foivos Tsimpourlas, Michael Sharman, et al._ 2025. **HealthBench: Evaluating Large Language Models towards Improved Human Health.** arXiv [Cs.CL]. arXiv. https://doi.org/10.48550/arXiv.2505.08775.
+[^6]: Arora, Rahul K., Jason Wei, Rebecca Soskin Hicks, Preston Bowman, Joaquin Quiñonero-Candela, Foivos Tsimpourlas, Michael Sharman, et al. 2025. _HealthBench: Evaluating Large Language Models towards Improved Human Health._ arXiv [Cs.CL]. arXiv. https://doi.org/10.48550/arXiv.2505.08775.
 
 This points to a deeper issue: we are measuring the wrong thing. The benchmarks capture performance on knowledge questions, but performance is not the same as the utility or quality a tool delivers in improving care. We have to be more careful about what we measure and move past raw performance. With the clear shift toward [agentic systems](https://www.somai.me/essay/agents) built on sophisticated harness architectures and adaptable skills, an LLM is better understood as an engine that needs a chassis and a set of tools to be operable. On that view, raw performance is not a measure of quality. What matters is whether a model, at a given level of performance and placed in the right architecture and harness, can produce the appropriate outcome. The focus on LLM benchmarking ignores precisely this complexity of building robust systems inside real clinical workflows.
 
-Satya Nadella, CEO of Microsoft, puts it nicely in his recent [X post](https://x.com/satyanadella/status/2066182223213293753).
+Satya Nadella, CEO of Microsoft, puts it nicely in his recent [<XIcon className="inline-block w-3 h-3 underline mb-0.5"/> post](https://x.com/satyanadella/status/2066182223213293753).
 
 <Quote author="Satya Nadella" source="A frontier without an ecosystem is not stable">
 [T]he real opportunity is not in picking the best model but instead in building a learning loop on top of models where human capital and token capital compound. 
@@ -86,8 +87,8 @@ You see this unfolding in industries like financial services, with [Ramp agents]
 
 My mentor [Charles Safran](https://dci.bidmc.org/people/charles-w-safran) always used to say that “_research results are only good for starting a conversation_.” Independent, real-world evaluation of clinical AI is precisely what the field has been missing, and this paper did the unglamorous work of measuring rather than asserting. The RCQ benchmark in particular (real physician queries, blinded clinicians, free of training-set contamination) points in the right direction, even if its use here is minimal, and is exactly the kind of instrument we should want far more of. My disagreement is not with the _measurement_. It is with the _frame_.
 
-<Quote author="Charles Safran">
-Research results are only good for starting a conversation
+<Quote author="Charles Safran, MD">
+Research results are only good for starting a conversation.
 </Quote>
 
 The frame asks which AI is better, frontier model or clinical tool, as if the two sit on a single axis. They do not. A frontier model is an engine. A clinical product is an engine bolted into a chassis, with retrieval, guardrails, context, memory, and a workflow wrapped around it. Benchmarking the engine tells you about the engine. It tells you almost nothing about whether the system around it makes a clinician's decision safer or more accurate at the point of care, which is the only thing that should count as _quality_. We keep benchmarking the engine and reporting the score as a verdict on how safe and good the entire product is. To extend the analogy: no one but an enthusiast or a race driver chooses a vehicle on engine performance alone.
