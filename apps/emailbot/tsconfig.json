@@ -6,5 +6,6 @@
       "@/*": ["./*"],
       "@workspace/*": ["../../packages/*"]
     }
-  }
+  },
+  "exclude": ["vitest.config.ts"]
 }
