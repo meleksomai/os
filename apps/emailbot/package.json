@@ -12,7 +12,7 @@
   "dependencies": {
     "@ai-sdk/openai": "3.0.1",
     "@workspace/transactional": "workspace:*",
-    "agents": "0.3.0",
+    "agents": "0.3.10",
     "ai": "6.0.49",
     "ai-gateway-provider": "3.0.1",
     "mimetext": "3.0.27",
