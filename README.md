@@ -12,29 +12,33 @@ This monorepo contains my personal website and the first pieces of an agentic, A
 
 Key pieces:
 
-- **Web app**: Next.js App Router site for essays, research, and portfolio content.
+- **Web app**: TanStack Start site for essays, research, and portfolio content, served from Cloudflare Workers.
 - **Agent runtime**: Cloudflare Worker using the `agents` runtime with Durable Objects for stateful, per-identity agents.
-- **Shared packages**: UI components, transactional email renderer, and shared TypeScript configs.
+- **Shared packages**: UI components, transactional email renderer, data access, and shared TypeScript configs.
 
 ## Repository structure
 
 ```bash
 apps/
-  web/          # Next.js website (somai.me)
-  agent/        # Cloudflare Email Routing agent worker
+  web/                # TanStack Start website (somai.me) on Cloudflare Workers
+  emailbot/           # Cloudflare Email Routing agent worker
+  trmnl/              # TRMNL plugin API worker
 packages/
-  ui/           # Shared UI components + styles
-  transactional # React Email renderer helpers
-  notion/       # Notion-related utilities (placeholder)
-  typescript-config/ # Shared TS configs
+  ui/                 # Shared UI components + styles
+  database/           # Supabase data access (baby signbook wishes)
+  emailing/           # Resend newsletter helpers
+  ntfy/               # ntfy.sh notifications
+  transactional/      # React Email templates
+  testing/            # Shared Vitest preset
+  typescript-config/  # Shared TS configs
 ```
 
 ## Tech stack
 
-- Next.js 16 + React 19
-- Tailwind CSS + shadcn/ui + Radix
+- TanStack Start + TanStack Router + React 19 + Vite
+- Tailwind CSS + shadcn/ui + Base UI
 - Cloudflare Workers + Durable Objects
-- Vercel (web), Wrangler (agent)
+- Wrangler (web + workers)
 - Turborepo + pnpm
 - Biome via Ultracite (format/lint)
 
@@ -43,7 +47,7 @@ packages/
 Prerequisites:
 
 - Node.js >= 24
-- pnpm >= 10
+- pnpm 10
 
 Install dependencies:
 
@@ -61,14 +65,15 @@ Run a specific app:
 
 ```bash
 pnpm --filter web dev
-pnpm --filter backend-email dev
+pnpm --filter emailbot dev
 ```
 
 ## Common scripts
 
 - `pnpm dev` - start all apps
 - `pnpm build` - build all apps
-- `pnpm test` - run tests
+- `pnpm test` - run unit tests
+- `pnpm e2e` - run the website's Playwright suite against its production build
 - `pnpm check` - run Ultracite checks
 - `pnpm fix` - format + fix lint issues
 
@@ -80,7 +85,7 @@ pnpm --filter backend-email dev
 ## Usage notes
 
 - Web app details: `apps/web/README.md`
-- Agent worker details: `apps/agent/README.md`
+- Agent worker details: `apps/emailbot/README.md`
 
 ## Contributing
 

@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build, Linting
-    timeout-minutes: 15
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
@@ -37,20 +37,29 @@ jobs:
       - name: formatting
         run: pnpm check
 
-      - name: build
-        run: pnpm build
-
       - name: tests
         run: pnpm test
 
-      # - name: install playwright browsers
-      #   run: pnpm exec playwright install --with-deps
+      - name: build
+        run: pnpm build
 
-      # - name: run playwright tests
-      #   run: pnpm e2e
-      # - uses: actions/upload-artifact@v4
-      #   if: ${{ !cancelled() }}
-      #   with:
-      #     name: web-playwright-report
-      #     path: web/playwright-report/
-      #     retention-days: 30
+      - name: cache playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-1.57.0
+
+      - name: install playwright browsers
+        run: pnpm --filter web exec playwright install --with-deps chromium
+
+      # Runs the production build of the website inside the Cloudflare
+      # workerd runtime (vite preview) and exercises it in a browser.
+      - name: end-to-end tests
+        run: pnpm e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: web-playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 30
