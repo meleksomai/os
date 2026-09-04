@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "somai-me",
+  // Custom entrypoint wrapping @tanstack/react-start/server-entry.
+  "main": "./src/server.ts",
+  // Dates from 2026-08-04 enable Node.js compatibility (and process.env
+  // populated from secrets) without a flag. Keep it at or before the workerd
+  // release bundled by the pinned @cloudflare/vite-plugin.
+  "compatibility_date": "2026-09-01",
+  "observability": {
+    "enabled": true
+  },
+  "upload_source_maps": true
+}

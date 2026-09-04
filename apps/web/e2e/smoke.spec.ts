@@ -8,7 +8,7 @@ test("home renders", async ({ page }) => {
 
 test("essays list renders and an essay page opens", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Essays" }).click();
+  await page.getByRole("link", { name: "Essays", exact: true }).click();
 
   await expect(page.getByRole("heading", { name: "Essays" })).toBeVisible();
 

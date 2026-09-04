@@ -1,21 +1,19 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: to be resolved */
+/** biome-ignore-all lint/correctness/useImageSize: images are sized by their CSS aspect-ratio container */
 "use client";
 
-import NextImage, { type ImageProps as NextImageProps } from "next/image";
+import type { ComponentPropsWithoutRef } from "react";
 import { cn } from "../lib/utils";
 
-type ThemeImageProps = Omit<NextImageProps, "src" | "fill"> & {
-  src?: NextImageProps["src"];
-  lightSrc?: NextImageProps["src"];
-  darkSrc?: NextImageProps["src"];
+type ThemeImageProps = Omit<ComponentPropsWithoutRef<"img">, "src"> & {
+  src?: string;
+  lightSrc?: string;
+  darkSrc?: string;
 
   /**
    * Only used when width/height are NOT provided.
    * Helps reserve layout space for responsive images.
    */
   aspectRatio?: number;
-
-  sizes?: string;
 };
 
 export function ThemeImage({
@@ -25,36 +23,26 @@ export function ThemeImage({
   darkSrc,
   alt,
   aspectRatio,
-  sizes = "(min-width: 1024px) 900px, 100vw",
   ...props
 }: ThemeImageProps) {
-  const hasThemePair = Boolean(lightSrc && darkSrc);
-
   const hasIntrinsic =
     typeof props.width === "number" && typeof props.height === "number";
 
-  // Helper to build props for NextImage without mixing fill + width/height.
-  const imageSizingProps = hasIntrinsic
-    ? { width: props.width, height: props.height }
-    : { fill: true as const, sizes };
-
   // If theme pair exists: render both and toggle via CSS (no JS timing).
-  if (hasThemePair) {
+  if (lightSrc && darkSrc) {
     return hasIntrinsic ? (
       <span className={cn("block w-full", className)}>
-        <NextImage
+        <img
           {...props}
-          {...imageSizingProps}
           alt={alt ?? ""}
           className={cn("h-auto w-full object-contain dark:hidden")}
-          src={lightSrc!}
+          src={lightSrc}
         />
-        <NextImage
+        <img
           {...props}
-          {...imageSizingProps}
           alt={alt ?? ""}
           className={cn("hidden h-auto w-full object-contain dark:block")}
-          src={darkSrc!}
+          src={darkSrc}
         />
       </span>
     ) : (
@@ -62,19 +50,17 @@ export function ThemeImage({
         className={cn("relative block w-full overflow-hidden", className)}
         style={aspectRatio ? { aspectRatio: String(aspectRatio) } : undefined}
       >
-        <NextImage
+        <img
           {...props}
-          {...imageSizingProps}
           alt={alt ?? ""}
-          className="object-contain dark:hidden"
-          src={lightSrc!}
+          className="absolute inset-0 h-full w-full object-contain dark:hidden"
+          src={lightSrc}
         />
-        <NextImage
+        <img
           {...props}
-          {...imageSizingProps}
           alt={alt ?? ""}
-          className="hidden object-contain dark:block"
-          src={darkSrc!}
+          className="absolute inset-0 hidden h-full w-full object-contain dark:block"
+          src={darkSrc}
         />
       </span>
     );
@@ -82,12 +68,13 @@ export function ThemeImage({
 
   // Single-source fallback
   const chosen = src ?? lightSrc ?? darkSrc;
-  if (!chosen) return null;
+  if (!chosen) {
+    return null;
+  }
 
   return hasIntrinsic ? (
-    <NextImage
+    <img
       {...props}
-      {...imageSizingProps}
       alt={alt ?? ""}
       className={cn("h-auto w-full object-contain", className)}
       src={chosen}
@@ -97,11 +84,10 @@ export function ThemeImage({
       className={cn("relative block w-full overflow-hidden", className)}
       style={aspectRatio ? { aspectRatio: String(aspectRatio) } : undefined}
     >
-      <NextImage
+      <img
         {...props}
-        {...imageSizingProps}
         alt={alt ?? ""}
-        className="object-contain"
+        className="absolute inset-0 h-full w-full object-contain"
         src={chosen}
       />
     </span>

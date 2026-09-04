@@ -4,17 +4,16 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars*"],
+      "outputs": ["dist/**", "!dist/server/.dev.vars"]
     },
     "test": {
       "dependsOn": ["^test"],
       "cache": false
     },
     "e2e": {
-      "dependsOn": ["^e2e"],
-      "cache": false,
-      "persistent": true
+      "dependsOn": ["build"],
+      "cache": false
     },
     "//#check": {},
     "//#fix": {

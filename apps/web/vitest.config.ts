@@ -1,20 +1,18 @@
-import path from "node:path";
+import tsConfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
+import { mdxPlugin } from "./mdx-plugin";
 
 export default defineConfig({
+  // The MDX plugin lets the essay tests compile the real content.
+  plugins: [tsConfigPaths({ projects: ["./tsconfig.json"] }), mdxPlugin()],
   esbuild: {
     jsx: "automatic",
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "."),
-    },
   },
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
-    include: ["**/*.test.ts", "**/*.test.tsx"],
-    exclude: ["node_modules", "dist", "e2e", ".next", ".turbo"],
+    include: ["src/**/*.test.{ts,tsx}"],
     globals: true,
+    restoreMocks: true,
   },
 });
