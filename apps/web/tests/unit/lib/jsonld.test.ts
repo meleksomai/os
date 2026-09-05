@@ -5,6 +5,8 @@ const PERSON = {
   "@type": "Person",
   "@id": "https://www.somai.me/#person",
   name: "Melek Somai",
+  description:
+    "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.",
   url: "https://www.somai.me",
   sameAs: [
     "https://github.com/meleksomai",
@@ -15,24 +17,27 @@ const PERSON = {
 
 describe("generateJsonLd", () => {
   it("produces a JSON-LD head script with < escaped", () => {
-    const script = generateJsonLd(personJsonLd("<b>bio</b>"));
+    const script = generateJsonLd({
+      "@context": "https://schema.org",
+      "@type": "Thing",
+      name: "<b>name</b>",
+    });
 
     expect(script.type).toBe("application/ld+json");
     expect(String(script.children)).not.toContain("<");
     expect(JSON.parse(String(script.children))).toEqual({
       "@context": "https://schema.org",
-      ...PERSON,
-      description: "<b>bio</b>",
+      "@type": "Thing",
+      name: "<b>name</b>",
     });
   });
 });
 
 describe("personJsonLd", () => {
   it("describes the site owner with a stable @id and social profiles", () => {
-    expect(personJsonLd("Bio")).toEqual({
+    expect(personJsonLd).toEqual({
       "@context": "https://schema.org",
       ...PERSON,
-      description: "Bio",
     });
   });
 });

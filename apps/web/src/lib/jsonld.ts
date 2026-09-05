@@ -34,14 +34,16 @@ export const person = {
   "@type": "Person",
   "@id": PERSON_ID,
   name: siteConfig.name,
+  description: siteConfig.description,
   url: siteConfig.url,
   sameAs: siteConfig.social.map((link) => link.href),
 } satisfies Person;
 
-/** The home page's structured data: the person, with the page description as bio. */
-export function personJsonLd(description: string): WithContext<Person> {
-  return { "@context": "https://schema.org", ...person, description };
-}
+/** The home page's structured data: the site owner. */
+export const personJsonLd: WithContext<Person> = {
+  "@context": "https://schema.org",
+  ...person,
+};
 
 export interface BlogInput {
   title: string;

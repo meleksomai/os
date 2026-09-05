@@ -1,5 +1,7 @@
 export const siteConfig = {
   name: "Melek Somai",
+  description:
+    "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.",
   twitter: "@meleksomai",
   url: "https://www.somai.me",
   locale: "en_US",
