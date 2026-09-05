@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EssaySection } from "@/components/home/section-essays";
 import IntroSection from "@/components/home/section-intro";
-import { personJsonLd, seo } from "@/lib/seo";
+import { seo } from "@/lib/seo";
+import { personJsonLd } from "@/lib/structured-data";
 import { fetchEssayList } from "@/server/essays/functions";
 
 const HOME_DESCRIPTION =

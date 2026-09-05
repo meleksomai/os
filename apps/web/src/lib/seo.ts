@@ -1,7 +1,7 @@
 import type { AnyRouteMatch } from "@tanstack/react-router";
-import type { BlogPosting, Person, Thing, WithContext } from "schema-dts";
 import { siteConfig } from "@/config/site";
 import { parsePublishedAt } from "@/lib/date";
+import { blogPostingJsonLd, type JsonLd } from "@/lib/structured-data";
 
 export interface PageSeo {
   /** Page part of the document title; rendered as `<site name> | <title>`. */
@@ -21,9 +21,6 @@ export interface PageSeo {
   /** Extra JSON-LD object for the page, e.g. `personJsonLd()` on the home page. */
   structuredData?: JsonLd;
 }
-
-/** A Schema.org object with its `@context`, typed by `schema-dts` (types only, no runtime). */
-export type JsonLd = WithContext<Thing>;
 
 /** What a route's `head()` returns. */
 export interface HeadTags {
@@ -83,18 +80,15 @@ export function seo(page: PageSeo): HeadTags {
 
   const structuredData: JsonLd[] = [];
   if (publishedAt) {
-    const posting: WithContext<BlogPosting> = {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      headline: page.title,
-      description: page.description,
-      image: imageUrl,
-      datePublished: publishedAt,
-      author: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
-      url,
-      mainEntityOfPage: url,
-    };
-    structuredData.push(posting);
+    structuredData.push(
+      blogPostingJsonLd({
+        title: page.title,
+        description: page.description,
+        url,
+        imageUrl,
+        publishedAt,
+      })
+    );
   }
   if (page.structuredData) {
     structuredData.push(page.structuredData);
@@ -107,18 +101,6 @@ export function seo(page: PageSeo): HeadTags {
       type: "application/ld+json",
       children: jsonLdText(data),
     })),
-  };
-}
-
-/** JSON-LD describing the site owner, for the home page. */
-export function personJsonLd(description: string): WithContext<Person> {
-  return {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: siteConfig.name,
-    description,
-    url: siteConfig.url,
-    sameAs: siteConfig.social.map((link) => link.href),
   };
 }
 

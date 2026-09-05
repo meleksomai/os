@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { personJsonLd, seo } from "@/lib/seo";
+import { seo } from "@/lib/seo";
+import { personJsonLd } from "@/lib/structured-data";
 
 const DESCRIPTION = "Description";
 
@@ -99,8 +100,14 @@ describe("seo", () => {
         datePublished: "2026-01-02T00:00:00.000Z",
         author: {
           "@type": "Person",
+          "@id": "https://www.somai.me/#person",
           name: "Melek Somai",
           url: "https://www.somai.me",
+          sameAs: [
+            "https://github.com/meleksomai",
+            "https://www.linkedin.com/in/msomai/",
+            "https://twitter.com/meleksomai",
+          ],
         },
         url: "https://www.somai.me/essay/agents",
         mainEntityOfPage: "https://www.somai.me/essay/agents",
@@ -124,6 +131,7 @@ describe("seo", () => {
       {
         "@context": "https://schema.org",
         "@type": "Person",
+        "@id": "https://www.somai.me/#person",
         name: "Melek Somai",
         description: "<b>bio</b>",
         url: "https://www.somai.me",
