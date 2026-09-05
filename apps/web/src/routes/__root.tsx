@@ -1,7 +1,14 @@
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
+import Footer from "@/components/common/footer";
+import Navbar from "@/components/common/navbar";
 import { ErrorPage } from "@/components/pages/error-page";
 import { NotFoundPage } from "@/components/pages/not-found-page";
 import { generateSeo } from "@/lib/seo";
@@ -33,8 +40,22 @@ export const Route = createRootRoute({
   }),
   errorComponent: ErrorPage,
   notFoundComponent: NotFoundPage,
-  shellComponent: RootDocument,
+  component: RootComponent,
 });
+
+function RootComponent() {
+  return (
+    <RootDocument>
+      <div className="mx-auto max-w-4xl px-6 sm:px-8 lg:px-16">
+        <Navbar />
+        <div className="relative bg-background text-foreground">
+          <Outlet />
+        </div>
+        <Footer />
+      </div>
+    </RootDocument>
+  );
+}
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (

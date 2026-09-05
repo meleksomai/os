@@ -6,7 +6,7 @@ import { generateJsonLd, personJsonLd } from "@/lib/jsonld";
 import { generateSeo } from "@/lib/seo";
 import { fetchEssayList } from "@/server/essays/functions";
 
-export const Route = createFileRoute("/_site/")({
+export const Route = createFileRoute("/")({
   loader: () => fetchEssayList(),
   head: () => ({
     ...generateSeo({

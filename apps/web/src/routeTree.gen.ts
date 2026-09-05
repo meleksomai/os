@@ -9,17 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SiteRouteImport } from './routes/_site'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as EssaysRouteImport } from './routes/essays'
+import { Route as PapersRouteImport } from './routes/papers'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SiteIndexRouteImport } from './routes/_site.index'
-import { Route as SiteEssaysRouteImport } from './routes/_site.essays'
-import { Route as SitePapersRouteImport } from './routes/_site.papers'
+import { Route as EssaySlugRouteImport } from './routes/essay.$slug'
 import { Route as EssayChar123slugChar125DotmdRouteImport } from './routes/essay.{$slug}[.]md'
-import { Route as SiteEssaySlugRouteImport } from './routes/_site.essay.$slug'
 import { Route as EssaySlugMdRouteImport } from './routes/essay.$slug.md'
 
-const SiteRoute = SiteRouteImport.update({
-  id: '/_site',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EssaysRoute = EssaysRouteImport.update({
+  id: '/essays',
+  path: '/essays',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PapersRoute = PapersRouteImport.update({
+  id: '/papers',
+  path: '/papers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -27,20 +37,10 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SiteIndexRoute = SiteIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SiteRoute,
-} as any)
-const SiteEssaysRoute = SiteEssaysRouteImport.update({
-  id: '/essays',
-  path: '/essays',
-  getParentRoute: () => SiteRoute,
-} as any)
-const SitePapersRoute = SitePapersRouteImport.update({
-  id: '/papers',
-  path: '/papers',
-  getParentRoute: () => SiteRoute,
+const EssaySlugRoute = EssaySlugRouteImport.update({
+  id: '/essay/$slug',
+  path: '/essay/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EssayChar123slugChar125DotmdRoute =
   EssayChar123slugChar125DotmdRouteImport.update({
@@ -48,91 +48,100 @@ const EssayChar123slugChar125DotmdRoute =
     path: '/essay/{$slug}.md',
     getParentRoute: () => rootRouteImport,
   } as any)
-const SiteEssaySlugRoute = SiteEssaySlugRouteImport.update({
-  id: '/essay/$slug',
-  path: '/essay/$slug',
-  getParentRoute: () => SiteRoute,
-} as any)
 const EssaySlugMdRoute = EssaySlugMdRouteImport.update({
-  id: '/essay/$slug/md',
-  path: '/essay/$slug/md',
-  getParentRoute: () => rootRouteImport,
+  id: '/md',
+  path: '/md',
+  getParentRoute: () => EssaySlugRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof SiteIndexRoute
+  '/': typeof IndexRoute
+  '/essays': typeof EssaysRoute
+  '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essays': typeof SiteEssaysRoute
-  '/papers': typeof SitePapersRoute
+  '/essay/$slug': typeof EssaySlugRouteWithChildren
   '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
-  '/essay/$slug': typeof SiteEssaySlugRoute
   '/essay/$slug/md': typeof EssaySlugMdRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/essays': typeof EssaysRoute
+  '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essays': typeof SiteEssaysRoute
-  '/papers': typeof SitePapersRoute
+  '/essay/$slug': typeof EssaySlugRouteWithChildren
   '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
-  '/': typeof SiteIndexRoute
-  '/essay/$slug': typeof SiteEssaySlugRoute
   '/essay/$slug/md': typeof EssaySlugMdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_site': typeof SiteRouteWithChildren
+  '/': typeof IndexRoute
+  '/essays': typeof EssaysRoute
+  '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/_site/essays': typeof SiteEssaysRoute
-  '/_site/papers': typeof SitePapersRoute
+  '/essay/$slug': typeof EssaySlugRouteWithChildren
   '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
-  '/_site/': typeof SiteIndexRoute
-  '/_site/essay/$slug': typeof SiteEssaySlugRoute
   '/essay/$slug/md': typeof EssaySlugMdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/sitemap.xml'
     | '/essays'
     | '/papers'
-    | '/essay/{$slug}.md'
+    | '/sitemap.xml'
     | '/essay/$slug'
+    | '/essay/{$slug}.md'
     | '/essay/$slug/md'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/sitemap.xml'
+    | '/'
     | '/essays'
     | '/papers'
-    | '/essay/{$slug}.md'
-    | '/'
+    | '/sitemap.xml'
     | '/essay/$slug'
+    | '/essay/{$slug}.md'
     | '/essay/$slug/md'
   id:
     | '__root__'
-    | '/_site'
+    | '/'
+    | '/essays'
+    | '/papers'
     | '/sitemap.xml'
-    | '/_site/essays'
-    | '/_site/papers'
+    | '/essay/$slug'
     | '/essay/{$slug}.md'
-    | '/_site/'
-    | '/_site/essay/$slug'
     | '/essay/$slug/md'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  SiteRoute: typeof SiteRouteWithChildren
+  IndexRoute: typeof IndexRoute
+  EssaysRoute: typeof EssaysRoute
+  PapersRoute: typeof PapersRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  EssaySlugRoute: typeof EssaySlugRouteWithChildren
   EssayChar123slugChar125DotmdRoute: typeof EssayChar123slugChar125DotmdRoute
-  EssaySlugMdRoute: typeof EssaySlugMdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_site': {
-      id: '/_site'
-      path: ''
+    '/': {
+      id: '/'
+      path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof SiteRouteImport
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/essays': {
+      id: '/essays'
+      path: '/essays'
+      fullPath: '/essays'
+      preLoaderRoute: typeof EssaysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/papers': {
+      id: '/papers'
+      path: '/papers'
+      fullPath: '/papers'
+      preLoaderRoute: typeof PapersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -142,26 +151,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_site/': {
-      id: '/_site/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof SiteIndexRouteImport
-      parentRoute: typeof SiteRoute
-    }
-    '/_site/essays': {
-      id: '/_site/essays'
-      path: '/essays'
-      fullPath: '/essays'
-      preLoaderRoute: typeof SiteEssaysRouteImport
-      parentRoute: typeof SiteRoute
-    }
-    '/_site/papers': {
-      id: '/_site/papers'
-      path: '/papers'
-      fullPath: '/papers'
-      preLoaderRoute: typeof SitePapersRouteImport
-      parentRoute: typeof SiteRoute
+    '/essay/$slug': {
+      id: '/essay/$slug'
+      path: '/essay/$slug'
+      fullPath: '/essay/$slug'
+      preLoaderRoute: typeof EssaySlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/essay/{$slug}.md': {
       id: '/essay/{$slug}.md'
@@ -170,44 +165,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EssayChar123slugChar125DotmdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_site/essay/$slug': {
-      id: '/_site/essay/$slug'
-      path: '/essay/$slug'
-      fullPath: '/essay/$slug'
-      preLoaderRoute: typeof SiteEssaySlugRouteImport
-      parentRoute: typeof SiteRoute
-    }
     '/essay/$slug/md': {
       id: '/essay/$slug/md'
-      path: '/essay/$slug/md'
+      path: '/md'
       fullPath: '/essay/$slug/md'
       preLoaderRoute: typeof EssaySlugMdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof EssaySlugRoute
     }
   }
 }
 
-interface SiteRouteChildren {
-  SiteEssaysRoute: typeof SiteEssaysRoute
-  SitePapersRoute: typeof SitePapersRoute
-  SiteIndexRoute: typeof SiteIndexRoute
-  SiteEssaySlugRoute: typeof SiteEssaySlugRoute
+interface EssaySlugRouteChildren {
+  EssaySlugMdRoute: typeof EssaySlugMdRoute
 }
 
-const SiteRouteChildren: SiteRouteChildren = {
-  SiteEssaysRoute: SiteEssaysRoute,
-  SitePapersRoute: SitePapersRoute,
-  SiteIndexRoute: SiteIndexRoute,
-  SiteEssaySlugRoute: SiteEssaySlugRoute,
+const EssaySlugRouteChildren: EssaySlugRouteChildren = {
+  EssaySlugMdRoute: EssaySlugMdRoute,
 }
 
-const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
+const EssaySlugRouteWithChildren = EssaySlugRoute._addFileChildren(
+  EssaySlugRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  SiteRoute: SiteRouteWithChildren,
+  IndexRoute: IndexRoute,
+  EssaysRoute: EssaysRoute,
+  PapersRoute: PapersRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  EssaySlugRoute: EssaySlugRouteWithChildren,
   EssayChar123slugChar125DotmdRoute: EssayChar123slugChar125DotmdRoute,
-  EssaySlugMdRoute: EssaySlugMdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
