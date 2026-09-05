@@ -35,39 +35,3 @@ test("essay responses vary on Accept", async ({ request }) => {
   });
   expect(markdown.headers().vary).toContain("Accept");
 });
-
-test("essays serve HTML for Accept values that are neither HTML nor markdown", async ({
-  request,
-}) => {
-  const response = await request.get("/essay/agents", {
-    headers: { accept: "application/json" },
-  });
-  expect(response.status()).toBe(200);
-  expect(response.headers()["content-type"]).toContain("text/html");
-});
-
-test("pages without a markdown rendition still serve HTML to markdown-first agents", async ({
-  request,
-}) => {
-  for (const path of ["/", "/essays", "/papers"]) {
-    const response = await request.get(path, {
-      headers: { accept: "text/markdown" },
-    });
-    expect(response.status(), path).toBe(200);
-    expect(response.headers()["content-type"], path).toContain("text/html");
-  }
-});
-
-test("trailing slashes redirect permanently to the canonical URL", async ({
-  request,
-}) => {
-  for (const [path, canonical] of [
-    ["/essays/", "/essays"],
-    ["/essay/agents/", "/essay/agents"],
-    ["/essay/agents/md/", "/essay/agents/md"],
-  ]) {
-    const response = await request.get(path ?? "", { maxRedirects: 0 });
-    expect(response.status(), path).toBe(308);
-    expect(new URL(response.headers().location ?? "").pathname).toBe(canonical);
-  }
-});

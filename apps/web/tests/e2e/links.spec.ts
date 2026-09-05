@@ -50,6 +50,14 @@ test("navbar navigation works on every site page", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Melek" })).toBeVisible();
 });
 
+test("trailing slash URLs redirect to the canonical path", async ({
+  request,
+}) => {
+  const response = await request.get("/essays/", { maxRedirects: 0 });
+  expect([301, 302, 307, 308]).toContain(response.status());
+  expect(response.headers().location).toContain("/essays");
+});
+
 test("client-side navigation between essays keeps content working", async ({
   page,
 }) => {

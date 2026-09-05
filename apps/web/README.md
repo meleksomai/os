@@ -35,7 +35,6 @@ tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), fixtures/, 
 mdx-plugin.ts       MDX pipeline shared by vite.config.ts and vitest.config.ts
 src/
   router.tsx        getRouter(): preload on intent, error/not-found defaults
-  server.ts         Worker entrypoint: trailing-slash redirects, Accept handling
   routes/           file-based routes; _site.* share the navbar/footer layout
   essays/           essay catalog, markdown renditions, per-essay lazy components
   server/           one folder per domain: schema.ts (client-safe types/validators), functions.ts (createServerFn), server.ts (server-only logic)
@@ -69,7 +68,7 @@ The site renders fully without any of them; the newsletter form reports "Subscri
 
 ## Cloudflare deployment
 
-`wrangler.jsonc` defines the Worker (`somai-me`) with `src/server.ts` as its entrypoint. `vite build` emits the Worker bundle (with source maps) and the static assets into `dist/` plus a resolved config at `dist/server/wrangler.json`, which `wrangler deploy` picks up automatically.
+`wrangler.jsonc` defines the Worker (`somai-me`) using TanStack Start's default server entry. `vite build` emits the Worker bundle (with source maps) and the static assets into `dist/` plus a resolved config at `dist/server/wrangler.json`, which `wrangler deploy` picks up automatically.
 
 Workers Builds (git integration):
 
@@ -96,7 +95,8 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 ## Known differences from the Next.js site
 
 - Footnote sections are now styled (the previous build lost their classes to an array `className`).
-- Trailing-slash redirects are 308 for every URL, including the markdown endpoints.
+- Trailing-slash redirects are 307 (the router's default) instead of 308, and the markdown endpoints are not redirected.
+- Requests for a page other than an essay with an `Accept` header that has neither `text/html` nor `*/*` get TanStack Start's `500 {"error":"Only HTML requests are supported here"}` instead of HTML; browsers and crawlers send `*/*`.
 - Unknown essays on the markdown endpoints answer a plain-text 404 instead of the HTML 404 page.
 - The sitemap's static entries carry the newest essay's publish date as `lastmod` instead of the build time.
 - `/favicon.svg` is served (it was 404 before); the `/baby` page, Vercel analytics and feature flags are gone.

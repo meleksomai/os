@@ -5,9 +5,13 @@ import { Suspense } from "react";
 import { mdxComponents } from "@/components/mdx-components";
 import { essayComponentBySlug } from "@/essays/components";
 import { essayMarkdownResponse } from "@/essays/markdown.server";
-import { prefersMarkdown } from "@/essays/negotiation";
 import { pageMeta } from "@/lib/seo";
 import { fetchEssay } from "@/server/essays/functions";
+
+function prefersMarkdown(request: Request): boolean {
+  const accept = request.headers.get("accept") ?? "";
+  return accept.includes("text/markdown") || accept.includes("text/plain");
+}
 
 export const Route = createFileRoute("/_site/essay/$slug")({
   server: {
