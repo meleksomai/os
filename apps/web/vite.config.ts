@@ -1,4 +1,5 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
+import contentCollections from "@content-collections/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -13,6 +14,7 @@ export default defineConfig({
     ssr: { build: { sourcemap: true } },
   },
   plugins: [
+    contentCollections({ environment: "ssr" }),
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
@@ -21,7 +23,13 @@ export default defineConfig({
       importProtection: {
         // `files` replaces the defaults, so keep `*.server.*` and add the
         // per-domain server modules under src/server/<domain>/server.ts.
-        client: { files: ["**/*.server.*", "**/src/server/*/server.ts"] },
+        client: {
+          files: [
+            "**/*.server.*",
+            "**/src/server/*/server.ts",
+            "**/.content-collections/**",
+          ],
+        },
       },
     }),
     viteReact({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),

@@ -7,7 +7,8 @@ The personal website [somai.me](https://www.somai.me), built with [TanStack Star
 - **[TanStack Start](https://tanstack.com/start)** — full-stack React framework on Vite: SSR, server functions, server routes.
 - **[TanStack Router](https://tanstack.com/router)** — type-safe file-based routing (`src/routes`).
 - **[Cloudflare Workers](https://workers.cloudflare.com/)** — runtime and hosting via `@cloudflare/vite-plugin` and Wrangler. `vite dev` and `vite preview` run the app inside workerd, the same runtime as production.
-- **[MDX](https://mdxjs.com/)** — essays in `content/*.mdx`, compiled by the remark/rehype chain in `mdx-plugin.ts` (GFM footnotes, table of contents, frontmatter, reading time, KaTeX, rehype-pretty-code/Shiki).
+- **[content-collections](https://www.content-collections.dev/)** — the content layer: `content-collections.ts` validates the essays' frontmatter and `content/papers.json` with zod at build time and generates a typed, server-only `content-collections` module (`allEssays`, `research`) with the derived fields (slug, formatted date, reading time, the plain-markdown rendition from `mdx-to-markdown.ts`).
+- **[MDX](https://mdxjs.com/)** — essays in `content/*.mdx`, compiled to page components by the remark/rehype chain in `mdx-plugin.ts` (GFM footnotes, table of contents, KaTeX, rehype-pretty-code/Shiki), the same approach as the content-collections TanStack Start + Cloudflare sample (its own MDX runtime needs `new Function`, which Workers forbid).
 - **[Tailwind CSS v4](https://tailwindcss.com/)** + `@workspace/ui` for the design system.
 - **[Satori](https://github.com/vercel/satori) + resvg** — Open Graph images pre-rendered at build time by `scripts/generate-og.ts` into `public/og/`.
 
@@ -32,7 +33,10 @@ content/            essays (*.mdx) and papers.json
 public/             static assets: icons, images, robots.txt
 scripts/            generate-og.ts — runs on plain Node 24 (no transpiler)
 tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), fixtures/, setup.ts, shared helpers
-mdx-plugin.ts       MDX pipeline shared by vite.config.ts and vitest.config.ts
+content-collections.ts  content layer: essays collection + research (papers) singleton, zod schemas, build-time transforms
+mdx-to-markdown.ts  MDX body → plain markdown (used by the essays transform; unit-tested with inline MDX)
+mdx-plugin.ts       MDX → page components, shared by vite.config.ts and vitest.config.ts
+.content-collections/   generated (gitignored): `pnpm run generate:content`, also run by dev/build/test/check-types
 src/
   router.tsx        getRouter(): preload on intent, error/not-found defaults
   routes/           file-based routes, one file per route; essay/ groups the essay routes; the root route renders the navbar/footer layout
@@ -88,7 +92,7 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 
 ## Tests
 
-- `tests/unit/**/*.test.ts(x)` — unit tests mirroring `src/`: essay catalog and markdown renditions (byte-compared with `tests/fixtures/agents.md`, captured from the previous deployment), sitemap, SEO tags, dates, server logic, and the newsletter form with its server function mocked.
+- `tests/unit/**/*.test.ts(x)` — unit tests mirroring `src/`: the MDX-to-markdown conversion (inline MDX samples), essay catalog and markdown renditions (compared with the checked-in `tests/fixtures/agents.md`), sitemap, SEO tags, dates, server logic, and the newsletter form with its server function mocked.
 - `tests/e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, markdown negotiation, SEO tags and OG image dimensions, inline SSR of essays, redirects, 404s, theme switching, and the real newsletter round trip (no secrets, so the server reports unavailability).
 
 ## Known differences from the Next.js site
@@ -97,5 +101,6 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 - Trailing-slash redirects are 307 (the router's default) instead of 308, and the markdown endpoints are not redirected.
 - Requests for a page other than an essay with an `Accept` header that has neither `text/html` nor `*/*` get TanStack Start's `500 {"error":"Only HTML requests are supported here"}` instead of HTML; browsers and crawlers send `*/*`.
 - Unknown essays on the markdown endpoints answer a plain-text 404 instead of the HTML 404 page.
+- The markdown renditions are produced from the MDX parse tree (`mdx-to-markdown.ts`) instead of the raw source: no frontmatter, imports or JSX tags; `<Quote>` becomes a blockquote with its attribution and `<ThemeImage>` an image; formatting is normalised (`*emphasis*`, `<autolinks>`), and the reading time counts the words of that body.
 - The sitemap's static entries carry the newest essay's publish date as `lastmod` instead of the build time.
 - `/favicon.svg` is served (it was 404 before); the `/baby` page, Vercel analytics and feature flags are gone.

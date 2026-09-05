@@ -5,17 +5,14 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import remarkReadingTime from "remark-reading-time";
-import remarkReadingMdxTime from "remark-reading-time/mdx";
 import remarkToc from "remark-toc";
 import type { Plugin } from "vite";
 
 /**
- * MDX pipeline shared by Vite (the app) and Vitest (unit tests), unchanged
- * from the previous Next.js configuration: GFM footnotes, table of contents,
- * frontmatter exported as `metadata`, `readingTime`, KaTeX, and
- * rehype-pretty-code with paired light/dark Shiki themes.
+ * How an essay's MDX becomes its page component, shared by Vite (the app) and
+ * Vitest: GFM footnotes, table of contents, KaTeX, and rehype-pretty-code with
+ * paired light/dark Shiki themes. The frontmatter is parsed by
+ * content-collections.ts, so here it is only kept out of the output.
  */
 export const mdxOptions: Options = {
   providerImportSource: "@mdx-js/react",
@@ -23,9 +20,6 @@ export const mdxOptions: Options = {
     [remarkGfm, { footnoteLabelProperties: { className: ["sr-only"] } }],
     remarkToc,
     remarkFrontmatter,
-    [remarkMdxFrontmatter, { name: "metadata" }],
-    remarkReadingTime,
-    remarkReadingMdxTime,
   ],
   rehypePlugins: [
     [
@@ -47,29 +41,7 @@ export const mdxOptions: Options = {
   ],
 };
 
-type MdxTransform = (
-  this: unknown,
-  code: string,
-  id: string
-) => Promise<unknown> | unknown;
-
-/**
- * `@mdx-js/rollup` strips query strings before matching ids, so it would also
- * compile the `content/*.mdx?raw` imports that feed the markdown renditions.
- * This wrapper leaves any queried id to Vite's own loaders.
- */
+/** The MDX compiler as a Vite plugin, ahead of the React plugin. */
 export function mdxPlugin(): Plugin {
-  const plugin = mdx(mdxOptions);
-  const transform = plugin.transform as MdxTransform;
-
-  return {
-    ...plugin,
-    enforce: "pre",
-    transform(this: unknown, code: string, id: string) {
-      if (id.includes("?")) {
-        return null;
-      }
-      return transform.call(this, code, id);
-    },
-  } as Plugin;
+  return { ...mdx(mdxOptions), enforce: "pre" } as Plugin;
 }

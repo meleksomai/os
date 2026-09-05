@@ -3,28 +3,56 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { getEssayMarkdown, listEssays } from "@/server/essays/server";
 
-const IMPORT_LINE = /^import /m;
+const JSX_TAG = /<[A-Z][A-Za-z]*[\s/>]/;
+const UI_IMPORT = /^import .* from "@workspace\/ui/m;
+const FENCED_CODE = /```[\s\S]*?```/g;
+const FENCE_WITH_IMPORT = /```[^\n]*\n[\s\S]*?^import /m;
 
-// Captured from the previous deployment on 2026-09-04:
-//   curl -s https://www.somai.me/essay/agents/md > tests/fixtures/agents.md
-const productionRendition = readFileSync(
+// The rendition of content/agents.mdx as produced by content-collections.ts
+// (mdx-to-markdown.ts), reviewed against the previous deployment's output on
+// 2026-09-05. Regenerate it on purpose when the conversion changes:
+//   pnpm build && pnpm preview & curl -s http://localhost:4173/essay/agents/md > tests/fixtures/agents.md
+const checkedInRendition = readFileSync(
   path.join(import.meta.dirname, "../../../fixtures/agents.md"),
   "utf8"
 );
 
 describe("getEssayMarkdown", () => {
-  it("is byte-identical to the production rendition", () => {
-    expect(getEssayMarkdown("agents")).toBe(productionRendition);
+  it("matches the checked-in rendition", () => {
+    expect(getEssayMarkdown("agents")).toBe(checkedInRendition);
   });
 
-  it("strips the frontmatter and import statements from every essay", () => {
+  it("renders every essay as plain markdown", () => {
     for (const essay of listEssays()) {
       const markdown = getEssayMarkdown(essay.slug);
       expect(markdown, essay.slug).not.toBeNull();
-      expect(markdown).toContain(`# ${essay.title}`);
-      expect(markdown).not.toContain("publishedAt:");
-      expect(markdown).not.toMatch(IMPORT_LINE);
+      expect(markdown).toContain(`# ${essay.title} - ${essay.subtitle}`);
+      expect(markdown).toContain(
+        `/ ${essay.publishedAtFormatted} / ${essay.readingTime.text} /`
+      );
+      expect(markdown, essay.slug).not.toContain("publishedAt:");
+      // Prose only: code blocks may legitimately contain `<Env>` or imports.
+      const prose = (markdown ?? "").replace(FENCED_CODE, "");
+      expect(prose, essay.slug).not.toMatch(JSX_TAG);
+      expect(prose, essay.slug).not.toMatch(UI_IMPORT);
     }
+  });
+
+  it("turns components into their markdown equivalent", () => {
+    const markdown = getEssayMarkdown("agents") ?? "";
+
+    // <Quote author source> → blockquote with an attribution line
+    expect(markdown).toContain(
+      "> — Norbert Wiener, The Human Use of Human Beings"
+    );
+    // <Highlight text="…">EHRs</Highlight> → its children
+    expect(markdown).toContain("to dashboards to EHRs");
+  });
+
+  it("keeps code blocks intact, including import lines inside them", () => {
+    const markdown = getEssayMarkdown("cloudflare_agents") ?? "";
+
+    expect(markdown).toMatch(FENCE_WITH_IMPORT);
   });
 
   it("returns null for an unknown slug", () => {

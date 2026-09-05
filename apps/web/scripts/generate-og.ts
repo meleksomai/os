@@ -1,28 +1,28 @@
 /**
  * Pre-renders the Open Graph images at build time (the previous deployment
  * rendered them per request with next/og). Runs on plain Node 24 — no
- * transpiler — and writes PNGs into public/og/, which is gitignored except for
- * the static baby.png.
+ * transpiler — and writes PNGs into public/og/ (gitignored).
  *
  * Output: public/og/{home,essays,papers}.png and public/og/essay-<slug>.png
  *
- * Only plain modules may be value-imported from src/ (types are erased);
- * anything that uses Vite features such as import.meta.glob cannot run here.
+ * The essays come from the generated content collection, so
+ * `pnpm run generate:content` runs first (see package.json). Only plain
+ * modules may be value-imported from src/ (types are erased); anything that
+ * uses Vite features such as import.meta.glob cannot run here.
  *
  * TODO(#99): replace this build-time step with a request-time server route
  * (takumi-js ImageResponse, edge-cached), the pattern tanstack.com uses on
  * Workers. https://github.com/meleksomai/os/issues/99
  */
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { Resvg } from "@resvg/resvg-js";
-import matter from "gray-matter";
 import type { ReactNode } from "react";
 import satori from "satori";
+import { allEssays } from "../.content-collections/generated/index.js";
 import { siteConfig } from "../src/config/site.ts";
-import { essaySlugFromPath } from "../src/server/essays/schema.ts";
 
 interface OgTarget {
   name: string;
@@ -42,7 +42,6 @@ const appRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   ".."
 );
-const contentDir = path.join(appRoot, "content");
 const assetsDir = path.join(appRoot, "assets");
 const outputDir = path.join(appRoot, "public", "og");
 
@@ -179,23 +178,13 @@ async function renderPng(
     .asPng();
 }
 
-async function essayTargets(): Promise<OgTarget[]> {
-  const files = (await readdir(contentDir)).filter((file) =>
-    file.endsWith(".mdx")
-  );
-
-  return await Promise.all(
-    files.map(async (file) => {
-      const { data } = matter(
-        await readFile(path.join(contentDir, file), "utf8")
-      );
-      return {
-        name: `essay-${essaySlugFromPath(file)}.png`,
-        title: String(data.title),
-        subtitle: String(data.subtitle),
-      };
-    })
-  );
+/** One card per essay, from the collection content-collections.ts builds. */
+function essayTargets(): OgTarget[] {
+  return allEssays.map(({ slug, title, subtitle }) => ({
+    name: `essay-${slug}.png`,
+    title,
+    subtitle,
+  }));
 }
 
 const staticTargets: OgTarget[] = [

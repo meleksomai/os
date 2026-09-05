@@ -1,9 +1,4 @@
-/** The fields the papers page renders; the rest of the record stays on the server. */
-export interface PaperListItem {
-  _id: string;
-  title: string;
-  doi?: string;
-  url?: string[];
-  published: { year: string };
-  publisher?: string;
-}
+import type { Research } from "content-collections";
+
+/** A paper as the papers page renders it (content-collections.ts keeps only these fields). */
+export type Paper = Research["papers"][number];

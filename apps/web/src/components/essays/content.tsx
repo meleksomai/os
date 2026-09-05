@@ -3,14 +3,20 @@ import { lazyRouteComponent } from "@tanstack/react-router";
 import type { MDXContent } from "mdx/types";
 import { Suspense } from "react";
 import { mdxComponents } from "@/components/common/mdx-components";
-import { essaySlugFromPath } from "@/server/essays/schema";
+
+const MDX_EXTENSION = /\.mdx$/;
+
+/** `../../../content/agents.mdx` → `agents`: the slug content-collections derives from the file name. */
+function slugFromPath(path: string): string {
+  return (path.split("/").pop() ?? path).replace(MDX_EXTENSION, "");
+}
 
 // One code-split chunk per essay, keyed by slug, loaded with the mechanism
 // TanStack Router uses for its own lazy route components.
 const contentBySlug = new Map(
   Object.entries(
     import.meta.glob<{ default: MDXContent }>("../../../content/*.mdx")
-  ).map(([path, load]) => [essaySlugFromPath(path), lazyRouteComponent(load)])
+  ).map(([path, load]) => [slugFromPath(path), lazyRouteComponent(load)])
 );
 
 function contentFor(slug: string) {

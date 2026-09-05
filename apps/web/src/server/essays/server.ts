@@ -1,97 +1,38 @@
-import { formatPublishedAt, parsePublishedAt } from "@/lib/date";
-import {
-  type Essay,
-  type EssayFrontmatter,
-  type EssayReadingTime,
-  essaySlugFromPath,
-} from "./schema";
+import { allEssays, type Essay as EssayDocument } from "content-collections";
+import type { Essay } from "./schema";
 
-// Only the named exports produced by the MDX pipeline (remark-mdx-frontmatter
-// and remark-reading-time) are imported here, so this module never renders an
-// essay. The components live in src/components/essays/content.tsx.
-const frontmatterByPath = import.meta.glob<EssayFrontmatter>(
-  "../../../content/*.mdx",
-  { eager: true, import: "metadata" }
+/** Every essay in `content/`, newest first (content-collections.ts builds and validates them). */
+const essays = [...allEssays].sort((a, b) =>
+  b.publishedAt.localeCompare(a.publishedAt)
 );
 
-const readingTimeByPath = import.meta.glob<EssayReadingTime>(
-  "../../../content/*.mdx",
-  { eager: true, import: "readingTime" }
-);
-
-const rawEssayByPath = import.meta.glob<string>("../../../content/*.mdx", {
-  eager: true,
-  import: "default",
-  query: "?raw",
-});
-
-function buildCatalog(): Essay[] {
-  return Object.entries(frontmatterByPath)
-    .map(([path, frontmatter]): Essay => {
-      const readingTime = readingTimeByPath[path];
-      if (!readingTime) {
-        throw new Error(`Missing reading time for essay: ${path}`);
-      }
-
-      return {
-        slug: essaySlugFromPath(path),
-        ...frontmatter,
-        publishedAtFormatted: formatPublishedAt(
-          parsePublishedAt(frontmatter.publishedAt)
-        ),
-        readingTime,
-      };
-    })
-    .sort(
-      (a, b) =>
-        parsePublishedAt(b.publishedAt).getTime() -
-        parsePublishedAt(a.publishedAt).getTime()
-    );
+function toEssay({ markdown: _markdown, ...essay }: EssayDocument): Essay {
+  return essay;
 }
 
-const catalog = buildCatalog();
-
-/** Every essay in `content/`, newest first. */
 export function listEssays(): Essay[] {
-  return catalog;
+  return essays.map(toEssay);
 }
 
 export function getEssayBySlug(slug: string): Essay | null {
-  return catalog.find((essay) => essay.slug === slug) ?? null;
+  const essay = essays.find((candidate) => candidate.slug === slug);
+  return essay ? toEssay(essay) : null;
 }
-
-const rawEssayBySlug = new Map(
-  Object.entries(rawEssayByPath).map(([path, raw]) => [
-    essaySlugFromPath(path),
-    raw,
-  ])
-);
-
-// The YAML block at the top of every essay. Its values reach the app through
-// the catalog, so the rendition only needs to drop it.
-const FRONTMATTER_BLOCK = /^---\r?\n[\s\S]*?\r?\n---\r?\n?/;
 
 /**
  * Plain-markdown rendition of an essay for user agents that ask for
- * text/markdown: the title heading, a metadata line, then the body with the
- * frontmatter and the MDX import statements stripped.
+ * text/markdown: the title heading, a metadata line, then the body the
+ * collection produced from the MDX source (mdx-to-markdown.ts).
  */
 export function getEssayMarkdown(slug: string): string | null {
-  const essay = getEssayBySlug(slug);
-  const raw = rawEssayBySlug.get(slug);
+  const essay = essays.find((candidate) => candidate.slug === slug);
 
-  if (!(essay && raw)) {
+  if (!essay) {
     return null;
   }
 
-  const body = raw
-    .replace(FRONTMATTER_BLOCK, "")
-    .split("\n")
-    .filter((line) => !line.trim().startsWith("import "))
-    .join("\n")
-    .trim();
-
-  const { title, subtitle, publishedAtFormatted, readingTime } = essay;
+  const { title, subtitle, publishedAtFormatted, readingTime, markdown } =
+    essay;
 
   return `# ${title} - ${subtitle}
 
@@ -99,6 +40,6 @@ export function getEssayMarkdown(slug: string): string | null {
 
 ---
 
-${body}
+${markdown}
 `;
 }

@@ -9,6 +9,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
+      "content-collections": ["./.content-collections/generated"],
       "@workspace/ui/*": ["../../packages/ui/src/*"]
     },
     "types": ["vite/client"]

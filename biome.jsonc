@@ -9,6 +9,7 @@
       "!**/.wrangler",
       // Static assets (SVG art, favicons) are not source
       "!**/public",
+      "!**/.content-collections",
       // Golden test fixtures must stay byte-exact
       "!**/tests/fixtures",
       "!**/routeTree.gen.ts",

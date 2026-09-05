@@ -4,7 +4,7 @@ import { essaySlugsOnDisk } from "../essays";
 
 const MARKDOWN_CONTENT_TYPE = "text/markdown; charset=utf-8";
 
-// The rendition captured from the previous deployment (see markdown.test.ts).
+// The checked-in rendition of content/agents.mdx (see the unit test markdown.test.ts).
 const AGENTS_RENDITION = readFileSync(
   new URL("../fixtures/agents.md", import.meta.url),
   "utf8"
