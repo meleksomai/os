@@ -2,8 +2,8 @@ import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
-import { ErrorPage } from "@/components/error-page";
-import { NotFoundPage } from "@/components/not-found-page";
+import { ErrorPage } from "@/components/pages/error-page";
+import { NotFoundPage } from "@/components/pages/not-found-page";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
