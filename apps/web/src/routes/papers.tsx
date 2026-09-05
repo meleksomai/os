@@ -4,7 +4,7 @@ import { PapersSection } from "@/components/papers/section-papers";
 import { generateSeo } from "@/lib/seo";
 import { fetchPapers } from "@/server/papers/functions";
 
-export const Route = createFileRoute("/papers/")({
+export const Route = createFileRoute("/papers")({
   loader: () => fetchPapers(),
   head: () =>
     generateSeo({

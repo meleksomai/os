@@ -35,7 +35,7 @@ tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), fixtures/, 
 mdx-plugin.ts       MDX pipeline shared by vite.config.ts and vitest.config.ts
 src/
   router.tsx        getRouter(): preload on intent, error/not-found defaults
-  routes/           file-based routes, one folder per page; the root route renders the navbar/footer layout
+  routes/           file-based routes (essay/ is a folder); the root route renders the navbar/footer layout
   essays/           essay catalog, markdown renditions, per-essay lazy components
   server/           one folder per domain: schema.ts (client-safe types/validators), functions.ts (createServerFn), server.ts (server-only logic)
   lib/              seo (one generateSeo() for the root defaults and every page), jsonld (Schema.org structured data), sitemap, date
@@ -49,9 +49,9 @@ Modules that must never reach the browser carry the `.server.ts` suffix; TanStac
 
 | URL                                         | Source                                              |
 | ------------------------------------------- | --------------------------------------------------- |
-| `/`, `/essays`, `/papers`, `/essay/:slug`   | `src/routes/index.tsx`, `essays/index.tsx`, `papers/index.tsx`, `essay/$slug/index.tsx` |
-| `/essay/:slug` with `Accept: text/markdown` | content negotiation in `essay/$slug/index.tsx`      |
-| `/essay/:slug/md`, `/essay/:slug.md`        | `src/routes/essay/$slug/md.ts`, `essay/{$slug}[.]md.ts` |
+| `/`, `/essays`, `/papers`, `/essay/:slug`   | `src/routes/index.tsx`, `essays.tsx`, `papers.tsx`, `essay/$slug.tsx` |
+| `/essay/:slug` with `Accept: text/markdown` | content negotiation in `essay/$slug.tsx`            |
+| `/essay/:slug/md`, `/essay/:slug.md`        | `src/routes/essay/$slug_/md.ts` (non-nested), `essay/{$slug}[.]md.ts` |
 | `/sitemap.xml`                              | `src/routes/sitemap[.]xml.ts`                       |
 | `/robots.txt`, `/og/*.png`, `/images/**`    | static files in `public/` (OG images generated at build) |
 

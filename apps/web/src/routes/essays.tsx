@@ -4,7 +4,7 @@ import { HeaderSection } from "@/components/essays/section-header";
 import { generateSeo } from "@/lib/seo";
 import { fetchEssayList } from "@/server/essays/functions";
 
-export const Route = createFileRoute("/essays/")({
+export const Route = createFileRoute("/essays")({
   loader: () => fetchEssayList(),
   head: () =>
     generateSeo({
