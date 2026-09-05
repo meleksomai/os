@@ -21,11 +21,16 @@ export default defineConfig({
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     mdxPlugin(),
     tanstackStart({
-      // Prerender the site by crawling links from "/": the static HTML lands
-      // in dist/client and the crawl feeds sitemap.xml. Essay URLs are routed
-      // to the Worker first (wrangler.jsonc) so their markdown negotiation
-      // keeps working.
-      prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: false },
+      // Prerender by crawling links from "/": the static pages land in
+      // dist/client and every crawled page feeds sitemap.xml. Essays are
+      // crawled but not rendered: they negotiate markdown on their URL, so
+      // they stay server-rendered.
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+        autoSubfolderIndex: false,
+        filter: (page) => !page.path.startsWith("/essay/"),
+      },
       pages: [{ path: "/" }],
       sitemap: { host: siteConfig.url },
       importProtection: {
