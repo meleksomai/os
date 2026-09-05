@@ -2,7 +2,7 @@ import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
-import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
+import { ErrorPage } from "@/components/error-page";
 import { NotFound } from "@/components/not-found";
 import appCss from "../styles.css?url";
 
@@ -29,7 +29,7 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  errorComponent: DefaultCatchBoundary,
+  errorComponent: ErrorPage,
   notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });

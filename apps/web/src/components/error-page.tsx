@@ -7,7 +7,8 @@ import {
 import { Heading1 } from "@workspace/ui/blocks/headings";
 import { Button, buttonVariants } from "@workspace/ui/components/button";
 
-export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
+/** Fallback rendered by TanStack's error boundary when a route throws (`errorComponent`). */
+export function ErrorPage({ error }: ErrorComponentProps) {
   const router = useRouter();
 
   console.error(error);
