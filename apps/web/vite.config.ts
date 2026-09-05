@@ -6,7 +6,8 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { mdxPlugin } from "./mdx-plugin";
-import { sitemapHost, sitemapPages } from "./sitemap-pages";
+import { sitemapPages } from "./sitemap-pages";
+import { siteConfig } from "./src/config/site";
 
 export default defineConfig({
   environments: {
@@ -22,7 +23,7 @@ export default defineConfig({
     mdxPlugin(),
     tanstackStart({
       // sitemap.xml is built from these pages at build time (no prerendering).
-      sitemap: { host: sitemapHost },
+      sitemap: { host: siteConfig.url },
       pages: sitemapPages(),
       importProtection: {
         // `files` replaces the defaults, so keep `*.server.*` and add the
