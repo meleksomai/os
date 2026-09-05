@@ -31,6 +31,7 @@ Linting and formatting run from the repository root: `pnpm check` / `pnpm fix` (
 content/            essays (*.mdx) and papers.json
 public/             static assets: icons, images, _headers (asset caching), robots.txt, og/baby.png
 scripts/            generate-og.ts — runs on plain Node 24 (no transpiler)
+test/               shared test support: Vitest setup, fixtures, helpers used by unit and e2e tests
 mdx-plugin.ts       MDX pipeline shared by vite.config.ts and vitest.config.ts
 src/
   router.tsx        getRouter(): preload on intent, error/not-found defaults
@@ -93,7 +94,7 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 
 ## Tests
 
-- `src/**/*.test.ts(x)` — unit tests: essay catalog and markdown renditions (byte-compared with a fixture captured from the previous deployment), sitemap, SEO tags, dates, server logic, and the newsletter/signbook forms with their server functions mocked.
+- `src/**/*.test.ts(x)` — unit tests, colocated with the code: essay catalog and markdown renditions (byte-compared with `test/fixtures/agents.md`, captured from the previous deployment), sitemap, SEO tags, dates, server logic, and the newsletter/signbook forms with their server functions mocked.
 - `e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, markdown negotiation, SEO tags and OG image dimensions, inline SSR of essays, cache headers, redirects, 404s, theme switching, and the real newsletter/signbook round trips (no secrets, so the server reports unavailability).
 
 ## Known differences from the Next.js site

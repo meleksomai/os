@@ -1,12 +1,12 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
-import { essaySlugsOnDisk } from "./helpers/essays";
+import { essaySlugsOnDisk } from "../test/essays";
 
 const MARKDOWN_CONTENT_TYPE = "text/markdown; charset=utf-8";
 
 // The rendition captured from the previous deployment (see markdown.test.ts).
 const AGENTS_RENDITION = readFileSync(
-  new URL("../src/essays/__fixtures__/agents.md", import.meta.url),
+  new URL("../test/fixtures/agents.md", import.meta.url),
   "utf8"
 );
 

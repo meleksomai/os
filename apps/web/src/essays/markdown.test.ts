@@ -7,9 +7,9 @@ import { essayMarkdownResponse, getEssayMarkdown } from "./markdown.server";
 const IMPORT_LINE = /^import /m;
 
 // Captured from the previous deployment on 2026-09-04:
-//   curl -s https://www.somai.me/essay/agents/md > src/essays/__fixtures__/agents.md
+//   curl -s https://www.somai.me/essay/agents/md > test/fixtures/agents.md
 const productionRendition = readFileSync(
-  path.join(import.meta.dirname, "__fixtures__/agents.md"),
+  path.join(import.meta.dirname, "../../test/fixtures/agents.md"),
   "utf8"
 );
 

@@ -1,15 +1,10 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: unit testing */
-import { readdirSync } from "node:fs";
-import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { parsePublishedAt } from "@/lib/date";
+import { essaySlugsOnDisk } from "../../test/essays";
 import { essayCatalog, getEssayBySlug } from "./catalog.server";
-import { essaySlugFromPath } from "./slug";
 
-const slugsOnDisk = readdirSync(path.join(import.meta.dirname, "../../content"))
-  .filter((file) => file.endsWith(".mdx"))
-  .map(essaySlugFromPath)
-  .sort();
+const slugsOnDisk = essaySlugsOnDisk();
 
 describe("essayCatalog", () => {
   it("contains exactly the essays in content/", () => {
