@@ -26,6 +26,7 @@ apps/
 packages/
   ui/                 # Shared UI components + styles
   emailing/           # Resend newsletter helpers
+  ntfy/               # ntfy.sh notifications
   transactional/      # React Email templates
   testing/            # Shared Vitest preset
   typescript-config/  # Shared TS configs
