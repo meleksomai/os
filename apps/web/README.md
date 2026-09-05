@@ -29,7 +29,7 @@ Linting and formatting run from the repository root: `pnpm check` / `pnpm fix` (
 
 ```
 content/            essays (*.mdx) and papers.json
-public/             static assets: icons, images, _headers (asset caching), robots.txt, og/baby.png
+public/             static assets: icons, images, robots.txt, og/baby.png
 scripts/            generate-og.ts — runs on plain Node 24 (no transpiler)
 tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), fixtures/, setup.ts, shared helpers
 mdx-plugin.ts       MDX pipeline shared by vite.config.ts and vitest.config.ts
@@ -88,14 +88,14 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 1. Verify the deployed Worker on its `workers.dev` URL.
 2. Remove the `www` CNAME to Vercel and add `www.somai.me` as a Custom Domain of the Worker.
 3. Point the apex at a proxied placeholder record (`A 192.0.2.0`) with a Redirect Rule `https://somai.me/*` → `https://www.somai.me/${1}`.
-4. Enable HSTS under *SSL/TLS → Edge Certificates* (production sends `max-age=63072000` today; nothing in this repo sets it, and `_headers` only applies to static assets).
+4. Enable HSTS under *SSL/TLS → Edge Certificates* (production sends `max-age=63072000` today; nothing in this repo sets it).
 5. Optionally enable Web Analytics (automatic setup, no code) and set `"workers_dev": false` in `wrangler.jsonc` so the site has a single origin.
 6. Remove the domain from the Vercel project, then delete the project.
 
 ## Tests
 
 - `tests/unit/**/*.test.ts(x)` — unit tests mirroring `src/`: essay catalog and markdown renditions (byte-compared with `tests/fixtures/agents.md`, captured from the previous deployment), sitemap, SEO tags, dates, server logic, and the newsletter/signbook forms with their server functions mocked.
-- `tests/e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, markdown negotiation, SEO tags and OG image dimensions, inline SSR of essays, cache headers, redirects, 404s, theme switching, and the real newsletter/signbook round trips (no secrets, so the server reports unavailability).
+- `tests/e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, markdown negotiation, SEO tags and OG image dimensions, inline SSR of essays, redirects, 404s, theme switching, and the real newsletter/signbook round trips (no secrets, so the server reports unavailability).
 
 ## Known differences from the Next.js site
 

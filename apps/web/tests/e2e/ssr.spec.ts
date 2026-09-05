@@ -71,19 +71,3 @@ test("trailing slashes redirect permanently to the canonical URL", async ({
     expect(new URL(response.headers().location ?? "").pathname).toBe(canonical);
   }
 });
-
-test("fingerprinted assets are immutable while images revalidate", async ({
-  request,
-}) => {
-  const html = await (await request.get("/")).text();
-  const asset = html.match(/\/assets\/[^"']+\.js/)?.[0];
-  expect(asset).toBeTruthy();
-
-  const script = await request.get(asset ?? "");
-  expect(script.status()).toBe(200);
-  expect(script.headers()["cache-control"]).toContain("immutable");
-
-  const image = await request.get("/og/home.png");
-  expect(image.status()).toBe(200);
-  expect(image.headers()["cache-control"]).not.toContain("immutable");
-});
