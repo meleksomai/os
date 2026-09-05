@@ -50,8 +50,8 @@ Modules that must never reach the browser carry the `.server.ts` suffix; TanStac
 | URL                                         | Source                                              |
 | ------------------------------------------- | --------------------------------------------------- |
 | `/`, `/essays`, `/papers`, `/essay/:slug`   | `src/routes/index.tsx`, `essays.tsx`, `papers.tsx`, `essay/$slug/index.tsx` |
-| `/essay/:slug.md`, or `/essay/:slug` with `Accept: text/markdown` | the GET handler in `essay/$slug/index.tsx` |
-| `/essay/:slug/md`                           | `src/routes/essay/$slug/md/index.ts`               |
+| `/essay/:slug` with `Accept: text/markdown` | content negotiation in `essay/$slug/index.tsx`      |
+| `/essay/:slug/md`, `/essay/:slug.md`        | `src/routes/essay/$slug/md/index.ts`, `essay/{$slug}[.]md/index.ts` |
 | `/sitemap.xml`                              | `src/routes/sitemap[.]xml.ts`                       |
 | `/robots.txt`, `/og/*.png`, `/images/**`    | static files in `public/` (OG images generated at build) |
 
