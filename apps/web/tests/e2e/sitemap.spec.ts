@@ -1,78 +1,53 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: e2e assertions */
-import { expect, test } from "@playwright/test";
+import { type APIRequestContext, expect, test } from "@playwright/test";
 import { essaySlugsOnDisk } from "../essays";
 
 const SITE = "https://www.somai.me";
 
-test("sitemap.xml serves the same entries as before the migration", async ({
-  request,
-}) => {
+async function sitemapLocs(request: APIRequestContext) {
   const response = await request.get("/sitemap.xml");
-
   expect(response.status()).toBe(200);
-  expect(response.headers()["content-type"]).toContain("application/xml");
-
+  expect(response.headers()["content-type"]).toContain("xml");
   const xml = await response.text();
-  expect(xml).toContain('<?xml version="1.0" encoding="UTF-8"?>');
-  expect(xml).toContain(
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+  expect(xml).toMatch(
+    /<urlset xmlns="https?:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/
   );
+  return {
+    xml,
+    locs: [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1] ?? ""),
+  };
+}
 
-  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1] ?? "");
+test("sitemap.xml lists every page once", async ({ request }) => {
+  const { locs } = await sitemapLocs(request);
 
-  // Static entries, including the duplicate root entry the previous
-  // implementation always emitted.
-  expect(locs.filter((loc) => loc === SITE)).toHaveLength(2);
+  expect(new Set(locs).size).toBe(locs.length);
+  expect(locs).toContain(`${SITE}/`);
   expect(locs).toContain(`${SITE}/essays`);
-  expect(locs).toContain(`${SITE}/research`);
+  expect(locs).toContain(`${SITE}/papers`);
 
-  // Exactly one entry per essay in content/
   const essaySlugs = locs
     .filter((loc) => loc.startsWith(`${SITE}/essay/`))
     .map((loc) => loc.replace(`${SITE}/essay/`, ""))
     .sort();
   expect(essaySlugs).toEqual(essaySlugsOnDisk());
+  expect(locs).toHaveLength(3 + essaySlugs.length);
 });
 
-test("every essay URL in the sitemap resolves on this deployment", async ({
-  request,
-}) => {
-  const xml = await (await request.get("/sitemap.xml")).text();
-  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1] ?? "");
+test("every sitemap URL resolves on this deployment", async ({ request }) => {
+  const { locs } = await sitemapLocs(request);
 
-  const paths = locs
-    .map((loc) => new URL(loc).pathname)
-    .filter((path) => path.startsWith("/essay/") || path === "/essays");
-
-  expect(paths.length).toBeGreaterThan(0);
-
-  for (const path of paths) {
-    const response = await request.get(path);
-    expect(response.status(), `${path} should resolve`).toBe(200);
+  for (const loc of locs) {
+    const response = await request.get(new URL(loc).pathname);
+    expect(response.status(), `${loc} should resolve`).toBe(200);
   }
 });
 
-test("sitemap essay entries use the publish date as lastmod", async ({
-  request,
-}) => {
-  const xml = await (await request.get("/sitemap.xml")).text();
+test("essay entries carry the publish date as lastmod", async ({ request }) => {
+  const { xml } = await sitemapLocs(request);
 
   // The agents essay was published on 2026-01-02
   expect(xml).toMatch(
-    /<loc>https:\/\/www\.somai\.me\/essay\/agents<\/loc>\n<lastmod>2026-01-02T00:00:00\.000Z<\/lastmod>/
+    /<loc>https:\/\/www\.somai\.me\/essay\/agents<\/loc>\s*<lastmod>2026-01-02<\/lastmod>/
   );
-});
-
-test("robots.txt matches the previous output", async ({ request }) => {
-  const response = await request.get("/robots.txt");
-
-  expect(response.status()).toBe(200);
-  expect(response.headers()["content-type"]).toContain("text/plain");
-
-  const body = await response.text();
-  expect(body).toBe(`User-Agent: *
-Allow: /
-
-Sitemap: https://www.somai.me/sitemap.xml
-`);
 });

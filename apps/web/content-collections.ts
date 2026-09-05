@@ -1,3 +1,4 @@
+import { writeFile } from "node:fs/promises";
 import {
   defineCollection,
   defineConfig,
@@ -46,6 +47,15 @@ const essays = defineCollection({
       markdown,
     };
   },
+  // What the sitemap needs from the essays; sitemap-pages.ts reads it into
+  // the `pages` option of the TanStack Start plugin (vite.config.ts).
+  onSuccess: (essays) =>
+    writeFile(
+      ".content-collections/sitemap.json",
+      JSON.stringify({
+        essays: essays.map(({ slug, publishedAt }) => ({ slug, publishedAt })),
+      })
+    ),
 });
 
 /** A record of the Paperpile export in content/papers.json; only these fields are kept. */
