@@ -1,14 +1,7 @@
-# Local environment for `pnpm dev` / `wrangler dev`.
+# Local environment for `pnpm dev` / `vite preview`.
 # Copy to .dev.vars and fill in real values. In production these are set as
 # Cloudflare Worker secrets (wrangler secret put <NAME>).
 
 # Resend (newsletter subscription form)
 RESEND_API_KEY=
 RESEND_SEGMENT_GENERAL=
-
-# Supabase (baby signbook wishes)
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-
-# ntfy.sh topic for wish notifications
-NTFY_WISHES_ID=

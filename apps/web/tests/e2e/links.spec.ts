@@ -2,7 +2,7 @@
 import { expect, test } from "@playwright/test";
 import { essaySlugsOnDisk } from "../essays";
 
-const CRAWL_PAGES = ["/", "/essays", "/papers", "/essay/agents", "/baby"];
+const CRAWL_PAGES = ["/", "/essays", "/papers", "/essay/agents"];
 
 test("every internal link on every page resolves", async ({
   page,

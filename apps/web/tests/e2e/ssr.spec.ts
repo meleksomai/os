@@ -49,7 +49,7 @@ test("essays serve HTML for Accept values that are neither HTML nor markdown", a
 test("pages without a markdown rendition still serve HTML to markdown-first agents", async ({
   request,
 }) => {
-  for (const path of ["/", "/essays", "/papers", "/baby"]) {
+  for (const path of ["/", "/essays", "/papers"]) {
     const response = await request.get(path, {
       headers: { accept: "text/markdown" },
     });

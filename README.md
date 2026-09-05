@@ -14,7 +14,7 @@ Key pieces:
 
 - **Web app**: TanStack Start site for essays, research, and portfolio content, served from Cloudflare Workers.
 - **Agent runtime**: Cloudflare Worker using the `agents` runtime with Durable Objects for stateful, per-identity agents.
-- **Shared packages**: UI components, transactional email renderer, data access, and shared TypeScript configs.
+- **Shared packages**: UI components, transactional email renderer, and shared TypeScript configs.
 
 ## Repository structure
 
@@ -25,9 +25,7 @@ apps/
   trmnl/              # TRMNL plugin API worker
 packages/
   ui/                 # Shared UI components + styles
-  database/           # Supabase data access (baby signbook wishes)
   emailing/           # Resend newsletter helpers
-  ntfy/               # ntfy.sh notifications
   transactional/      # React Email templates
   testing/            # Shared Vitest preset
   typescript-config/  # Shared TS configs

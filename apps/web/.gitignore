@@ -1,6 +1,5 @@
 # TanStack Start route generation cache
 .tanstack/
 
-# Generated OG images (baby.png is a committed static asset)
-public/og/*
-!public/og/baby.png
+# Generated OG images
+public/og/

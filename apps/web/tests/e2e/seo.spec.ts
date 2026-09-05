@@ -45,10 +45,6 @@ const PAGES: ExpectedSeo[] = [
       "Melek Somai | Agent-First Systems and the Future of Software",
     ogImage: "https://www.somai.me/og/essay-agents.png",
   },
-  {
-    path: "/baby",
-    ogImage: "https://www.somai.me/og/baby.png",
-  },
 ];
 
 function metaContent(page: Page, selector: string) {

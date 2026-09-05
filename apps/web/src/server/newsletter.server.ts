@@ -1,6 +1,8 @@
 import { subscribeContact } from "@workspace/emailing/newsletter";
-import { isValidEmail } from "./email";
 import type { ActionResult } from "./types";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_EMAIL_LENGTH = 254;
 
 const INVALID_EMAIL: ActionResult = {
   success: false,
@@ -23,7 +25,10 @@ export async function subscribeToNewsletter(
 
   const trimmedEmail = email.trim().toLowerCase();
 
-  if (!isValidEmail(trimmedEmail)) {
+  if (
+    trimmedEmail.length > MAX_EMAIL_LENGTH ||
+    !EMAIL_REGEX.test(trimmedEmail)
+  ) {
     return INVALID_EMAIL;
   }
 

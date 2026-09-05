@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SiteRouteImport } from './routes/_site'
-import { Route as BabyRouteImport } from './routes/baby'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
 import { Route as SiteEssaysRouteImport } from './routes/_site.essays'
@@ -21,11 +20,6 @@ import { Route as EssaySlugMdRouteImport } from './routes/essay.$slug.md'
 
 const SiteRoute = SiteRouteImport.update({
   id: '/_site',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BabyRoute = BabyRouteImport.update({
-  id: '/baby',
-  path: '/baby',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -67,7 +61,6 @@ const EssaySlugMdRoute = EssaySlugMdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
-  '/baby': typeof BabyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/essays': typeof SiteEssaysRoute
   '/papers': typeof SitePapersRoute
@@ -76,7 +69,6 @@ export interface FileRoutesByFullPath {
   '/essay/$slug/md': typeof EssaySlugMdRoute
 }
 export interface FileRoutesByTo {
-  '/baby': typeof BabyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/essays': typeof SiteEssaysRoute
   '/papers': typeof SitePapersRoute
@@ -88,7 +80,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_site': typeof SiteRouteWithChildren
-  '/baby': typeof BabyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_site/essays': typeof SiteEssaysRoute
   '/_site/papers': typeof SitePapersRoute
@@ -101,7 +92,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/baby'
     | '/sitemap.xml'
     | '/essays'
     | '/papers'
@@ -110,7 +100,6 @@ export interface FileRouteTypes {
     | '/essay/$slug/md'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/baby'
     | '/sitemap.xml'
     | '/essays'
     | '/papers'
@@ -121,7 +110,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_site'
-    | '/baby'
     | '/sitemap.xml'
     | '/_site/essays'
     | '/_site/papers'
@@ -133,7 +121,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   SiteRoute: typeof SiteRouteWithChildren
-  BabyRoute: typeof BabyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   EssayChar123slugChar125DotmdRoute: typeof EssayChar123slugChar125DotmdRoute
   EssaySlugMdRoute: typeof EssaySlugMdRoute
@@ -146,13 +133,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof SiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/baby': {
-      id: '/baby'
-      path: '/baby'
-      fullPath: '/baby'
-      preLoaderRoute: typeof BabyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -225,7 +205,6 @@ const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   SiteRoute: SiteRouteWithChildren,
-  BabyRoute: BabyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   EssayChar123slugChar125DotmdRoute: EssayChar123slugChar125DotmdRoute,
   EssaySlugMdRoute: EssaySlugMdRoute,

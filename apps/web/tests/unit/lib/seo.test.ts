@@ -46,17 +46,17 @@ describe("pageMeta", () => {
     });
   });
 
-  it("emits only the card and image tags for image-only pages like /baby", () => {
-    const meta = pageMeta({ ogImage: "/og/baby.png" });
+  it("emits only the card and image tags for image-only pages", () => {
+    const meta = pageMeta({ ogImage: "/og/card.png" });
 
     expect(meta).toEqual([
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:image:type", content: "image/png" },
-      { property: "og:image", content: "https://www.somai.me/og/baby.png" },
+      { property: "og:image", content: "https://www.somai.me/og/card.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:image:type", content: "image/png" },
-      { name: "twitter:image", content: "https://www.somai.me/og/baby.png" },
+      { name: "twitter:image", content: "https://www.somai.me/og/card.png" },
       { name: "twitter:image:width", content: "1200" },
       { name: "twitter:image:height", content: "630" },
     ]);
