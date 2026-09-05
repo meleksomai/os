@@ -1,18 +1,18 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { essayCatalog } from "@/essays/catalog.server";
 import {
   essayMarkdownResponse,
   getEssayMarkdown,
-} from "@/essays/markdown.server";
+  listEssays,
+} from "@/server/essays/server";
 
 const IMPORT_LINE = /^import /m;
 
 // Captured from the previous deployment on 2026-09-04:
 //   curl -s https://www.somai.me/essay/agents/md > tests/fixtures/agents.md
 const productionRendition = readFileSync(
-  path.join(import.meta.dirname, "../../fixtures/agents.md"),
+  path.join(import.meta.dirname, "../../../fixtures/agents.md"),
   "utf8"
 );
 
@@ -22,7 +22,7 @@ describe("getEssayMarkdown", () => {
   });
 
   it("strips the frontmatter and import statements from every essay", () => {
-    for (const essay of essayCatalog) {
+    for (const essay of listEssays()) {
       const markdown = getEssayMarkdown(essay.slug);
       expect(markdown, essay.slug).not.toBeNull();
       expect(markdown).toContain(`# ${essay.metadata.title}`);

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Heading2, Heading4 } from "@workspace/ui/blocks/headings";
-import type { EssayListItem } from "@/essays/types";
+import type { EssayListItem } from "@/server/essays/schema";
 
 export const EssaysSection = ({ posts }: { posts: EssayListItem[] }) => (
   <div className="flex flex-col gap-4">

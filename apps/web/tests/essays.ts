@@ -1,6 +1,6 @@
 import { readdirSync } from "node:fs";
 import path from "node:path";
-import { essaySlugFromPath } from "../src/essays/slug";
+import { essaySlugFromPath } from "../src/server/essays/schema";
 
 /** Slugs of every essay in content/, so tests never hardcode the list. */
 export function essaySlugsOnDisk(): string[] {

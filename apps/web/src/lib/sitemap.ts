@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
-import type { EssayListItem } from "@/essays/types";
 import { parsePublishedAt } from "@/lib/date";
+import type { EssayListItem } from "@/server/essays/schema";
 
 export interface SitemapEntry {
   url: string;

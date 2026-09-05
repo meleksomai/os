@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { EssayListItem } from "@/essays/types";
 import { buildSitemapEntries, sitemapXml } from "@/lib/sitemap";
+import type { EssayListItem } from "@/server/essays/schema";
 
 function essay(slug: string, publishedAt: string): EssayListItem {
   return {

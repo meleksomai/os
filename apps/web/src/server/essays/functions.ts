@@ -1,9 +1,9 @@
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { essayCatalog, getEssayBySlug } from "@/essays/catalog.server";
 import { essaySlug } from "./schema";
+import { getEssayBySlug, listEssays } from "./server";
 
-export const fetchEssayList = createServerFn().handler(() => essayCatalog);
+export const fetchAllEssays = createServerFn().handler(() => listEssays());
 
 export const fetchEssay = createServerFn()
   .validator(essaySlug)

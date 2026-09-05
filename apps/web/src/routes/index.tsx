@@ -4,10 +4,10 @@ import IntroSection from "@/components/home/section-intro";
 import { siteConfig } from "@/config/site";
 import { generateJsonLd, personJsonLd } from "@/lib/jsonld";
 import { generateSeo } from "@/lib/seo";
-import { fetchEssayList } from "@/server/essays/functions";
+import { fetchAllEssays } from "@/server/essays/functions";
 
 export const Route = createFileRoute("/")({
-  loader: () => fetchEssayList(),
+  loader: () => fetchAllEssays(),
   head: () => ({
     ...generateSeo({
       title: "Home",

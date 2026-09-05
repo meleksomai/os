@@ -36,7 +36,6 @@ mdx-plugin.ts       MDX pipeline shared by vite.config.ts and vitest.config.ts
 src/
   router.tsx        getRouter(): preload on intent, error/not-found defaults
   routes/           file-based routes, one file per route; essay/ groups the essay routes; the root route renders the navbar/footer layout
-  essays/           essay catalog, markdown renditions, per-essay lazy components
   server/           one folder per domain: schema.ts (client-safe types/validators), functions.ts (createServerFn), server.ts (server-only logic)
   lib/              seo (one generateSeo() for the root defaults and every page), jsonld (Schema.org structured data), sitemap, date
   components/       UI components

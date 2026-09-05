@@ -1,9 +1,9 @@
 import { lazyRouteComponent } from "@tanstack/react-router";
 import type { MDXContent } from "mdx/types";
-import { essaySlugFromPath } from "./slug";
+import { essaySlugFromPath } from "@/server/essays/schema";
 
 const essayModules = import.meta.glob<{ default: MDXContent }>(
-  "../../content/*.mdx"
+  "../../../content/*.mdx"
 );
 
 /**

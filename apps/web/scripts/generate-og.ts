@@ -22,7 +22,7 @@ import matter from "gray-matter";
 import type { ReactNode } from "react";
 import satori from "satori";
 import { siteConfig } from "../src/config/site.ts";
-import { essaySlugFromPath } from "../src/essays/slug.ts";
+import { essaySlugFromPath } from "../src/server/essays/schema.ts";
 
 interface OgTarget {
   name: string;

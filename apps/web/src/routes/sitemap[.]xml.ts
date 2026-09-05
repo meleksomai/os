@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { essayCatalog } from "@/essays/catalog.server";
 import { buildSitemapEntries, sitemapXml } from "@/lib/sitemap";
+import { listEssays } from "@/server/essays/server";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: () =>
-        new Response(sitemapXml(buildSitemapEntries(essayCatalog)), {
+        new Response(sitemapXml(buildSitemapEntries(listEssays())), {
           headers: { "Content-Type": "application/xml" },
         }),
     },
