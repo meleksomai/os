@@ -1,83 +1,101 @@
 import { describe, expect, it } from "vitest";
-import { generateDefaultSeo, generateSeo } from "@/lib/seo";
+import { generateSeo } from "@/lib/seo";
 
 const DESCRIPTION = "Description";
 const SITE_DESCRIPTION =
   "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.";
 
-describe("generateDefaultSeo", () => {
-  it("emits the complete site-wide card for the root route", () => {
-    expect(generateDefaultSeo()).toEqual([
-      { title: "Melek Somai" },
-      { name: "description", content: SITE_DESCRIPTION },
-      { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Melek Somai" },
-      { property: "og:locale", content: "en_US" },
-      { property: "og:url", content: "https://www.somai.me" },
-      { property: "og:title", content: "Melek Somai" },
-      { property: "og:description", content: SITE_DESCRIPTION },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image", content: "https://www.somai.me/og/home.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@meleksomai" },
-      { name: "twitter:creator", content: "@meleksomai" },
-      { name: "twitter:title", content: "Melek Somai" },
-      { name: "twitter:description", content: SITE_DESCRIPTION },
-      { name: "twitter:image:type", content: "image/png" },
-      { name: "twitter:image", content: "https://www.somai.me/og/home.png" },
-      { name: "twitter:image:width", content: "1200" },
-      { name: "twitter:image:height", content: "630" },
-    ]);
-  });
-});
-
 describe("generateSeo", () => {
-  it("emits only the per-page overrides and the canonical link", () => {
+  it("falls back to the site config for the root route and emits no canonical link", () => {
+    expect(generateSeo()).toEqual({
+      meta: [
+        { title: "Melek Somai" },
+        { name: "description", content: SITE_DESCRIPTION },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "Melek Somai" },
+        { property: "og:locale", content: "en_US" },
+        { property: "og:url", content: "https://www.somai.me" },
+        { property: "og:title", content: "Melek Somai" },
+        { property: "og:description", content: SITE_DESCRIPTION },
+        { property: "og:image:type", content: "image/png" },
+        { property: "og:image", content: "https://www.somai.me/og/home.png" },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:site", content: "@meleksomai" },
+        { name: "twitter:creator", content: "@meleksomai" },
+        { name: "twitter:title", content: "Melek Somai" },
+        { name: "twitter:description", content: SITE_DESCRIPTION },
+        { name: "twitter:image:type", content: "image/png" },
+        { name: "twitter:image", content: "https://www.somai.me/og/home.png" },
+        { name: "twitter:image:width", content: "1200" },
+        { name: "twitter:image:height", content: "630" },
+      ],
+      links: [],
+    });
+  });
+
+  it("emits the complete card for a page with the canonical link", () => {
     expect(
       generateSeo({
-        title: "Home",
+        title: "Essays",
         description: DESCRIPTION,
-        path: "/",
-        twitterTitle: "Melek Somai",
+        path: "/essays",
+        ogImage: "/og/essays.png",
       })
     ).toEqual({
       meta: [
-        { title: "Melek Somai | Home" },
+        { title: "Melek Somai | Essays" },
         { name: "description", content: DESCRIPTION },
-        { property: "og:url", content: "https://www.somai.me" },
-        { property: "og:title", content: "Melek Somai | Home" },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "Melek Somai" },
+        { property: "og:locale", content: "en_US" },
+        { property: "og:url", content: "https://www.somai.me/essays" },
+        { property: "og:title", content: "Melek Somai | Essays" },
         { property: "og:description", content: DESCRIPTION },
-        { name: "twitter:title", content: "Melek Somai" },
+        { property: "og:image:type", content: "image/png" },
+        { property: "og:image", content: "https://www.somai.me/og/essays.png" },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:site", content: "@meleksomai" },
+        { name: "twitter:creator", content: "@meleksomai" },
+        { name: "twitter:title", content: "Melek Somai | Essays" },
         { name: "twitter:description", content: DESCRIPTION },
+        { name: "twitter:image:type", content: "image/png" },
+        {
+          name: "twitter:image",
+          content: "https://www.somai.me/og/essays.png",
+        },
+        { name: "twitter:image:width", content: "1200" },
+        { name: "twitter:image:height", content: "630" },
       ],
-      links: [{ rel: "canonical", href: "https://www.somai.me" }],
+      links: [{ rel: "canonical", href: "https://www.somai.me/essays" }],
     });
   });
 
-  it("overrides the image when the page has its own", () => {
+  it("uses the site image, a custom Twitter title and the bare origin for the home page", () => {
     const head = generateSeo({
-      title: "Essays",
+      title: "Home",
       description: DESCRIPTION,
-      path: "/essays",
-      ogImage: "/og/essays.png",
+      path: "/",
+      twitterTitle: "Melek Somai",
     });
 
     expect(head.meta).toContainEqual({
-      name: "twitter:title",
-      content: "Melek Somai | Essays",
-    });
-    expect(head.meta).toContainEqual({
       property: "og:image",
-      content: "https://www.somai.me/og/essays.png",
+      content: "https://www.somai.me/og/home.png",
     });
     expect(head.meta).toContainEqual({
-      name: "twitter:image",
-      content: "https://www.somai.me/og/essays.png",
+      name: "twitter:title",
+      content: "Melek Somai",
+    });
+    expect(head.meta).toContainEqual({
+      property: "og:url",
+      content: "https://www.somai.me",
     });
     expect(head.links).toEqual([
-      { rel: "canonical", href: "https://www.somai.me/essays" },
+      { rel: "canonical", href: "https://www.somai.me" },
     ]);
   });
 
@@ -102,23 +120,5 @@ describe("generateSeo", () => {
       property: "article:author",
       content: "https://www.somai.me",
     });
-  });
-
-  it("overrides every default it repeats, so the root and page tags merge by key", () => {
-    const defaultKeys = new Set(
-      generateDefaultSeo().map((tag) => tag?.name ?? tag?.property ?? "title")
-    );
-    const pageKeys = generateSeo({
-      title: "Essays",
-      description: DESCRIPTION,
-      path: "/essays",
-      ogImage: "/og/essays.png",
-    }).meta.map((tag) => tag?.name ?? tag?.property ?? "title");
-
-    for (const key of pageKeys) {
-      expect(defaultKeys.has(key), `${key} has no site-wide default`).toBe(
-        true
-      );
-    }
   });
 });

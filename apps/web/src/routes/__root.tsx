@@ -4,7 +4,7 @@ import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
 import { ErrorPage } from "@/components/pages/error-page";
 import { NotFoundPage } from "@/components/pages/not-found-page";
-import { generateDefaultSeo } from "@/lib/seo";
+import { generateSeo } from "@/lib/seo";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -12,7 +12,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      ...generateDefaultSeo(),
+      ...generateSeo().meta,
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -3,12 +3,13 @@ import { siteConfig, siteUrl } from "@/config/site";
 import { parsePublishedAt } from "@/lib/date";
 
 export interface PageSeo {
-  /** Page part of the document title; rendered as `<site name> | <title>`. */
-  title: string;
-  description: string;
-  /** Path of the page, e.g. `/essays`; becomes the canonical URL and `og:url`. */
-  path: string;
-  /** Path of the page's Open Graph image, e.g. `/og/essays.png`; defaults to the site image. */
+  /** Page part of the document title, rendered as `<site name> | <title>`; omitted, the site name alone. */
+  title?: string;
+  /** Defaults to the site description. */
+  description?: string;
+  /** Path of the page, e.g. `/essays`; becomes the canonical URL and `og:url`. Omitted (root route), `og:url` is the site URL and no canonical link is emitted. */
+  path?: string;
+  /** Path of the Open Graph image, e.g. `/og/essays.png`; defaults to the site image. */
   ogImage?: string;
   /** Twitter card title when it should differ from the document title. */
   twitterTitle?: string;
@@ -26,25 +27,36 @@ export interface HeadTags {
 }
 
 /**
- * Site-wide head tags for the root route. TanStack merges `meta` across the
- * matched routes by `name`/`property` (and picks the deepest `title`), so every
- * page starts from this complete card and `generateSeo()` only overrides what
- * differs. Pages without their own `head()`, such as the 404 page, get it whole.
+ * The complete SEO card for a page: title and description with their Open
+ * Graph and Twitter counterparts, the image, and the canonical link. Every
+ * value falls back to `siteConfig`, so the root route calls `generateSeo()`
+ * with no arguments and pages pass only what differs. TanStack merges `meta`
+ * across matched routes by `name`/`property` with the deepest route winning
+ * (and keeps the deepest `title`), so a page's tags replace the root's and
+ * routes without their own `head()`, such as the 404 page, keep the root's.
+ * Links are not merged that way, which is why the canonical link is emitted
+ * only for pages with a `path`. Structured data is separate; see
+ * `generateJsonLd()` in `@/lib/jsonld`.
  */
-export function generateDefaultSeo(): HeadTags["meta"] {
-  const imageUrl = siteUrl(siteConfig.ogImage.default);
+export function generateSeo(page: PageSeo = {}): HeadTags {
+  const title = page.title
+    ? `${siteConfig.name} | ${page.title}`
+    : siteConfig.name;
+  const description = page.description ?? siteConfig.description;
+  const url = page.path ? siteUrl(page.path) : siteConfig.url;
+  const imageUrl = siteUrl(page.ogImage ?? siteConfig.ogImage.default);
   const imageWidth = String(siteConfig.ogImage.width);
   const imageHeight = String(siteConfig.ogImage.height);
 
-  return [
-    { title: siteConfig.name },
-    { name: "description", content: siteConfig.description },
-    { property: "og:type", content: "website" },
+  const meta: HeadTags["meta"] = [
+    { title },
+    { name: "description", content: description },
+    { property: "og:type", content: page.article ? "article" : "website" },
     { property: "og:site_name", content: siteConfig.name },
     { property: "og:locale", content: siteConfig.locale },
-    { property: "og:url", content: siteConfig.url },
-    { property: "og:title", content: siteConfig.name },
-    { property: "og:description", content: siteConfig.description },
+    { property: "og:url", content: url },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
     { property: "og:image:type", content: siteConfig.ogImage.type },
     { property: "og:image", content: imageUrl },
     { property: "og:image:width", content: imageWidth },
@@ -52,47 +64,16 @@ export function generateDefaultSeo(): HeadTags["meta"] {
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:site", content: siteConfig.twitter },
     { name: "twitter:creator", content: siteConfig.twitter },
-    { name: "twitter:title", content: siteConfig.name },
-    { name: "twitter:description", content: siteConfig.description },
+    { name: "twitter:title", content: page.twitterTitle ?? title },
+    { name: "twitter:description", content: description },
     { name: "twitter:image:type", content: siteConfig.ogImage.type },
     { name: "twitter:image", content: imageUrl },
     { name: "twitter:image:width", content: imageWidth },
     { name: "twitter:image:height", content: imageHeight },
   ];
-}
-
-/**
- * Per-page head tags, overriding the root defaults by key: title and
- * description with their Open Graph and Twitter counterparts, the page image
- * when it has one, article tags for essays, and the canonical link. Links are
- * not merged by key, so the canonical link only ever lives here.
- * Structured data is separate; see `generateJsonLd()` in `@/lib/jsonld`.
- */
-export function generateSeo(page: PageSeo): HeadTags {
-  const title = `${siteConfig.name} | ${page.title}`;
-  const url = siteUrl(page.path);
-
-  const meta: HeadTags["meta"] = [
-    { title },
-    { name: "description", content: page.description },
-    { property: "og:url", content: url },
-    { property: "og:title", content: title },
-    { property: "og:description", content: page.description },
-    { name: "twitter:title", content: page.twitterTitle ?? title },
-    { name: "twitter:description", content: page.description },
-  ];
-
-  if (page.ogImage) {
-    const imageUrl = siteUrl(page.ogImage);
-    meta.push(
-      { property: "og:image", content: imageUrl },
-      { name: "twitter:image", content: imageUrl }
-    );
-  }
 
   if (page.article) {
     meta.push(
-      { property: "og:type", content: "article" },
       {
         property: "article:published_time",
         content: parsePublishedAt(page.article.publishedAt).toISOString(),
@@ -101,5 +82,8 @@ export function generateSeo(page: PageSeo): HeadTags {
     );
   }
 
-  return { meta, links: [{ rel: "canonical", href: url }] };
+  return {
+    meta,
+    links: page.path ? [{ rel: "canonical", href: url }] : [],
+  };
 }
