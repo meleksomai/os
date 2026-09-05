@@ -23,20 +23,20 @@ const OG_IMAGE_HEIGHT = "630";
  * and the image tags. Shared values (site name, Twitter handle, origin) come
  * from `siteConfig`.
  */
-export function seo(seo: PageSeo): RouteMeta {
-  const title = `${siteConfig.name} | ${seo.title}`;
-  const imageUrl = `${siteConfig.url}${seo.ogImage}`;
+export function seo(page: PageSeo): RouteMeta {
+  const title = `${siteConfig.name} | ${page.title}`;
+  const imageUrl = `${siteConfig.url}${page.ogImage}`;
 
   return [
     { title },
     { property: "og:title", content: title },
-    { name: "description", content: seo.description },
-    { property: "og:description", content: seo.description },
+    { name: "description", content: page.description },
+    { property: "og:description", content: page.description },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:site", content: siteConfig.twitter },
     { name: "twitter:creator", content: siteConfig.twitter },
-    { name: "twitter:title", content: seo.twitterTitle ?? title },
-    { name: "twitter:description", content: seo.description },
+    { name: "twitter:title", content: page.twitterTitle ?? title },
+    { name: "twitter:description", content: page.description },
     { property: "og:image:type", content: "image/png" },
     { property: "og:image", content: imageUrl },
     { property: "og:image:width", content: OG_IMAGE_WIDTH },
