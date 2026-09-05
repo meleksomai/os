@@ -21,8 +21,14 @@
   },
   "overrides": [
     {
-      // The server modules are the only readers of the generated content collection
-      "includes": ["apps/web/src/server/**"],
+      // The only readers of the generated content collection: the server modules
+      // (denied to the client by import protection), the type-only schema files,
+      // and the OG build script.
+      "includes": [
+        "apps/web/src/server/*/server.ts",
+        "apps/web/src/server/*/schema.ts",
+        "apps/web/scripts/**"
+      ],
       "linter": {
         "rules": {
           "style": {
@@ -57,7 +63,13 @@
           "options": {
             "paths": {
               "content-collections": "Server-only content: read it through src/server/<domain>/server.ts"
-            }
+            },
+            "patterns": [
+              {
+                "group": ["**/.content-collections/**"],
+                "message": "Server-only content: read it through src/server/<domain>/server.ts"
+              }
+            ]
           }
         }
       }

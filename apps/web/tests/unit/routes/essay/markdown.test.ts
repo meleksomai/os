@@ -1,12 +1,9 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { markdownResponse, prefersMarkdown } from "@/routes/essay/-markdown";
+import { getEssayMarkdown } from "@/server/essays/server";
 
-const productionRendition = readFileSync(
-  path.join(import.meta.dirname, "../../../fixtures/agents.md"),
-  "utf8"
-);
+// The route only wraps the domain's rendition in a response.
+const rendition = getEssayMarkdown("agents") ?? "";
 
 function requestAccepting(accept: string): Request {
   return new Request("https://www.somai.me/essay/agents", {
@@ -39,7 +36,7 @@ describe("markdownResponse", () => {
       "text/markdown; charset=utf-8"
     );
     expect(response.headers.get("Vary")).toBe("Accept");
-    expect(await response.text()).toBe(productionRendition);
+    expect(await response.text()).toBe(rendition);
   });
 
   it("returns a plain-text 404 for unknown essays", async () => {

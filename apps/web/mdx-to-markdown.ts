@@ -1,4 +1,5 @@
 import type { Root, RootContent } from "mdast";
+import { toString as mdastToString } from "mdast-util-to-string";
 import remarkGfm from "remark-gfm";
 import remarkMdx from "remark-mdx";
 import remarkParse from "remark-parse";
@@ -13,18 +14,41 @@ import { unified } from "unified";
  * collection's `transform` (content-collections.ts).
  */
 export function mdxToMarkdown(source: string): string {
-  const tree = parser.parse(source);
+  const tree = mdxParser.parse(source);
   const markdownTree: Root = {
     type: "root",
-    children: tree.children.flatMap((child) =>
-      toMarkdownNodes(child as MdxNode)
+    children: withMergedText(
+      tree.children.flatMap((child) => toMarkdownNodes(child as MdxNode))
     ) as RootContent[],
   };
   return stringifier.stringify(markdownTree).trim();
 }
 
-const parser = unified().use(remarkParse).use(remarkMdx).use(remarkGfm);
+/** The words of a markdown document, without its syntax; what reading time is measured on. */
+export function plainText(markdown: string): string {
+  return blockTexts(markdownParser.parse(markdown) as MdxNode).join("\n");
+}
 
+const BLOCK_CONTAINERS = new Set([
+  "root",
+  "blockquote",
+  "list",
+  "listItem",
+  "footnoteDefinition",
+  "table",
+  "tableRow",
+]);
+
+// One string per block, so words of neighbouring blocks never run together.
+function blockTexts(node: MdxNode): string[] {
+  if (BLOCK_CONTAINERS.has(node.type) && node.children) {
+    return node.children.flatMap(blockTexts);
+  }
+  return [mdastToString(node)];
+}
+
+const mdxParser = unified().use(remarkParse).use(remarkMdx).use(remarkGfm);
+const markdownParser = unified().use(remarkParse).use(remarkGfm);
 const stringifier = unified()
   .use(remarkGfm)
   .use(remarkStringify, { bullet: "-", fences: true, listItemIndent: "one" });
@@ -33,8 +57,15 @@ const stringifier = unified()
 interface MdxNode {
   type: string;
   name?: string | null;
-  attributes?: Array<{ type: string; name?: string; value?: unknown }>;
+  value?: string;
+  attributes?: MdxAttribute[];
   children?: MdxNode[];
+}
+
+interface MdxAttribute {
+  type: string;
+  name?: string;
+  value?: string | { type: string; value: string } | null;
 }
 
 const DROPPED_NODE_TYPES = new Set([
@@ -53,18 +84,26 @@ function toMarkdownNodes(node: MdxNode): MdxNode[] {
     return componentToMarkdown(node);
   }
   if (node.children) {
-    return [{ ...node, children: node.children.flatMap(toMarkdownNodes) }];
+    return [
+      {
+        ...node,
+        children: withMergedText(node.children.flatMap(toMarkdownNodes)),
+      },
+    ];
   }
   return [node];
 }
 
 /**
  * The markdown equivalent of a JSX component: `<Quote>` becomes a blockquote
- * with an attribution line, anything with a `src` an image, and everything
- * else what it wraps (so a self-closing component disappears).
+ * with an attribution line, `<RelativeTime>` its date, `<br />` a line break,
+ * anything with an image source an image, and everything else what it wraps
+ * (so a self-closing icon disappears).
  */
 function componentToMarkdown(node: MdxNode): MdxNode[] {
-  const children = (node.children ?? []).flatMap(toMarkdownNodes);
+  const children = withMergedText(
+    (node.children ?? []).flatMap(toMarkdownNodes)
+  );
 
   if (node.name === "Quote") {
     const attribution = [attribute(node, "author"), attribute(node, "source")]
@@ -76,7 +115,19 @@ function componentToMarkdown(node: MdxNode): MdxNode[] {
     return [{ type: "blockquote", children }];
   }
 
-  const src = attribute(node, "src");
+  if (node.name === "RelativeTime") {
+    const date = attribute(node, "date");
+    return date ? [text(date)] : [];
+  }
+
+  if (node.name === "br") {
+    return [{ type: "break" }];
+  }
+
+  const src =
+    attribute(node, "src") ??
+    attribute(node, "lightSrc") ??
+    attribute(node, "darkSrc");
   if (src) {
     const image = {
       type: "image",
@@ -92,14 +143,60 @@ function componentToMarkdown(node: MdxNode): MdxNode[] {
   return children;
 }
 
+/** A string attribute, written either as `name="value"` or as `name={"value"}`. */
 function attribute(node: MdxNode, name: string): string | undefined {
   const found = node.attributes?.find(
     (candidate) =>
       candidate.type === "mdxJsxAttribute" && candidate.name === name
   );
-  return typeof found?.value === "string" ? found.value : undefined;
+  if (typeof found?.value === "string") {
+    return found.value;
+  }
+  if (found?.value && typeof found.value === "object") {
+    try {
+      const literal: unknown = JSON.parse(found.value.value);
+      return typeof literal === "string" ? literal : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
+const DOUBLE_SPACES = / {2,}/g;
+const SPACE_BEFORE_PUNCTUATION = / ([,.;:!?])/g;
+
+/**
+ * Joins text nodes that became adjacent because a node between them was
+ * dropped, and repairs the whitespace that dropping it left behind.
+ */
+function withMergedText(nodes: MdxNode[]): MdxNode[] {
+  const merged: MdxNode[] = [];
+  for (const node of nodes) {
+    const previous = merged.at(-1);
+    if (node.type === "text" && previous?.type === "text") {
+      previous.value = `${previous.value}${node.value}`
+        .replace(DOUBLE_SPACES, " ")
+        .replace(SPACE_BEFORE_PUNCTUATION, "$1");
+      continue;
+    }
+    // A hard line break replaces the spaces around it.
+    if (node.type === "break" && previous?.type === "text") {
+      previous.value = previous.value?.trimEnd();
+    }
+    if (node.type === "text" && previous?.type === "break") {
+      merged.push({ ...node, value: node.value?.trimStart() });
+      continue;
+    }
+    merged.push(node.type === "text" ? { ...node } : node);
+  }
+  return merged;
+}
+
+function text(value: string): MdxNode {
+  return { type: "text", value };
 }
 
 function paragraph(value: string): MdxNode {
-  return { type: "paragraph", children: [{ type: "text", value } as MdxNode] };
+  return { type: "paragraph", children: [text(value)] };
 }

@@ -7,7 +7,7 @@ export const PapersSection = ({ papers }: { papers: Paper[] }) => (
       <a
         className="group flex cursor-pointer flex-col justify-between gap-2 border-foreground/10 border-b py-6 transition-all duration-700 hover:border-foreground/20 md:py-8"
         href={
-          paper.url?.at(0) || paper.doi ? `https://doi.org/${paper.doi}` : "#"
+          paper.doi ? `https://doi.org/${paper.doi}` : (paper.url?.at(0) ?? "#")
         }
         key={paper._id}
         rel="noopener noreferrer"

@@ -101,6 +101,6 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 - Trailing-slash redirects are 307 (the router's default) instead of 308, and the markdown endpoints are not redirected.
 - Requests for a page other than an essay with an `Accept` header that has neither `text/html` nor `*/*` get TanStack Start's `500 {"error":"Only HTML requests are supported here"}` instead of HTML; browsers and crawlers send `*/*`.
 - Unknown essays on the markdown endpoints answer a plain-text 404 instead of the HTML 404 page.
-- The markdown renditions are produced from the MDX parse tree (`mdx-to-markdown.ts`) instead of the raw source: no frontmatter, imports or JSX tags; `<Quote>` becomes a blockquote with its attribution and `<ThemeImage>` an image; formatting is normalised (`*emphasis*`, `<autolinks>`), and the reading time counts the words of that body.
+- The markdown renditions are produced from the MDX parse tree (`mdx-to-markdown.ts`) instead of the raw source: no frontmatter, imports or JSX tags; `<Quote>` becomes a blockquote with its attribution and `<ThemeImage>` an image; formatting is normalised (`*emphasis*`, `<autolinks>`), and the reading time counts the words of its text.
 - The sitemap's static entries carry the newest essay's publish date as `lastmod` instead of the build time.
 - `/favicon.svg` is served (it was 404 before); the `/baby` page, Vercel analytics and feature flags are gone.

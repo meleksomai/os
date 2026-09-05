@@ -5,7 +5,7 @@ import {
 } from "@content-collections/core";
 import readingTime from "reading-time";
 import { z } from "zod";
-import { mdxToMarkdown } from "./mdx-to-markdown";
+import { mdxToMarkdown, plainText } from "./mdx-to-markdown";
 import { formatPublishedAt, parsePublishedAt } from "./src/lib/date";
 
 /**
@@ -35,7 +35,7 @@ const essays = defineCollection({
   }),
   transform: async ({ content, _meta, ...frontmatter }, { cache }) => {
     const markdown = await cache(content, mdxToMarkdown);
-    const { text, minutes, time, words } = readingTime(markdown);
+    const { text, minutes, time, words } = readingTime(plainText(markdown));
     return {
       ...frontmatter,
       slug: _meta.path,
