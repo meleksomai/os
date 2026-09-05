@@ -6,7 +6,6 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { mdxPlugin } from "./mdx-plugin";
-import { sitemapPages } from "./sitemap-pages";
 import { siteConfig } from "./src/config/site";
 
 export default defineConfig({
@@ -22,9 +21,13 @@ export default defineConfig({
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     mdxPlugin(),
     tanstackStart({
-      // sitemap.xml is built from these pages at build time (no prerendering).
+      // Prerender the site by crawling links from "/": the static HTML lands
+      // in dist/client and the crawl feeds sitemap.xml. Essay URLs are routed
+      // to the Worker first (wrangler.jsonc) so their markdown negotiation
+      // keeps working.
+      prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: false },
+      pages: [{ path: "/" }],
       sitemap: { host: siteConfig.url },
-      pages: sitemapPages(),
       importProtection: {
         // `files` replaces the defaults, so keep `*.server.*` and add the
         // per-domain server modules under src/server/<domain>/server.ts.

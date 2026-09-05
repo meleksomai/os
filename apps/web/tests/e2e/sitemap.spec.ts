@@ -43,11 +43,14 @@ test("every sitemap URL resolves on this deployment", async ({ request }) => {
   }
 });
 
-test("essay entries carry the publish date as lastmod", async ({ request }) => {
+test("every entry carries a lastmod date", async ({ request }) => {
   const { xml } = await sitemapLocs(request);
 
-  // The agents essay was published on 2026-01-02
-  expect(xml).toMatch(
-    /<loc>https:\/\/www\.somai\.me\/essay\/agents<\/loc>\s*<lastmod>2026-01-02<\/lastmod>/
+  const dates = [...xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map(
+    (m) => m[1] ?? ""
   );
+  expect(dates).toHaveLength(12);
+  for (const date of dates) {
+    expect(date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  }
 });

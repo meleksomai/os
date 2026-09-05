@@ -9,5 +9,11 @@
   "observability": {
     "enabled": true
   },
+  "assets": {
+    // Prerendered pages are flat .html files served at their extensionless URL.
+    "html_handling": "drop-trailing-slash",
+    // Essay URLs negotiate markdown in the Worker, ahead of their static HTML.
+    "run_worker_first": ["/essay/*"]
+  },
   "upload_source_maps": true
 }

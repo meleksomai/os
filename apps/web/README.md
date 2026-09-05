@@ -36,7 +36,6 @@ tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), fixtures/, 
 content-collections.ts  content layer: essays collection + research (papers) singleton, zod schemas, build-time transforms
 mdx-to-markdown.ts  MDX body → plain markdown (used by the essays transform; unit-tested with inline MDX)
 mdx-plugin.ts       MDX → page components, shared by vite.config.ts and vitest.config.ts
-sitemap-pages.ts    the `pages` list for TanStack Start's sitemap, from .content-collections/sitemap.json
 .content-collections/   generated (gitignored): `pnpm run generate:content`, also run by dev/build/test/check-types
 src/
   router.tsx        getRouter(): preload on intent, error/not-found defaults
@@ -56,7 +55,7 @@ Modules that must never reach the browser carry the `.server.ts` suffix; TanStac
 | `/`, `/essays`, `/papers`, `/essay/:slug`   | `src/routes/index.tsx`, `essays.tsx`, `papers.tsx`, `essay/$slug.tsx` |
 | `/essay/:slug` with `Accept: text/markdown` | content negotiation in `essay/$slug.tsx`            |
 | `/essay/:slug/md`, `/essay/:slug.md`        | `src/routes/essay/$slug.md.ts`, `essay/{$slug}[.]md.ts` |
-| `/sitemap.xml`                              | built by `tanstackStart({ sitemap, pages })` from `sitemap-pages.ts` (static asset) |
+| `/sitemap.xml`                              | built by `tanstackStart({ prerender, sitemap })` from the pages crawled at build time (static asset) |
 | `/robots.txt`, `/og/*.png`, `/images/**`    | static files in `public/` (OG images generated at build) |
 
 ## Environment
@@ -100,8 +99,7 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 
 - Footnote sections are now styled (the previous build lost their classes to an array `className`).
 - Trailing-slash redirects are 307 (the router's default) instead of 308, and the markdown endpoints are not redirected.
-- Requests for a page other than an essay with an `Accept` header that has neither `text/html` nor `*/*` get TanStack Start's `500 {"error":"Only HTML requests are supported here"}` instead of HTML; browsers and crawlers send `*/*`.
 - Unknown essays on the markdown endpoints answer a plain-text 404 instead of the HTML 404 page.
 - The markdown renditions are produced from the MDX parse tree (`mdx-to-markdown.ts`) instead of the raw source: no frontmatter, imports or JSX tags; `<Quote>` becomes a blockquote with its attribution and `<ThemeImage>` an image; formatting is normalised (`*emphasis*`, `<autolinks>`), and the reading time counts the words of its text.
-- The sitemap is TanStack Start's built-in one (static `dist/client/sitemap.xml`): one entry per page (`/`, `/essays`, `/papers`, each essay), no duplicate root entry and no `/research`; essays carry their publish date as `lastmod`, the static pages the build date.
+- The site is prerendered at build time (`tanstackStart({ prerender: { crawlLinks } })` crawling from `/`): `/`, `/essays` and `/papers` are served as static HTML by the Worker's assets, while `/essay/*` runs the Worker first (`wrangler.jsonc` `assets.run_worker_first`) so the markdown negotiation keeps working. The sitemap is Start's built-in one from the crawled pages: one entry per page, no duplicate root entry and no `/research`, `lastmod` = build date. Start also writes `pages.json` next to it.
 - `/favicon.svg` is served (it was 404 before); the `/baby` page, Vercel analytics and feature flags are gone.
