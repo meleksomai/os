@@ -4,12 +4,7 @@ import { EssayContent, preloadEssayContent } from "@/components/essays/content";
 import { blogJsonLd, generateJsonLd } from "@/lib/jsonld";
 import { generateSeo } from "@/lib/seo";
 import { fetchEssay } from "@/server/essays/functions";
-import { essayMarkdownResponse } from "@/server/essays/server";
-
-function prefersMarkdown(request: Request): boolean {
-  const accept = request.headers.get("accept") ?? "";
-  return accept.includes("text/markdown") || accept.includes("text/plain");
-}
+import { markdownResponse, prefersMarkdown } from "./-markdown";
 
 export const Route = createFileRoute("/essay/$slug")({
   server: {
@@ -17,15 +12,10 @@ export const Route = createFileRoute("/essay/$slug")({
       // Content negotiation on the canonical essay URL: agents asking for
       // text/markdown or text/plain get the markdown rendition (or its 404);
       // browsers fall through to the page.
-      GET: ({ request, params, next }) => {
-        if (!prefersMarkdown(request)) {
-          return next();
-        }
-
-        const response = essayMarkdownResponse(params.slug);
-        response.headers.set("Vary", "Accept");
-        return response;
-      },
+      GET: ({ request, params, next }) =>
+        prefersMarkdown(request)
+          ? markdownResponse(params.slug, { Vary: "Accept" })
+          : next(),
     },
   },
   headers: () => ({ Vary: "Accept" }),
