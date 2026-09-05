@@ -8,7 +8,7 @@ export interface PageSeo {
   description: string;
   /** Path of the page, e.g. `/essays`; becomes the canonical URL and `og:url`. */
   path: string;
-  /** Path of the 1200×630 Open Graph image, e.g. `/og/home.png`. */
+  /** Path of the Open Graph image, e.g. `/og/home.png`. */
   ogImage: string;
   /** Twitter card title when it should differ from the document title. */
   twitterTitle?: string;
@@ -25,9 +25,6 @@ export interface HeadTags {
   links: NonNullable<AnyRouteMatch["links"]>;
 }
 
-const OG_IMAGE_WIDTH = "1200";
-const OG_IMAGE_HEIGHT = "630";
-
 /**
  * Head tags for a page, in the shape TanStack Start's `head()` expects: title
  * and description with their Open Graph and Twitter counterparts, and the
@@ -39,6 +36,8 @@ export function generateSeo(page: PageSeo): HeadTags {
   const title = `${siteConfig.name} | ${page.title}`;
   const url = siteUrl(page.path);
   const imageUrl = siteUrl(page.ogImage);
+  const imageWidth = String(siteConfig.ogImage.width);
+  const imageHeight = String(siteConfig.ogImage.height);
 
   const meta: HeadTags["meta"] = [
     { title },
@@ -49,19 +48,19 @@ export function generateSeo(page: PageSeo): HeadTags {
     { property: "og:url", content: url },
     { property: "og:title", content: title },
     { property: "og:description", content: page.description },
-    { property: "og:image:type", content: "image/png" },
+    { property: "og:image:type", content: siteConfig.ogImage.type },
     { property: "og:image", content: imageUrl },
-    { property: "og:image:width", content: OG_IMAGE_WIDTH },
-    { property: "og:image:height", content: OG_IMAGE_HEIGHT },
+    { property: "og:image:width", content: imageWidth },
+    { property: "og:image:height", content: imageHeight },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:site", content: siteConfig.twitter },
     { name: "twitter:creator", content: siteConfig.twitter },
     { name: "twitter:title", content: page.twitterTitle ?? title },
     { name: "twitter:description", content: page.description },
-    { name: "twitter:image:type", content: "image/png" },
+    { name: "twitter:image:type", content: siteConfig.ogImage.type },
     { name: "twitter:image", content: imageUrl },
-    { name: "twitter:image:width", content: OG_IMAGE_WIDTH },
-    { name: "twitter:image:height", content: OG_IMAGE_HEIGHT },
+    { name: "twitter:image:width", content: imageWidth },
+    { name: "twitter:image:height", content: imageHeight },
   ];
 
   if (page.article) {

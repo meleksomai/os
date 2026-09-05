@@ -21,6 +21,7 @@ import { Resvg } from "@resvg/resvg-js";
 import matter from "gray-matter";
 import type { ReactNode } from "react";
 import satori from "satori";
+import { siteConfig } from "../src/config/site.ts";
 import { essaySlugFromPath } from "../src/essays/slug.ts";
 
 interface OgTarget {
@@ -45,8 +46,7 @@ const contentDir = path.join(appRoot, "content");
 const assetsDir = path.join(appRoot, "assets");
 const outputDir = path.join(appRoot, "public", "og");
 
-const WIDTH = 1200;
-const HEIGHT = 630;
+const { width: WIDTH, height: HEIGHT } = siteConfig.ogImage;
 const GRAY_400 = "#9ca3af";
 const GRAY_500 = "#6b7280";
 

@@ -100,12 +100,6 @@ for (const expected of PAGES) {
     expect(await metaContent(page, 'meta[property="og:image"]')).toBe(
       expected.ogImage
     );
-    expect(await metaContent(page, 'meta[property="og:image:width"]')).toBe(
-      "1200"
-    );
-    expect(await metaContent(page, 'meta[property="og:image:height"]')).toBe(
-      "630"
-    );
     expect(await metaContent(page, 'meta[name="twitter:image"]')).toBe(
       expected.ogImage
     );
@@ -125,10 +119,12 @@ for (const expected of PAGES) {
     expect(imageResponse.status()).toBe(200);
     expect(imageResponse.headers()["content-type"]).toBe("image/png");
 
-    // PNG IHDR dimensions must match the advertised 1200x630.
+    // PNG IHDR dimensions must match the advertised og:image:width/height.
+    const width = await metaContent(page, 'meta[property="og:image:width"]');
+    const height = await metaContent(page, 'meta[property="og:image:height"]');
     const body = await imageResponse.body();
-    expect(body.readUInt32BE(16)).toBe(1200);
-    expect(body.readUInt32BE(20)).toBe(630);
+    expect(String(body.readUInt32BE(16))).toBe(width);
+    expect(String(body.readUInt32BE(20))).toBe(height);
   });
 }
 

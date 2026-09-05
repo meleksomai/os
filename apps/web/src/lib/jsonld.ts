@@ -50,7 +50,7 @@ export interface BlogInput {
   description: string;
   /** Path of the essay, e.g. `/essay/agents`. */
   path: string;
-  /** Path of the 1200×630 Open Graph image, e.g. `/og/essay-agents.png`. */
+  /** Path of the Open Graph image, e.g. `/og/essay-agents.png`. */
   ogImage: string;
   /** Frontmatter date, `YYYY-MM-DD`. */
   publishedAt: string;
