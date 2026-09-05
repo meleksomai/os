@@ -9,18 +9,25 @@ import { blogJsonLd, generateJsonLd } from "@/lib/jsonld";
 import { generateSeo } from "@/lib/seo";
 import { fetchEssay } from "@/server/essays/functions";
 
+const MARKDOWN_EXTENSION = ".md";
+
 function prefersMarkdown(request: Request): boolean {
   const accept = request.headers.get("accept") ?? "";
   return accept.includes("text/markdown") || accept.includes("text/plain");
 }
 
-export const Route = createFileRoute("/essay/$slug")({
+export const Route = createFileRoute("/essay/$slug/")({
   server: {
     handlers: {
-      // Content negotiation on the canonical essay URL: agents asking for
-      // text/markdown or text/plain get the markdown rendition (or its 404);
-      // browsers fall through to the page.
+      // The markdown rendition is served for `/essay/:slug.md` and, by content
+      // negotiation, to agents asking the canonical URL for text/markdown or
+      // text/plain (or its 404); browsers fall through to the page.
       GET: ({ request, params, next }) => {
+        if (params.slug.endsWith(MARKDOWN_EXTENSION)) {
+          return essayMarkdownResponse(
+            params.slug.slice(0, -MARKDOWN_EXTENSION.length)
+          );
+        }
         if (!prefersMarkdown(request)) {
           return next();
         }
