@@ -21,6 +21,17 @@
   },
   "overrides": [
     {
+      // The server modules are the only readers of the generated content collection
+      "includes": ["apps/web/src/server/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
+    },
+    {
       // TanStack Router file-based routes use $params, [.] escapes, and {$param} patterns
       "includes": ["apps/web/src/routes/**"],
       "linter": {
@@ -39,7 +50,16 @@
         "noBarrelFile": "off"
       },
       "style": {
-        "useBlockStatements": "off"
+        "useBlockStatements": "off",
+        // The generated content collection is server-only; see apps/web/content-collections.ts
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "content-collections": "Server-only content: read it through src/server/<domain>/server.ts"
+            }
+          }
+        }
       }
     }
   }

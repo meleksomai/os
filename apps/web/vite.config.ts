@@ -24,11 +24,7 @@ export default defineConfig({
         // `files` replaces the defaults, so keep `*.server.*` and add the
         // per-domain server modules under src/server/<domain>/server.ts.
         client: {
-          files: [
-            "**/*.server.*",
-            "**/src/server/*/server.ts",
-            "**/.content-collections/**",
-          ],
+          files: ["**/*.server.*", "**/src/server/*/server.ts"],
         },
       },
     }),

@@ -10,8 +10,9 @@ import { formatPublishedAt, parsePublishedAt } from "./src/lib/date";
 
 /**
  * The site's content, validated and shaped at build time. The generated
- * `content-collections` module (`allEssays`, `research`) is server-only: the
- * client never imports it (see the import protection in vite.config.ts).
+ * `content-collections` module (`allEssays`, `research`) is read only by
+ * `src/server/<domain>/server.ts`, which import protection keeps out of the
+ * client; a Biome rule (biome.jsonc) rejects the import anywhere else.
  */
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
