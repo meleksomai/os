@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { mdxComponents } from "@/components/mdx-components";
 import { essayComponentBySlug } from "@/essays/components";
 import { essayMarkdownResponse } from "@/essays/markdown.server";
-import { pageMeta } from "@/lib/seo";
+import { seo } from "@/lib/seo";
 import { fetchEssay } from "@/server/essays/functions";
 
 function prefersMarkdown(request: Request): boolean {
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/_site/essay/$slug")({
   },
   head: ({ loaderData }) => ({
     meta: loaderData
-      ? pageMeta({
+      ? seo({
           title: loaderData.metadata.title,
           description: loaderData.metadata.subtitle,
           ogImage: `/og/essay-${loaderData.slug}.png`,

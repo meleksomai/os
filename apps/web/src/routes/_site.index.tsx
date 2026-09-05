@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EssaySection } from "@/components/home/section-essays";
 import IntroSection from "@/components/home/section-intro";
-import { pageMeta } from "@/lib/seo";
+import { seo } from "@/lib/seo";
 import { fetchEssayList } from "@/server/essays/functions";
 
 export const Route = createFileRoute("/_site/")({
   loader: () => fetchEssayList(),
   head: () => ({
-    meta: pageMeta({
+    meta: seo({
       title: "Home",
       description:
         "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.",

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { pageMeta } from "@/lib/seo";
+import { seo } from "@/lib/seo";
 
 const DESCRIPTION = "Description";
 
-describe("pageMeta", () => {
+describe("seo", () => {
   it("emits the full tag set with the site name, handle, and origin applied", () => {
     expect(
-      pageMeta({
+      seo({
         title: "Home",
         description: DESCRIPTION,
         ogImage: "/og/home.png",
@@ -34,7 +34,7 @@ describe("pageMeta", () => {
   });
 
   it("defaults the Twitter title to the document title", () => {
-    const meta = pageMeta({
+    const meta = seo({
       title: "Essays",
       description: DESCRIPTION,
       ogImage: "/og/essays.png",
