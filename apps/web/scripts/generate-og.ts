@@ -8,6 +8,10 @@
  *
  * Only plain modules may be value-imported from src/ (types are erased);
  * anything that uses Vite features such as import.meta.glob cannot run here.
+ *
+ * TODO(#99): replace this build-time step with a request-time server route
+ * (takumi-js ImageResponse, edge-cached), the pattern tanstack.com uses on
+ * Workers. https://github.com/meleksomai/os/issues/99
  */
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
