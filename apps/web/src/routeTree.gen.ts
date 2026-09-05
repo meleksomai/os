@@ -10,36 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as EssaysRouteImport } from './routes/essays'
-import { Route as PapersRouteImport } from './routes/papers'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as EssaySlugRouteImport } from './routes/essay.$slug'
-import { Route as EssayChar123slugChar125DotmdRouteImport } from './routes/essay.{$slug}[.]md'
-import { Route as EssaySlugMdRouteImport } from './routes/essay.$slug.md'
+import { Route as EssayChar123slugChar125DotmdRouteImport } from './routes/essay/{$slug}[.]md'
+import { Route as EssaysIndexRouteImport } from './routes/essays/index'
+import { Route as PapersIndexRouteImport } from './routes/papers/index'
+import { Route as EssaySlugIndexRouteImport } from './routes/essay/$slug/index'
+import { Route as EssaySlugMdRouteImport } from './routes/essay/$slug/md'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EssaysRoute = EssaysRouteImport.update({
-  id: '/essays',
-  path: '/essays',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PapersRoute = PapersRouteImport.update({
-  id: '/papers',
-  path: '/papers',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EssaySlugRoute = EssaySlugRouteImport.update({
-  id: '/essay/$slug',
-  path: '/essay/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EssayChar123slugChar125DotmdRoute =
@@ -48,77 +33,93 @@ const EssayChar123slugChar125DotmdRoute =
     path: '/essay/{$slug}.md',
     getParentRoute: () => rootRouteImport,
   } as any)
+const EssaysIndexRoute = EssaysIndexRouteImport.update({
+  id: '/essays/',
+  path: '/essays/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PapersIndexRoute = PapersIndexRouteImport.update({
+  id: '/papers/',
+  path: '/papers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EssaySlugIndexRoute = EssaySlugIndexRouteImport.update({
+  id: '/essay/$slug/',
+  path: '/essay/$slug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EssaySlugMdRoute = EssaySlugMdRouteImport.update({
-  id: '/md',
-  path: '/md',
-  getParentRoute: () => EssaySlugRoute,
+  id: '/essay/$slug/md',
+  path: '/essay/$slug/md',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/essays': typeof EssaysRoute
-  '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essay/$slug': typeof EssaySlugRouteWithChildren
   '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
+  '/essays/': typeof EssaysIndexRoute
+  '/papers/': typeof PapersIndexRoute
   '/essay/$slug/md': typeof EssaySlugMdRoute
+  '/essay/$slug/': typeof EssaySlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/essays': typeof EssaysRoute
-  '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essay/$slug': typeof EssaySlugRouteWithChildren
   '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
+  '/essays': typeof EssaysIndexRoute
+  '/papers': typeof PapersIndexRoute
   '/essay/$slug/md': typeof EssaySlugMdRoute
+  '/essay/$slug': typeof EssaySlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/essays': typeof EssaysRoute
-  '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essay/$slug': typeof EssaySlugRouteWithChildren
   '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
+  '/essays/': typeof EssaysIndexRoute
+  '/papers/': typeof PapersIndexRoute
   '/essay/$slug/md': typeof EssaySlugMdRoute
+  '/essay/$slug/': typeof EssaySlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/essays'
-    | '/papers'
     | '/sitemap.xml'
-    | '/essay/$slug'
     | '/essay/{$slug}.md'
+    | '/essays/'
+    | '/papers/'
     | '/essay/$slug/md'
+    | '/essay/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/sitemap.xml'
+    | '/essay/{$slug}.md'
     | '/essays'
     | '/papers'
-    | '/sitemap.xml'
-    | '/essay/$slug'
-    | '/essay/{$slug}.md'
     | '/essay/$slug/md'
+    | '/essay/$slug'
   id:
     | '__root__'
     | '/'
-    | '/essays'
-    | '/papers'
     | '/sitemap.xml'
-    | '/essay/$slug'
     | '/essay/{$slug}.md'
+    | '/essays/'
+    | '/papers/'
     | '/essay/$slug/md'
+    | '/essay/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  EssaysRoute: typeof EssaysRoute
-  PapersRoute: typeof PapersRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  EssaySlugRoute: typeof EssaySlugRouteWithChildren
   EssayChar123slugChar125DotmdRoute: typeof EssayChar123slugChar125DotmdRoute
+  EssaysIndexRoute: typeof EssaysIndexRoute
+  PapersIndexRoute: typeof PapersIndexRoute
+  EssaySlugMdRoute: typeof EssaySlugMdRoute
+  EssaySlugIndexRoute: typeof EssaySlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -130,32 +131,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/essays': {
-      id: '/essays'
-      path: '/essays'
-      fullPath: '/essays'
-      preLoaderRoute: typeof EssaysRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/papers': {
-      id: '/papers'
-      path: '/papers'
-      fullPath: '/papers'
-      preLoaderRoute: typeof PapersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/essay/$slug': {
-      id: '/essay/$slug'
-      path: '/essay/$slug'
-      fullPath: '/essay/$slug'
-      preLoaderRoute: typeof EssaySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/essay/{$slug}.md': {
@@ -165,35 +145,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EssayChar123slugChar125DotmdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/essays/': {
+      id: '/essays/'
+      path: '/essays'
+      fullPath: '/essays/'
+      preLoaderRoute: typeof EssaysIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/papers/': {
+      id: '/papers/'
+      path: '/papers'
+      fullPath: '/papers/'
+      preLoaderRoute: typeof PapersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/essay/$slug/': {
+      id: '/essay/$slug/'
+      path: '/essay/$slug'
+      fullPath: '/essay/$slug/'
+      preLoaderRoute: typeof EssaySlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/essay/$slug/md': {
       id: '/essay/$slug/md'
-      path: '/md'
+      path: '/essay/$slug/md'
       fullPath: '/essay/$slug/md'
       preLoaderRoute: typeof EssaySlugMdRouteImport
-      parentRoute: typeof EssaySlugRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface EssaySlugRouteChildren {
-  EssaySlugMdRoute: typeof EssaySlugMdRoute
-}
-
-const EssaySlugRouteChildren: EssaySlugRouteChildren = {
-  EssaySlugMdRoute: EssaySlugMdRoute,
-}
-
-const EssaySlugRouteWithChildren = EssaySlugRoute._addFileChildren(
-  EssaySlugRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  EssaysRoute: EssaysRoute,
-  PapersRoute: PapersRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  EssaySlugRoute: EssaySlugRouteWithChildren,
   EssayChar123slugChar125DotmdRoute: EssayChar123slugChar125DotmdRoute,
+  EssaysIndexRoute: EssaysIndexRoute,
+  PapersIndexRoute: PapersIndexRoute,
+  EssaySlugMdRoute: EssaySlugMdRoute,
+  EssaySlugIndexRoute: EssaySlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
