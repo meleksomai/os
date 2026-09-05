@@ -13,9 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as EssaysRouteImport } from './routes/essays'
 import { Route as PapersRouteImport } from './routes/papers'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as EssaySlugIndexRouteImport } from './routes/essay/$slug/index'
-import { Route as EssayChar123slugChar125DotmdIndexRouteImport } from './routes/essay/{$slug}[.]md/index'
-import { Route as EssaySlugMdIndexRouteImport } from './routes/essay/$slug/md/index'
+import { Route as EssaySlugRouteImport } from './routes/essay/$slug'
+import { Route as EssayChar123slugChar125DotmdRouteImport } from './routes/essay/{$slug}[.]md'
+import { Route as EssaySlugMdRouteImport } from './routes/essay/$slug.md'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -37,21 +37,21 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EssaySlugIndexRoute = EssaySlugIndexRouteImport.update({
-  id: '/essay/$slug/',
-  path: '/essay/$slug/',
+const EssaySlugRoute = EssaySlugRouteImport.update({
+  id: '/essay/$slug',
+  path: '/essay/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EssayChar123slugChar125DotmdIndexRoute =
-  EssayChar123slugChar125DotmdIndexRouteImport.update({
-    id: '/essay/{$slug}.md/',
-    path: '/essay/{$slug}.md/',
+const EssayChar123slugChar125DotmdRoute =
+  EssayChar123slugChar125DotmdRouteImport.update({
+    id: '/essay/{$slug}.md',
+    path: '/essay/{$slug}.md',
     getParentRoute: () => rootRouteImport,
   } as any)
-const EssaySlugMdIndexRoute = EssaySlugMdIndexRouteImport.update({
-  id: '/essay/$slug/md/',
-  path: '/essay/$slug/md/',
-  getParentRoute: () => rootRouteImport,
+const EssaySlugMdRoute = EssaySlugMdRouteImport.update({
+  id: '/md',
+  path: '/md',
+  getParentRoute: () => EssaySlugRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -59,18 +59,18 @@ export interface FileRoutesByFullPath {
   '/essays': typeof EssaysRoute
   '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essay/$slug/': typeof EssaySlugIndexRoute
-  '/essay/{$slug}.md/': typeof EssayChar123slugChar125DotmdIndexRoute
-  '/essay/$slug/md/': typeof EssaySlugMdIndexRoute
+  '/essay/$slug': typeof EssaySlugRouteWithChildren
+  '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
+  '/essay/$slug/md': typeof EssaySlugMdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/essays': typeof EssaysRoute
   '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essay/$slug': typeof EssaySlugIndexRoute
-  '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdIndexRoute
-  '/essay/$slug/md': typeof EssaySlugMdIndexRoute
+  '/essay/$slug': typeof EssaySlugRouteWithChildren
+  '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
+  '/essay/$slug/md': typeof EssaySlugMdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,9 +78,9 @@ export interface FileRoutesById {
   '/essays': typeof EssaysRoute
   '/papers': typeof PapersRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/essay/$slug/': typeof EssaySlugIndexRoute
-  '/essay/{$slug}.md/': typeof EssayChar123slugChar125DotmdIndexRoute
-  '/essay/$slug/md/': typeof EssaySlugMdIndexRoute
+  '/essay/$slug': typeof EssaySlugRouteWithChildren
+  '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
+  '/essay/$slug/md': typeof EssaySlugMdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -89,9 +89,9 @@ export interface FileRouteTypes {
     | '/essays'
     | '/papers'
     | '/sitemap.xml'
-    | '/essay/$slug/'
-    | '/essay/{$slug}.md/'
-    | '/essay/$slug/md/'
+    | '/essay/$slug'
+    | '/essay/{$slug}.md'
+    | '/essay/$slug/md'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -107,9 +107,9 @@ export interface FileRouteTypes {
     | '/essays'
     | '/papers'
     | '/sitemap.xml'
-    | '/essay/$slug/'
-    | '/essay/{$slug}.md/'
-    | '/essay/$slug/md/'
+    | '/essay/$slug'
+    | '/essay/{$slug}.md'
+    | '/essay/$slug/md'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,9 +117,8 @@ export interface RootRouteChildren {
   EssaysRoute: typeof EssaysRoute
   PapersRoute: typeof PapersRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  EssaySlugIndexRoute: typeof EssaySlugIndexRoute
-  EssayChar123slugChar125DotmdIndexRoute: typeof EssayChar123slugChar125DotmdIndexRoute
-  EssaySlugMdIndexRoute: typeof EssaySlugMdIndexRoute
+  EssaySlugRoute: typeof EssaySlugRouteWithChildren
+  EssayChar123slugChar125DotmdRoute: typeof EssayChar123slugChar125DotmdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,39 +151,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/essay/$slug/': {
-      id: '/essay/$slug/'
+    '/essay/$slug': {
+      id: '/essay/$slug'
       path: '/essay/$slug'
-      fullPath: '/essay/$slug/'
-      preLoaderRoute: typeof EssaySlugIndexRouteImport
+      fullPath: '/essay/$slug'
+      preLoaderRoute: typeof EssaySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/essay/{$slug}.md/': {
-      id: '/essay/{$slug}.md/'
+    '/essay/{$slug}.md': {
+      id: '/essay/{$slug}.md'
       path: '/essay/{$slug}.md'
-      fullPath: '/essay/{$slug}.md/'
-      preLoaderRoute: typeof EssayChar123slugChar125DotmdIndexRouteImport
+      fullPath: '/essay/{$slug}.md'
+      preLoaderRoute: typeof EssayChar123slugChar125DotmdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/essay/$slug/md/': {
-      id: '/essay/$slug/md/'
-      path: '/essay/$slug/md'
-      fullPath: '/essay/$slug/md/'
-      preLoaderRoute: typeof EssaySlugMdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/essay/$slug/md': {
+      id: '/essay/$slug/md'
+      path: '/md'
+      fullPath: '/essay/$slug/md'
+      preLoaderRoute: typeof EssaySlugMdRouteImport
+      parentRoute: typeof EssaySlugRoute
     }
   }
 }
+
+interface EssaySlugRouteChildren {
+  EssaySlugMdRoute: typeof EssaySlugMdRoute
+}
+
+const EssaySlugRouteChildren: EssaySlugRouteChildren = {
+  EssaySlugMdRoute: EssaySlugMdRoute,
+}
+
+const EssaySlugRouteWithChildren = EssaySlugRoute._addFileChildren(
+  EssaySlugRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EssaysRoute: EssaysRoute,
   PapersRoute: PapersRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  EssaySlugIndexRoute: EssaySlugIndexRoute,
-  EssayChar123slugChar125DotmdIndexRoute:
-    EssayChar123slugChar125DotmdIndexRoute,
-  EssaySlugMdIndexRoute: EssaySlugMdIndexRoute,
+  EssaySlugRoute: EssaySlugRouteWithChildren,
+  EssayChar123slugChar125DotmdRoute: EssayChar123slugChar125DotmdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

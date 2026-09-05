@@ -14,7 +14,7 @@ function prefersMarkdown(request: Request): boolean {
   return accept.includes("text/markdown") || accept.includes("text/plain");
 }
 
-export const Route = createFileRoute("/essay/$slug/")({
+export const Route = createFileRoute("/essay/$slug")({
   server: {
     handlers: {
       // Content negotiation on the canonical essay URL: agents asking for
