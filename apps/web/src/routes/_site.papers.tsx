@@ -6,14 +6,14 @@ import { fetchPapers } from "@/server/papers/functions";
 
 export const Route = createFileRoute("/_site/papers")({
   loader: () => fetchPapers(),
-  head: () => ({
-    meta: seo({
+  head: () =>
+    seo({
       title: "Research Papers",
       description:
         "Research in areas ranging from Clinical Computing, Patient Remote Monitoring, Neuro-Epidemiology, to AI and Machine Learning",
+      path: "/papers",
       ogImage: "/og/papers.png",
     }),
-  }),
   component: PapersPage,
 });
 

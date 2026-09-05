@@ -6,14 +6,14 @@ import { fetchEssayList } from "@/server/essays/functions";
 
 export const Route = createFileRoute("/_site/essays")({
   loader: () => fetchEssayList(),
-  head: () => ({
-    meta: seo({
+  head: () =>
+    seo({
       title: "Essays",
       description:
         "A space to share thoughts and ideas that are often reflections on my current research.",
+      path: "/essays",
       ogImage: "/og/essays.png",
     }),
-  }),
   component: EssaysPage,
 });
 

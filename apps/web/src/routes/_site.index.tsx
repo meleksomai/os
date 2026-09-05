@@ -1,20 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EssaySection } from "@/components/home/section-essays";
 import IntroSection from "@/components/home/section-intro";
-import { seo } from "@/lib/seo";
+import { personJsonLd, seo } from "@/lib/seo";
 import { fetchEssayList } from "@/server/essays/functions";
+
+const HOME_DESCRIPTION =
+  "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.";
 
 export const Route = createFileRoute("/_site/")({
   loader: () => fetchEssayList(),
-  head: () => ({
-    meta: seo({
+  head: () =>
+    seo({
       title: "Home",
-      description:
-        "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.",
+      description: HOME_DESCRIPTION,
+      path: "/",
       ogImage: "/og/home.png",
       twitterTitle: "Melek Somai",
+      structuredData: personJsonLd(HOME_DESCRIPTION),
     }),
-  }),
   component: HomePage,
 });
 

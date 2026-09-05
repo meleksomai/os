@@ -46,15 +46,16 @@ export const Route = createFileRoute("/_site/essay/$slug")({
 
     return essay;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
+  head: ({ loaderData }) =>
+    loaderData
       ? seo({
           title: loaderData.metadata.title,
           description: loaderData.metadata.subtitle,
+          path: `/essay/${loaderData.slug}`,
           ogImage: `/og/essay-${loaderData.slug}.png`,
+          article: { publishedAt: loaderData.metadata.publishedAt },
         })
-      : [],
-  }),
+      : {},
   component: EssayPage,
 });
 

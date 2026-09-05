@@ -3,12 +3,15 @@ import { expect, type Page, test } from "@playwright/test";
 
 interface ExpectedSeo {
   path: string;
-  title?: string;
-  description?: string;
-  twitterTitle?: string;
+  title: string;
+  description: string;
+  twitterTitle: string;
   ogImage: string;
+  ogType: "website" | "article";
+  jsonLdType: string | null;
 }
 
+const SITE = "https://www.somai.me";
 const HOME_DESCRIPTION =
   "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.";
 
@@ -18,7 +21,9 @@ const PAGES: ExpectedSeo[] = [
     title: "Melek Somai | Home",
     description: HOME_DESCRIPTION,
     twitterTitle: "Melek Somai",
-    ogImage: "https://www.somai.me/og/home.png",
+    ogImage: `${SITE}/og/home.png`,
+    ogType: "website",
+    jsonLdType: "Person",
   },
   {
     path: "/essays",
@@ -26,7 +31,9 @@ const PAGES: ExpectedSeo[] = [
     description:
       "A space to share thoughts and ideas that are often reflections on my current research.",
     twitterTitle: "Melek Somai | Essays",
-    ogImage: "https://www.somai.me/og/essays.png",
+    ogImage: `${SITE}/og/essays.png`,
+    ogType: "website",
+    jsonLdType: null,
   },
   {
     path: "/papers",
@@ -34,7 +41,9 @@ const PAGES: ExpectedSeo[] = [
     description:
       "Research in areas ranging from Clinical Computing, Patient Remote Monitoring, Neuro-Epidemiology, to AI and Machine Learning",
     twitterTitle: "Melek Somai | Research Papers",
-    ogImage: "https://www.somai.me/og/papers.png",
+    ogImage: `${SITE}/og/papers.png`,
+    ogType: "website",
+    jsonLdType: null,
   },
   {
     path: "/essay/agents",
@@ -43,7 +52,9 @@ const PAGES: ExpectedSeo[] = [
       "On harnesses, verifiability, and why human-in-the-loop is not the answer for safe AI agents",
     twitterTitle:
       "Melek Somai | Agent-First Systems and the Future of Software",
-    ogImage: "https://www.somai.me/og/essay-agents.png",
+    ogImage: `${SITE}/og/essay-agents.png`,
+    ogType: "article",
+    jsonLdType: "BlogPosting",
   },
 ];
 
@@ -54,34 +65,37 @@ function metaContent(page: Page, selector: string) {
 for (const expected of PAGES) {
   test(`SEO tags on ${expected.path}`, async ({ page, request }) => {
     await page.goto(expected.path);
+    const canonical = expected.path === "/" ? SITE : `${SITE}${expected.path}`;
 
-    if (expected.title) {
-      await expect(page).toHaveTitle(expected.title);
-      expect(await metaContent(page, 'meta[property="og:title"]')).toBe(
-        expected.title
-      );
-    }
-
-    if (expected.description) {
-      expect(await metaContent(page, 'meta[name="description"]')).toBe(
-        expected.description
-      );
-      expect(await metaContent(page, 'meta[property="og:description"]')).toBe(
-        expected.description
-      );
-    }
-
-    if (expected.twitterTitle) {
-      expect(await metaContent(page, 'meta[name="twitter:title"]')).toBe(
-        expected.twitterTitle
-      );
-      expect(await metaContent(page, 'meta[name="twitter:creator"]')).toBe(
-        "@meleksomai"
-      );
-    }
+    await expect(page).toHaveTitle(expected.title);
+    expect(await metaContent(page, 'meta[property="og:title"]')).toBe(
+      expected.title
+    );
+    expect(await metaContent(page, 'meta[name="description"]')).toBe(
+      expected.description
+    );
+    expect(await metaContent(page, 'meta[property="og:description"]')).toBe(
+      expected.description
+    );
+    expect(await metaContent(page, 'meta[property="og:type"]')).toBe(
+      expected.ogType
+    );
+    expect(await metaContent(page, 'meta[property="og:site_name"]')).toBe(
+      "Melek Somai"
+    );
+    expect(await metaContent(page, 'meta[property="og:url"]')).toBe(canonical);
+    expect(
+      await page.locator('link[rel="canonical"]').getAttribute("href")
+    ).toBe(canonical);
 
     expect(await metaContent(page, 'meta[name="twitter:card"]')).toBe(
       "summary_large_image"
+    );
+    expect(await metaContent(page, 'meta[name="twitter:site"]')).toBe(
+      "@meleksomai"
+    );
+    expect(await metaContent(page, 'meta[name="twitter:title"]')).toBe(
+      expected.twitterTitle
     );
     expect(await metaContent(page, 'meta[property="og:image"]')).toBe(
       expected.ogImage
@@ -96,9 +110,18 @@ for (const expected of PAGES) {
       expected.ogImage
     );
 
+    // Structured data, when the page has any, must be valid JSON of the expected type.
+    const scripts = page.locator('script[type="application/ld+json"]');
+    if (expected.jsonLdType === null) {
+      await expect(scripts).toHaveCount(0);
+    } else {
+      const data = JSON.parse((await scripts.first().textContent()) ?? "{}");
+      expect(data["@type"]).toBe(expected.jsonLdType);
+      expect(data["@context"]).toBe("https://schema.org");
+    }
+
     // The advertised OG image must actually resolve on this deployment.
-    const imagePath = new URL(expected.ogImage).pathname;
-    const imageResponse = await request.get(imagePath);
+    const imageResponse = await request.get(new URL(expected.ogImage).pathname);
     expect(imageResponse.status()).toBe(200);
     expect(imageResponse.headers()["content-type"]).toBe("image/png");
 
@@ -108,6 +131,15 @@ for (const expected of PAGES) {
     expect(body.readUInt32BE(20)).toBe(630);
   });
 }
+
+test("essays carry article metadata", async ({ page }) => {
+  await page.goto("/essay/agents");
+
+  expect(
+    await metaContent(page, 'meta[property="article:published_time"]')
+  ).toBe("2026-01-02T00:00:00.000Z");
+  expect(await metaContent(page, 'meta[property="article:author"]')).toBe(SITE);
+});
 
 test("every essay page advertises its own OG image", async ({
   page,
@@ -129,7 +161,7 @@ test("every essay page advertises its own OG image", async ({
       .locator('meta[property="og:image"]')
       .getAttribute("content");
     expect(ogImage).toBe(
-      `https://www.somai.me/og/essay-${essayPath.replace("/essay/", "")}.png`
+      `${SITE}/og/essay-${essayPath.replace("/essay/", "")}.png`
     );
 
     const imageResponse = await request.get(new URL(ogImage ?? "").pathname);

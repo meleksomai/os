@@ -17,3 +17,12 @@ test("unknown essay slugs return 404", async ({ page }) => {
   expect(response?.status()).toBe(404);
   await expect(page.getByText("404 - Idea not found")).toBeVisible();
 });
+
+test("404 pages ask search engines not to index them", async ({ request }) => {
+  const response = await request.get("/this-page-does-not-exist");
+  const html = await response.text();
+
+  expect(response.status()).toBe(404);
+  const robots = html.match(/<meta[^>]*name="robots"[^>]*>/)?.[0] ?? "";
+  expect(robots).toContain('content="noindex"');
+});
