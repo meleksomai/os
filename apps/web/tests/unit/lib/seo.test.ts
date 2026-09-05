@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pageMeta } from "./seo";
+import { pageMeta } from "@/lib/seo";
 
 const DESCRIPTION = "Description";
 

@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: e2e assertions */
 import { expect, test } from "@playwright/test";
-import { essaySlugsOnDisk } from "../test/essays";
+import { essaySlugsOnDisk } from "../essays";
 
 const SITE = "https://www.somai.me";
 

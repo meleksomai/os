@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatPublishedAt, parsePublishedAt } from "./date";
+import { formatPublishedAt, parsePublishedAt } from "@/lib/date";
 
 describe("parsePublishedAt", () => {
   it("parses ISO YYYY-MM-DD as UTC midnight", () => {

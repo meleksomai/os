@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { subscribeToNewsletter } from "./newsletter.server";
+import { subscribeToNewsletter } from "@/server/newsletter.server";
 
 vi.mock("@workspace/emailing/newsletter", () => ({
   subscribeContact: vi.fn(),

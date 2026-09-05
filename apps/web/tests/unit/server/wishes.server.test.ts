@@ -14,7 +14,7 @@ vi.mock("@workspace/ntfy", () => ({
 
 import { db } from "@workspace/database";
 import { publish } from "@workspace/ntfy";
-import { submitWish, WISH_RECEIVED } from "./wishes.server";
+import { submitWish, WISH_RECEIVED } from "@/server/wishes.server";
 
 const mockSubmit = vi.mocked(db.wishes.submit);
 const mockPublish = vi.mocked(publish);

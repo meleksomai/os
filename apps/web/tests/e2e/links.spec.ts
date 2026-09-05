@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: e2e assertions */
 import { expect, test } from "@playwright/test";
-import { essaySlugsOnDisk } from "../test/essays";
+import { essaySlugsOnDisk } from "../essays";
 
 const CRAWL_PAGES = ["/", "/essays", "/papers", "/essay/agents", "/baby"];
 

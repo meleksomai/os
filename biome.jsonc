@@ -10,7 +10,7 @@
       // Static assets (SVG art, favicons) are not source
       "!**/public",
       // Golden test fixtures must stay byte-exact
-      "!**/test/fixtures",
+      "!**/tests/fixtures",
       "!**/routeTree.gen.ts",
       // Git worktrees live under .claude/worktrees and carry their own root config
       "!**/.claude/worktrees",

@@ -5,7 +5,9 @@ import { expect, test } from "@playwright/test";
 const SERVER_FN = "**/_serverFn/**";
 // With real secrets in a local .dev.vars the round trip would subscribe a
 // test address to the real audience.
-const HAS_LOCAL_SECRETS = existsSync(new URL("../.dev.vars", import.meta.url));
+const HAS_LOCAL_SECRETS = existsSync(
+  new URL("../../.dev.vars", import.meta.url)
+);
 
 test.describe("Newsletter Subscription", () => {
   test("contact form section is visible on homepage", async ({ page }) => {

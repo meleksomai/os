@@ -6,8 +6,8 @@ vi.mock("@/server/wishes", () => ({
   submitWishFn: vi.fn(),
 }));
 
+import { SignBook } from "@/components/baby/signbook";
 import { submitWishFn } from "@/server/wishes";
-import { SignBook } from "./signbook";
 
 const mockSubmitWish = vi.mocked(submitWishFn);
 

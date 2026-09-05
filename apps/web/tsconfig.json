@@ -14,13 +14,13 @@
     "types": ["vite/client"]
   },
   "include": [
-    "e2e/**/*.ts",
     "mdx-plugin.ts",
     "playwright.config.ts",
     "scripts/**/*.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "test/**/*.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
     "vite.config.ts",
     "vitest.config.ts"
   ],

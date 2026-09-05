@@ -1,15 +1,18 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { essayCatalog } from "./catalog.server";
-import { essayMarkdownResponse, getEssayMarkdown } from "./markdown.server";
+import { essayCatalog } from "@/essays/catalog.server";
+import {
+  essayMarkdownResponse,
+  getEssayMarkdown,
+} from "@/essays/markdown.server";
 
 const IMPORT_LINE = /^import /m;
 
 // Captured from the previous deployment on 2026-09-04:
-//   curl -s https://www.somai.me/essay/agents/md > test/fixtures/agents.md
+//   curl -s https://www.somai.me/essay/agents/md > tests/fixtures/agents.md
 const productionRendition = readFileSync(
-  path.join(import.meta.dirname, "../../test/fixtures/agents.md"),
+  path.join(import.meta.dirname, "../../fixtures/agents.md"),
   "utf8"
 );
 

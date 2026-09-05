@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: unit testing */
 import { describe, expect, it } from "vitest";
+import { essayCatalog, getEssayBySlug } from "@/essays/catalog.server";
 import { parsePublishedAt } from "@/lib/date";
-import { essaySlugsOnDisk } from "../../test/essays";
-import { essayCatalog, getEssayBySlug } from "./catalog.server";
+import { essaySlugsOnDisk } from "../../essays";
 
 const slugsOnDisk = essaySlugsOnDisk();
 
