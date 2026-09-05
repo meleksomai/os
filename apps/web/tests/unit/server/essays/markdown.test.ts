@@ -25,7 +25,7 @@ describe("getEssayMarkdown", () => {
     for (const essay of listEssays()) {
       const markdown = getEssayMarkdown(essay.slug);
       expect(markdown, essay.slug).not.toBeNull();
-      expect(markdown).toContain(`# ${essay.metadata.title}`);
+      expect(markdown).toContain(`# ${essay.title}`);
       expect(markdown).not.toContain("publishedAt:");
       expect(markdown).not.toMatch(IMPORT_LINE);
     }

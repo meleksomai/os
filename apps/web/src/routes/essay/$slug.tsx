@@ -39,11 +39,11 @@ export const Route = createFileRoute("/essay/$slug")({
       return {};
     }
     const page = {
-      title: loaderData.metadata.title,
-      description: loaderData.metadata.subtitle,
+      title: loaderData.title,
+      description: loaderData.subtitle,
       path: `/essay/${loaderData.slug}`,
       ogImage: `/og/essay-${loaderData.slug}.png`,
-      publishedAt: loaderData.metadata.publishedAt,
+      publishedAt: loaderData.publishedAt,
     };
     return {
       ...generateSeo({ ...page, article: { publishedAt: page.publishedAt } }),
@@ -54,23 +54,24 @@ export const Route = createFileRoute("/essay/$slug")({
 });
 
 function EssayPage() {
-  const { slug, metadata, readingTime } = Route.useLoaderData();
+  const { slug, title, subtitle, publishedAtFormatted, readingTime } =
+    Route.useLoaderData();
 
   return (
     <article>
       <div className="flex flex-col">
         <div className="flex flex-col gap-4">
           <div className="animate-fade-slide-up">
-            <Heading1>{metadata.title}</Heading1>
+            <Heading1>{title}</Heading1>
           </div>
           <div className="animation-delay-150 animate-fade-slide-up">
             <Heading3 className="font-mono text-muted-foreground uppercase">
-              {metadata.subtitle}
+              {subtitle}
             </Heading3>
           </div>
           <div className="animation-delay-300 animate-fade-slide-up py-8 font-mono text-muted-foreground text-xs uppercase md:text-sm">
-            / {metadata.publishedAtFormatted} / {readingTime.text} /{" "}
-            {readingTime.words} words
+            / {publishedAtFormatted} / {readingTime.text} / {readingTime.words}{" "}
+            words
           </div>
         </div>
         <div className="animation-delay-450 prose animate-fade-slide-up">

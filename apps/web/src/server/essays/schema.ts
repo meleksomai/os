@@ -1,14 +1,16 @@
-export interface EssayMetadata {
+/** The YAML frontmatter of `content/<slug>.mdx`, as the author writes it. */
+export interface EssayFrontmatter {
   title: string;
   subtitle: string;
+  category: string;
   featured: boolean;
+  /** `YYYY-MM-DD` */
   publishedAt: string;
-  publishedAtFormatted: string;
   audio?: string;
   image?: string;
-  category: string;
 }
 
+/** Reading-time estimate exported by the MDX pipeline (remark-reading-time). */
 export interface EssayReadingTime {
   text: string;
   minutes: number;
@@ -16,9 +18,11 @@ export interface EssayReadingTime {
   words: number;
 }
 
-export interface EssayListItem {
+/** An essay as the app uses it: its slug, its frontmatter, and what the MDX pipeline derived. */
+export interface Essay extends EssayFrontmatter {
   slug: string;
-  metadata: EssayMetadata;
+  /** `publishedAt` for display, e.g. "January 2, 2026". */
+  publishedAtFormatted: string;
   readingTime: EssayReadingTime;
 }
 

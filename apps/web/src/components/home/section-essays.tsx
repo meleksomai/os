@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { Heading2, Heading3 } from "@workspace/ui/blocks/headings";
 import { ArrowRightIcon } from "@workspace/ui/components/icons";
 import { useReveal } from "@workspace/ui/hooks/use-reveal";
-import type { EssayListItem } from "@/server/essays/schema";
+import type { Essay } from "@/server/essays/schema";
 
-export function EssaySection({ essays }: { essays?: EssayListItem[] }) {
+export function EssaySection({ essays }: { essays?: Essay[] }) {
   const { ref, isVisible } = useReveal(0.2);
 
   return (
@@ -66,7 +66,7 @@ function EssayCard({
   index,
   isVisible,
 }: {
-  essay: EssayListItem;
+  essay: Essay;
   index: number;
   isVisible: boolean;
 }) {
@@ -89,13 +89,13 @@ function EssayCard({
       <div className="flex items-baseline gap-4 md:gap-8">
         <div>
           <span className="font-mono text-muted-foreground text-xs md:text-sm">
-            {essay.metadata.publishedAtFormatted}
+            {essay.publishedAtFormatted}
           </span>
           <Heading3 className="mr-12 mb-1 transition-transform duration-300 group-hover:translate-x-2">
-            {essay.metadata.title}
+            {essay.title}
           </Heading3>
           <p className="font-mono text-foreground/50 text-xs md:text-sm">
-            {essay.metadata.subtitle}
+            {essay.subtitle}
           </p>
         </div>
       </div>

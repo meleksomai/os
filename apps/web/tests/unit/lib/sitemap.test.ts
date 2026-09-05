@@ -1,18 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { buildSitemapEntries, sitemapXml } from "@/lib/sitemap";
-import type { EssayListItem } from "@/server/essays/schema";
+import type { Essay } from "@/server/essays/schema";
 
-function essay(slug: string, publishedAt: string): EssayListItem {
+function essay(slug: string, publishedAt: string): Essay {
   return {
     slug,
-    metadata: {
-      title: slug,
-      subtitle: "subtitle",
-      featured: false,
-      publishedAt,
-      publishedAtFormatted: "formatted",
-      category: "engineering",
-    },
+    title: slug,
+    subtitle: "subtitle",
+    category: "engineering",
+    featured: false,
+    publishedAt,
+    publishedAtFormatted: "formatted",
     readingTime: { text: "1 min read", minutes: 1, time: 60_000, words: 100 },
   };
 }

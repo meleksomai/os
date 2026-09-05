@@ -18,7 +18,7 @@ describe("listEssays", () => {
 
   it("is sorted by publishedAt descending", () => {
     const dates = listEssays().map((essay) =>
-      parsePublishedAt(essay.metadata.publishedAt).getTime()
+      parsePublishedAt(essay.publishedAt).getTime()
     );
     const sorted = [...dates].sort((a, b) => b - a);
     expect(dates).toEqual(sorted);
@@ -26,12 +26,12 @@ describe("listEssays", () => {
 
   it("exposes complete metadata for every essay", () => {
     for (const essay of listEssays()) {
-      expect(essay.metadata.title).toBeTruthy();
-      expect(essay.metadata.subtitle).toBeTruthy();
-      expect(essay.metadata.category).toBeTruthy();
-      expect(essay.metadata.publishedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(essay.metadata.publishedAtFormatted).toMatch(/\d{4}$/);
-      expect(typeof essay.metadata.featured).toBe("boolean");
+      expect(essay.title).toBeTruthy();
+      expect(essay.subtitle).toBeTruthy();
+      expect(essay.category).toBeTruthy();
+      expect(essay.publishedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(essay.publishedAtFormatted).toMatch(/\d{4}$/);
+      expect(typeof essay.featured).toBe("boolean");
     }
   });
 
@@ -44,7 +44,7 @@ describe("listEssays", () => {
 
   it("has at least one featured essay for the home page", () => {
     expect(
-      listEssays().filter((essay) => essay.metadata.featured).length
+      listEssays().filter((essay) => essay.featured).length
     ).toBeGreaterThan(0);
   });
 });
@@ -52,9 +52,7 @@ describe("listEssays", () => {
 describe("getEssayBySlug", () => {
   it("returns the essay for a known slug", () => {
     const essay = getEssayBySlug("agents");
-    expect(essay?.metadata.title).toBe(
-      "Agent-First Systems and the Future of Software"
-    );
+    expect(essay?.title).toBe("Agent-First Systems and the Future of Software");
   });
 
   it("returns null for an unknown slug", () => {

@@ -1,17 +1,15 @@
 import { formatPublishedAt, parsePublishedAt } from "@/lib/date";
 import {
-  type EssayListItem,
-  type EssayMetadata,
+  type Essay,
+  type EssayFrontmatter,
   type EssayReadingTime,
   essaySlugFromPath,
 } from "./schema";
 
-type Frontmatter = Omit<EssayMetadata, "publishedAtFormatted">;
-
 // Only the named exports produced by the MDX pipeline (remark-mdx-frontmatter
 // and remark-reading-time) are imported here, so this module never renders an
 // essay. The components live in src/components/essays/content.tsx.
-const frontmatterByPath = import.meta.glob<Frontmatter>(
+const frontmatterByPath = import.meta.glob<EssayFrontmatter>(
   "../../../content/*.mdx",
   { eager: true, import: "metadata" }
 );
@@ -27,9 +25,9 @@ const rawEssayByPath = import.meta.glob<string>("../../../content/*.mdx", {
   query: "?raw",
 });
 
-function buildCatalog(): EssayListItem[] {
+function buildCatalog(): Essay[] {
   return Object.entries(frontmatterByPath)
-    .map(([path, frontmatter]) => {
+    .map(([path, frontmatter]): Essay => {
       const readingTime = readingTimeByPath[path];
       if (!readingTime) {
         throw new Error(`Missing reading time for essay: ${path}`);
@@ -37,30 +35,28 @@ function buildCatalog(): EssayListItem[] {
 
       return {
         slug: essaySlugFromPath(path),
-        metadata: {
-          ...frontmatter,
-          publishedAtFormatted: formatPublishedAt(
-            parsePublishedAt(frontmatter.publishedAt)
-          ),
-        },
+        ...frontmatter,
+        publishedAtFormatted: formatPublishedAt(
+          parsePublishedAt(frontmatter.publishedAt)
+        ),
         readingTime,
       };
     })
     .sort(
       (a, b) =>
-        parsePublishedAt(b.metadata.publishedAt).getTime() -
-        parsePublishedAt(a.metadata.publishedAt).getTime()
+        parsePublishedAt(b.publishedAt).getTime() -
+        parsePublishedAt(a.publishedAt).getTime()
     );
 }
 
 const catalog = buildCatalog();
 
 /** Every essay in `content/`, newest first. */
-export function listEssays(): EssayListItem[] {
+export function listEssays(): Essay[] {
   return catalog;
 }
 
-export function getEssayBySlug(slug: string): EssayListItem | null {
+export function getEssayBySlug(slug: string): Essay | null {
   return catalog.find((essay) => essay.slug === slug) ?? null;
 }
 
@@ -95,11 +91,11 @@ export function getEssayMarkdown(slug: string): string | null {
     .join("\n")
     .trim();
 
-  const { metadata, readingTime } = essay;
+  const { title, subtitle, publishedAtFormatted, readingTime } = essay;
 
-  return `# ${metadata.title} - ${metadata.subtitle}
+  return `# ${title} - ${subtitle}
 
-/ ${metadata.publishedAtFormatted} / ${readingTime.text} / ${readingTime.words} words
+/ ${publishedAtFormatted} / ${readingTime.text} / ${readingTime.words} words
 
 ---
 

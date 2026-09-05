@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const essays = Route.useLoaderData();
-  const featured = essays.filter((essay) => essay.metadata.featured);
+  const featured = essays.filter((essay) => essay.featured);
 
   return (
     <div className="space-y-18 py-12 md:space-y-20 lg:space-y-24">

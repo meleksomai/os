@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { parsePublishedAt } from "@/lib/date";
-import type { EssayListItem } from "@/server/essays/schema";
+import type { Essay } from "@/server/essays/schema";
 
 export interface SitemapEntry {
   url: string;
@@ -22,10 +22,10 @@ export interface SitemapEntry {
  * carry the newest essay's publish date as their last modification — the last
  * time the site's content changed.
  */
-export function buildSitemapEntries(essays: EssayListItem[]): SitemapEntry[] {
+export function buildSitemapEntries(essays: Essay[]): SitemapEntry[] {
   const essayEntries = essays.map((essay) => ({
     url: `${siteConfig.url}/essay/${essay.slug}`,
-    lastModified: parsePublishedAt(essay.metadata.publishedAt),
+    lastModified: parsePublishedAt(essay.publishedAt),
     changeFrequency: "monthly" as const,
     priority: 0.4,
   }));
