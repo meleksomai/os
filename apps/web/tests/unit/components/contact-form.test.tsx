@@ -10,7 +10,7 @@ vi.mock("@workspace/ui/hooks/use-reveal", () => ({
   useReveal: () => ({ ref: { current: null }, isVisible: true }),
 }));
 
-import { ContactForm } from "@/components/contact-form";
+import { ContactForm } from "@/components/common/contact-form";
 import { subscribeToNewsletterFn } from "@/server/newsletter/functions";
 
 const mockSubscribe = vi.mocked(subscribeToNewsletterFn);

@@ -2,7 +2,7 @@ import { MDXProvider } from "@mdx-js/react";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Heading1, Heading3 } from "@workspace/ui/blocks/headings";
 import { Suspense } from "react";
-import { mdxComponents } from "@/components/mdx-components";
+import { mdxComponents } from "@/components/common/mdx-components";
 import { essayComponentBySlug } from "@/essays/components";
 import { essayMarkdownResponse } from "@/essays/markdown.server";
 import { blogJsonLd, generateJsonLd } from "@/lib/jsonld";
