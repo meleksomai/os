@@ -1,22 +1,22 @@
 import { subscribeContact } from "@workspace/emailing/newsletter";
-import type { ActionResult } from "./types";
+import type { SubscribeResult } from "./schema";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL_LENGTH = 254;
 
-const INVALID_EMAIL: ActionResult = {
+const INVALID_EMAIL: SubscribeResult = {
   success: false,
   message: "Please enter a valid email",
 };
 
-const UNAVAILABLE: ActionResult = {
+const UNAVAILABLE: SubscribeResult = {
   success: false,
   message: "Subscription temporarily unavailable",
 };
 
 export async function subscribeToNewsletter(
   formData: FormData
-): Promise<ActionResult> {
+): Promise<SubscribeResult> {
   const email = formData.get("email");
 
   if (typeof email !== "string") {

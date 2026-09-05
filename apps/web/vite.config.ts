@@ -17,7 +17,13 @@ export default defineConfig({
     tailwindcss(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     mdxPlugin(),
-    tanstackStart(),
+    tanstackStart({
+      importProtection: {
+        // `files` replaces the defaults, so keep `*.server.*` and add the
+        // per-domain server modules under src/server/<domain>/server.ts.
+        client: { files: ["**/*.server.*", "**/src/server/*/server.ts"] },
+      },
+    }),
     viteReact({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
   ],
 });

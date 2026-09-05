@@ -7,7 +7,7 @@ import { essayComponentBySlug } from "@/essays/components";
 import { essayMarkdownResponse } from "@/essays/markdown.server";
 import { prefersMarkdown } from "@/essays/negotiation";
 import { pageMeta } from "@/lib/seo";
-import { fetchEssay } from "@/server/essays";
+import { fetchEssay } from "@/server/essays/functions";
 
 export const Route = createFileRoute("/_site/essay/$slug")({
   server: {

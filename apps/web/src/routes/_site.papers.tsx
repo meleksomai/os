@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HeaderSection } from "@/components/papers/section-header";
 import { PapersSection } from "@/components/papers/section-papers";
 import { pageMeta } from "@/lib/seo";
-import { fetchPapers } from "@/server/papers";
+import { fetchPapers } from "@/server/papers/functions";
 
 export const Route = createFileRoute("/_site/papers")({
   loader: () => fetchPapers(),

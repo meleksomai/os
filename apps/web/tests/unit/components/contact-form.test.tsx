@@ -2,7 +2,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/server/newsletter", () => ({
+vi.mock("@/server/newsletter/functions", () => ({
   subscribeToNewsletterFn: vi.fn(),
 }));
 
@@ -11,7 +11,7 @@ vi.mock("@workspace/ui/hooks/use-reveal", () => ({
 }));
 
 import { ContactForm } from "@/components/contact-form";
-import { subscribeToNewsletterFn } from "@/server/newsletter";
+import { subscribeToNewsletterFn } from "@/server/newsletter/functions";
 
 const mockSubscribe = vi.mocked(subscribeToNewsletterFn);
 

@@ -9,17 +9,17 @@ import {
 import { useReveal } from "@workspace/ui/hooks/use-reveal";
 import { cn } from "@workspace/ui/lib/utils";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { subscribeToNewsletterFn } from "@/server/newsletter";
-import type { ActionResult } from "@/server/types";
+import { subscribeToNewsletterFn } from "@/server/newsletter/functions";
+import type { SubscribeResult } from "@/server/newsletter/schema";
 
 type SubscribeState = "idle" | "loading" | "success" | "error";
 
-const initialState: ActionResult = { success: false, message: "" };
+const initialState: SubscribeResult = { success: false, message: "" };
 
 async function subscribeAction(
-  _prevState: ActionResult,
+  _prevState: SubscribeResult,
   formData: FormData
-): Promise<ActionResult> {
+): Promise<SubscribeResult> {
   try {
     return await subscribeToNewsletterFn({ data: formData });
   } catch {

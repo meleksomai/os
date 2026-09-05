@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { assertFormData } from "./form-data";
-import { subscribeToNewsletter } from "./newsletter.server";
+import { subscribeInput } from "./schema";
+import { subscribeToNewsletter } from "./server";
 
 export const subscribeToNewsletterFn = createServerFn({ method: "POST" })
-  .validator(assertFormData)
+  .validator(subscribeInput)
   .handler(({ data }) => subscribeToNewsletter(data));
