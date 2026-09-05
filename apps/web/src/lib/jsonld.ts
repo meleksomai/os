@@ -1,8 +1,26 @@
+import type { AnyRouteMatch } from "@tanstack/react-router";
 import type { BlogPosting, Person, Thing, WithContext } from "schema-dts";
-import { siteConfig } from "@/config/site";
+import { siteConfig, siteUrl } from "@/config/site";
+import { parsePublishedAt } from "@/lib/date";
 
 /** A Schema.org object with its `@context`, typed by `schema-dts` (types only, no runtime). */
 export type JsonLd = WithContext<Thing>;
+
+type HeadScript = NonNullable<
+  NonNullable<AnyRouteMatch["headScripts"]>[number]
+>;
+
+/**
+ * Head script entry for a JSON-LD object, for a route's `head().scripts`.
+ * JSON-LD is by definition a `<script type="application/ld+json">`; `<` is
+ * escaped so a value can never close the tag.
+ */
+export function generateJsonLd(data: JsonLd): HeadScript {
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify(data).replaceAll("<", "\\u003c"),
+  };
+}
 
 /**
  * Stable identifier for the site owner. Every page that mentions the person
@@ -25,30 +43,29 @@ export function personJsonLd(description: string): WithContext<Person> {
   return { "@context": "https://schema.org", ...person, description };
 }
 
-export interface BlogPostingInput {
+export interface BlogInput {
   title: string;
   description: string;
-  /** Absolute URL of the essay. */
-  url: string;
-  /** Absolute URL of the 1200×630 Open Graph image. */
-  imageUrl: string;
-  /** ISO 8601 publication date. */
+  /** Path of the essay, e.g. `/essay/agents`. */
+  path: string;
+  /** Path of the 1200×630 Open Graph image, e.g. `/og/essay-agents.png`. */
+  ogImage: string;
+  /** Frontmatter date, `YYYY-MM-DD`. */
   publishedAt: string;
 }
 
 /** An essay's structured data, authored by the site owner. */
-export function blogPostingJsonLd(
-  input: BlogPostingInput
-): WithContext<BlogPosting> {
+export function blogJsonLd(input: BlogInput): WithContext<BlogPosting> {
+  const url = siteUrl(input.path);
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: input.title,
     description: input.description,
-    image: input.imageUrl,
-    datePublished: input.publishedAt,
+    image: siteUrl(input.ogImage),
+    datePublished: parsePublishedAt(input.publishedAt).toISOString(),
     author: person,
-    url: input.url,
-    mainEntityOfPage: input.url,
+    url,
+    mainEntityOfPage: url,
   };
 }

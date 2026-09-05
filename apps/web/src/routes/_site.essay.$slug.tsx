@@ -5,7 +5,8 @@ import { Suspense } from "react";
 import { mdxComponents } from "@/components/mdx-components";
 import { essayComponentBySlug } from "@/essays/components";
 import { essayMarkdownResponse } from "@/essays/markdown.server";
-import { seo } from "@/lib/seo";
+import { blogJsonLd, generateJsonLd } from "@/lib/jsonld";
+import { generateSeo } from "@/lib/seo";
 import { fetchEssay } from "@/server/essays/functions";
 
 function prefersMarkdown(request: Request): boolean {
@@ -46,16 +47,22 @@ export const Route = createFileRoute("/_site/essay/$slug")({
 
     return essay;
   },
-  head: ({ loaderData }) =>
-    loaderData
-      ? seo({
-          title: loaderData.metadata.title,
-          description: loaderData.metadata.subtitle,
-          path: `/essay/${loaderData.slug}`,
-          ogImage: `/og/essay-${loaderData.slug}.png`,
-          article: { publishedAt: loaderData.metadata.publishedAt },
-        })
-      : {},
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {};
+    }
+    const page = {
+      title: loaderData.metadata.title,
+      description: loaderData.metadata.subtitle,
+      path: `/essay/${loaderData.slug}`,
+      ogImage: `/og/essay-${loaderData.slug}.png`,
+      publishedAt: loaderData.metadata.publishedAt,
+    };
+    return {
+      ...generateSeo({ ...page, article: { publishedAt: page.publishedAt } }),
+      scripts: [generateJsonLd(blogJsonLd(page))],
+    };
+  },
   component: EssayPage,
 });
 

@@ -1,7 +1,6 @@
 import type { AnyRouteMatch } from "@tanstack/react-router";
-import { siteConfig } from "@/config/site";
+import { siteConfig, siteUrl } from "@/config/site";
 import { parsePublishedAt } from "@/lib/date";
-import { blogPostingJsonLd, type JsonLd } from "@/lib/structured-data";
 
 export interface PageSeo {
   /** Page part of the document title; rendered as `<site name> | <title>`. */
@@ -13,39 +12,33 @@ export interface PageSeo {
   ogImage: string;
   /** Twitter card title when it should differ from the document title. */
   twitterTitle?: string;
-  /** Marks the page as an article (essay): Open Graph article tags + BlogPosting data. */
+  /** Marks the page as an article (essay): Open Graph article tags. */
   article?: {
     /** Frontmatter date, `YYYY-MM-DD`. */
     publishedAt: string;
   };
-  /** Extra JSON-LD object for the page, e.g. `personJsonLd()` on the home page. */
-  structuredData?: JsonLd;
 }
 
-/** What a route's `head()` returns. */
+/** The head tags `generateSeo()` produces; spread into a route's `head()` result. */
 export interface HeadTags {
   meta: NonNullable<AnyRouteMatch["meta"]>;
   links: NonNullable<AnyRouteMatch["links"]>;
-  scripts: NonNullable<AnyRouteMatch["headScripts"]>;
 }
 
 const OG_IMAGE_WIDTH = "1200";
 const OG_IMAGE_HEIGHT = "630";
 
 /**
- * Head tags for a page, in the shape TanStack Start's `head()` expects:
- * title and description with their Open Graph and Twitter counterparts, the
- * canonical URL, and JSON-LD structured data. Shared values (site name, Twitter
- * handle, origin, locale) come from `siteConfig`, so routes only pass what
- * varies per page.
+ * Head tags for a page, in the shape TanStack Start's `head()` expects: title
+ * and description with their Open Graph and Twitter counterparts, and the
+ * canonical URL. Shared values (site name, Twitter handle, origin, locale)
+ * come from `siteConfig`, so routes only pass what varies per page.
+ * Structured data is separate; see `generateJsonLd()` in `@/lib/jsonld`.
  */
-export function seo(page: PageSeo): HeadTags {
+export function generateSeo(page: PageSeo): HeadTags {
   const title = `${siteConfig.name} | ${page.title}`;
-  const url = `${siteConfig.url}${page.path === "/" ? "" : page.path}`;
-  const imageUrl = `${siteConfig.url}${page.ogImage}`;
-  const publishedAt = page.article
-    ? parsePublishedAt(page.article.publishedAt).toISOString()
-    : undefined;
+  const url = siteUrl(page.path);
+  const imageUrl = siteUrl(page.ogImage);
 
   const meta: HeadTags["meta"] = [
     { title },
@@ -71,40 +64,15 @@ export function seo(page: PageSeo): HeadTags {
     { name: "twitter:image:height", content: OG_IMAGE_HEIGHT },
   ];
 
-  if (publishedAt) {
+  if (page.article) {
     meta.push(
-      { property: "article:published_time", content: publishedAt },
+      {
+        property: "article:published_time",
+        content: parsePublishedAt(page.article.publishedAt).toISOString(),
+      },
       { property: "article:author", content: siteConfig.url }
     );
   }
 
-  const structuredData: JsonLd[] = [];
-  if (publishedAt) {
-    structuredData.push(
-      blogPostingJsonLd({
-        title: page.title,
-        description: page.description,
-        url,
-        imageUrl,
-        publishedAt,
-      })
-    );
-  }
-  if (page.structuredData) {
-    structuredData.push(page.structuredData);
-  }
-
-  return {
-    meta,
-    links: [{ rel: "canonical", href: url }],
-    scripts: structuredData.map((data) => ({
-      type: "application/ld+json",
-      children: jsonLdText(data),
-    })),
-  };
-}
-
-// `<` is escaped so a value can never close the <script> tag.
-function jsonLdText(data: JsonLd): string {
-  return JSON.stringify(data).replaceAll("<", "\\u003c");
+  return { meta, links: [{ rel: "canonical", href: url }] };
 }

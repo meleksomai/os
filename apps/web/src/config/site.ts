@@ -19,3 +19,8 @@ export const siteConfig = {
     },
   ],
 } as const;
+
+/** Absolute URL for a site path; the home page is the bare origin. */
+export function siteUrl(path: string): string {
+  return path === "/" ? siteConfig.url : `${siteConfig.url}${path}`;
+}

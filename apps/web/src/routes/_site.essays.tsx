@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EssaysSection } from "@/components/essays/section-essays";
 import { HeaderSection } from "@/components/essays/section-header";
-import { seo } from "@/lib/seo";
+import { generateSeo } from "@/lib/seo";
 import { fetchEssayList } from "@/server/essays/functions";
 
 export const Route = createFileRoute("/_site/essays")({
   loader: () => fetchEssayList(),
   head: () =>
-    seo({
+    generateSeo({
       title: "Essays",
       description:
         "A space to share thoughts and ideas that are often reflections on my current research.",
