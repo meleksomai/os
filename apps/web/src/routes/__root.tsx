@@ -3,7 +3,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
 import { ErrorPage } from "@/components/error-page";
-import { NotFound } from "@/components/not-found";
+import { NotFoundPage } from "@/components/not-found-page";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -30,7 +30,7 @@ export const Route = createRootRoute({
     ],
   }),
   errorComponent: ErrorPage,
-  notFoundComponent: NotFound,
+  notFoundComponent: NotFoundPage,
   shellComponent: RootDocument,
 });
 

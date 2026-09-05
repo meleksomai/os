@@ -1,6 +1,6 @@
 import { Heading1, Heading2, Heading3 } from "@workspace/ui/blocks/headings";
 
-export function NotFound() {
+export function NotFoundPage() {
   return (
     <div className="flex h-dvh flex-col justify-center gap-12">
       {/* Hoisted into <head> by React; keeps error pages out of search results. */}

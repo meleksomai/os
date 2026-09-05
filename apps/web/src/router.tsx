@@ -1,6 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
 import { ErrorPage } from "@/components/error-page";
-import { NotFound } from "@/components/not-found";
+import { NotFoundPage } from "@/components/not-found-page";
 import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
@@ -8,7 +8,7 @@ export function getRouter() {
     routeTree,
     defaultPreload: "intent",
     defaultErrorComponent: ErrorPage,
-    defaultNotFoundComponent: NotFound,
+    defaultNotFoundComponent: NotFoundPage,
     scrollRestoration: true,
   });
 }
