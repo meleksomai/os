@@ -1,4 +1,5 @@
 import type { AnyRouteMatch } from "@tanstack/react-router";
+import type { BlogPosting, Person, Thing, WithContext } from "schema-dts";
 import { siteConfig } from "@/config/site";
 import { parsePublishedAt } from "@/lib/date";
 
@@ -21,7 +22,8 @@ export interface PageSeo {
   structuredData?: JsonLd;
 }
 
-export type JsonLd = Record<string, unknown>;
+/** A Schema.org object with its `@context`, typed by `schema-dts` (types only, no runtime). */
+export type JsonLd = WithContext<Thing>;
 
 /** What a route's `head()` returns. */
 export interface HeadTags {
@@ -81,7 +83,7 @@ export function seo(page: PageSeo): HeadTags {
 
   const structuredData: JsonLd[] = [];
   if (publishedAt) {
-    structuredData.push({
+    const posting: WithContext<BlogPosting> = {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       headline: page.title,
@@ -91,7 +93,8 @@ export function seo(page: PageSeo): HeadTags {
       author: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
       url,
       mainEntityOfPage: url,
-    });
+    };
+    structuredData.push(posting);
   }
   if (page.structuredData) {
     structuredData.push(page.structuredData);
@@ -108,7 +111,7 @@ export function seo(page: PageSeo): HeadTags {
 }
 
 /** JSON-LD describing the site owner, for the home page. */
-export function personJsonLd(description: string): JsonLd {
+export function personJsonLd(description: string): WithContext<Person> {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
