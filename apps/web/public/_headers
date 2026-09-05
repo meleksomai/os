@@ -1,3 +1,28 @@
-# Vite fingerprints everything under /assets, so it can be cached for a year.
+# Response headers for Cloudflare Workers Static Assets.
+#
+# How this file gets where it needs to be: TanStack Start's Vite build emits
+# the client bundle into dist/client, and Vite copies everything in public/
+# into that directory verbatim (https://vite.dev/guide/assets#the-public-directory).
+# The Cloudflare Vite plugin then serves dist/client as the Worker's static
+# assets and reads `_headers` from its root at deploy time; the file itself is
+# never uploaded as an asset.
+#
+# Scope: these rules only apply to files served from the assets directory.
+# They never touch responses produced by the Worker, i.e. pages rendered by
+# TanStack Start or its server routes. Those set headers in code, through the
+# `headers` option on a route (see src/routes/_site.essay.$slug.tsx) or on the
+# Response a server route returns.
+#
+# Why only /assets: Vite fingerprints every file under /assets
+# (index-<hash>.js, <font>-<hash>.woff2, …), so a new build always produces
+# new URLs and the old ones can be cached indefinitely. Everything else in
+# public/ (og/*.png, images/**, icons) keeps Cloudflare's default
+# `public, max-age=0, must-revalidate` plus an ETag, which is what the
+# previous deployment served for the same files.
+#
+# References:
+# - https://developers.cloudflare.com/workers/static-assets/headers/
+# - https://developers.cloudflare.com/workers/vite-plugin/reference/static-assets/
+# - https://tanstack.com/start/latest/docs/framework/react/guide/hosting (Cloudflare Workers)
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
