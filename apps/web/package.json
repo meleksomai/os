@@ -36,7 +36,8 @@
     "remark-mdx-frontmatter": "5.2.0",
     "remark-reading-time": "2.0.2",
     "remark-toc": "9.0.0",
-    "shiki": "3.21.0"
+    "shiki": "3.21.0",
+    "zod": "4.2.1"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.54.4",

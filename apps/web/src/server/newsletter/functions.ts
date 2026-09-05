@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { subscribeInput } from "./schema";
+import { z } from "zod";
 import { subscribeToNewsletter } from "./server";
 
 export const subscribeToNewsletterFn = createServerFn({ method: "POST" })
-  .validator(subscribeInput)
+  .validator(z.instanceof(FormData))
   .handler(({ data }) => subscribeToNewsletter(data));

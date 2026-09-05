@@ -26,14 +26,6 @@ export interface Essay extends EssayFrontmatter {
   readingTime: EssayReadingTime;
 }
 
-/** Validator for the essay server function: a slug from the URL. */
-export function essaySlug(slug: unknown): string {
-  if (typeof slug !== "string") {
-    throw new Error("Expected an essay slug");
-  }
-  return slug;
-}
-
 const MDX_EXTENSION = /\.mdx$/;
 
 /** `content/agents.mdx` → `agents`. Shared by the app and the OG image script. */
