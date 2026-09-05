@@ -13,7 +13,6 @@ export const Route = createFileRoute("/_site/")({
       title: "Home",
       description: siteConfig.description,
       path: "/",
-      ogImage: "/og/home.png",
       twitterTitle: "Melek Somai",
     }),
     scripts: [generateJsonLd(personJsonLd)],

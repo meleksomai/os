@@ -26,3 +26,18 @@ test("404 pages ask search engines not to index them", async ({ request }) => {
   const robots = html.match(/<meta[^>]*name="robots"[^>]*>/)?.[0] ?? "";
   expect(robots).toContain('content="noindex"');
 });
+
+test("404 pages inherit the site-wide SEO defaults from the root route", async ({
+  page,
+}) => {
+  await page.goto("/this-page-does-not-exist");
+
+  await expect(page).toHaveTitle("Melek Somai");
+  expect(
+    await page.locator('meta[property="og:site_name"]').getAttribute("content")
+  ).toBe("Melek Somai");
+  expect(
+    await page.locator('meta[name="twitter:site"]').getAttribute("content")
+  ).toBe("@meleksomai");
+  await expect(page.locator('meta[property="og:title"]')).toHaveCount(1);
+});

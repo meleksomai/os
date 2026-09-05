@@ -6,8 +6,13 @@ export const siteConfig = {
   url: "https://www.somai.me",
   locale: "en_US",
   sitemap: "https://www.somai.me/sitemap.xml",
-  /** Size and format of the Open Graph images rendered by scripts/generate-og.ts. */
-  ogImage: { width: 1200, height: 630, type: "image/png" },
+  /** Open Graph images rendered by scripts/generate-og.ts: the site-wide default and their size. */
+  ogImage: {
+    default: "/og/home.png",
+    width: 1200,
+    height: 630,
+    type: "image/png",
+  },
   social: [
     {
       name: "GitHub",
