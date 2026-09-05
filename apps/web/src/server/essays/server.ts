@@ -10,7 +10,7 @@ type Frontmatter = Omit<EssayMetadata, "publishedAtFormatted">;
 
 // Only the named exports produced by the MDX pipeline (remark-mdx-frontmatter
 // and remark-reading-time) are imported here, so this module never renders an
-// essay. The components live in src/components/essays/content.ts.
+// essay. The components live in src/components/essays/content.tsx.
 const frontmatterByPath = import.meta.glob<Frontmatter>(
   "../../../content/*.mdx",
   { eager: true, import: "metadata" }

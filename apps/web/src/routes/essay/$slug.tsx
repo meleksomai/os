@@ -1,9 +1,6 @@
-import { MDXProvider } from "@mdx-js/react";
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Heading1, Heading3 } from "@workspace/ui/blocks/headings";
-import { Suspense } from "react";
-import { mdxComponents } from "@/components/common/mdx-components";
-import { essayComponentBySlug } from "@/components/essays/content";
+import { EssayContent, preloadEssayContent } from "@/components/essays/content";
 import { blogJsonLd, generateJsonLd } from "@/lib/jsonld";
 import { generateSeo } from "@/lib/seo";
 import { fetchEssay } from "@/server/essays/functions";
@@ -34,17 +31,7 @@ export const Route = createFileRoute("/essay/$slug")({
   headers: () => ({ Vary: "Accept" }),
   loader: async ({ params }) => {
     const essay = await fetchEssay({ data: params.slug });
-    const Essay = essayComponentBySlug[essay.slug];
-
-    if (!Essay) {
-      throw notFound();
-    }
-
-    // Load the essay's chunk before rendering: the server renders it inline,
-    // and client navigations (or link hover, via preload "intent") never show
-    // a fallback.
-    await Essay.preload?.();
-
+    await preloadEssayContent(essay.slug);
     return essay;
   },
   head: ({ loaderData }) => {
@@ -68,7 +55,6 @@ export const Route = createFileRoute("/essay/$slug")({
 
 function EssayPage() {
   const { slug, metadata, readingTime } = Route.useLoaderData();
-  const Essay = essayComponentBySlug[slug];
 
   return (
     <article>
@@ -88,12 +74,7 @@ function EssayPage() {
           </div>
         </div>
         <div className="animation-delay-450 prose animate-fade-slide-up">
-          <MDXProvider components={mdxComponents}>
-            {/* Only the first hydration can suspend here: dehydrated matches
-                skip the loader, so the chunk loads while React keeps the
-                server-rendered essay in place. */}
-            <Suspense fallback={null}>{Essay ? <Essay /> : null}</Suspense>
-          </MDXProvider>
+          <EssayContent slug={slug} />
         </div>
       </div>
     </article>
