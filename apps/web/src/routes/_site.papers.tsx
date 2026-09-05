@@ -8,10 +8,9 @@ export const Route = createFileRoute("/_site/papers")({
   loader: () => fetchPapers(),
   head: () => ({
     meta: pageMeta({
-      title: "Melek Somai | Research Papers",
+      title: "Research Papers",
       description:
         "Research in areas ranging from Clinical Computing, Patient Remote Monitoring, Neuro-Epidemiology, to AI and Machine Learning",
-      twitterTitle: "Melek Somai | Research Papers",
       ogImage: "/og/papers.png",
     }),
   }),

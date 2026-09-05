@@ -1,4 +1,6 @@
 export const siteConfig = {
+  name: "Melek Somai",
+  twitter: "@meleksomai",
   url: "https://www.somai.me",
   sitemap: "https://www.somai.me/sitemap.xml",
   social: [

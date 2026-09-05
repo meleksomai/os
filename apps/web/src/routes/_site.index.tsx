@@ -8,13 +8,11 @@ export const Route = createFileRoute("/_site/")({
   loader: () => fetchEssayList(),
   head: () => ({
     meta: pageMeta({
-      title: "Melek Somai | Home",
+      title: "Home",
       description:
         "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.",
-      twitterTitle: "Melek Somai",
-      twitterDescription:
-        "Melek Somai is a physician, scientist, and innovator. He works at the intersection of health care Informatics, Data Science, and Product Engineering.",
       ogImage: "/og/home.png",
+      twitterTitle: "Melek Somai",
     }),
   }),
   component: HomePage,

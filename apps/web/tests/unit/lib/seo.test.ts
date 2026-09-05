@@ -4,21 +4,21 @@ import { pageMeta } from "@/lib/seo";
 const DESCRIPTION = "Description";
 
 describe("pageMeta", () => {
-  it("emits exactly the tag set Next.js produced for a full page", () => {
-    const meta = pageMeta({
-      title: "Melek Somai | Home",
-      description: DESCRIPTION,
-      twitterTitle: "Melek Somai",
-      ogImage: "/og/home.png",
-    });
-
-    expect(meta).toEqual([
+  it("emits the full tag set with the site name, handle, and origin applied", () => {
+    expect(
+      pageMeta({
+        title: "Home",
+        description: DESCRIPTION,
+        ogImage: "/og/home.png",
+        twitterTitle: "Melek Somai",
+      })
+    ).toEqual([
       { title: "Melek Somai | Home" },
       { property: "og:title", content: "Melek Somai | Home" },
       { name: "description", content: DESCRIPTION },
       { property: "og:description", content: DESCRIPTION },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "https://somai.me" },
+      { name: "twitter:site", content: "@meleksomai" },
       { name: "twitter:creator", content: "@meleksomai" },
       { name: "twitter:title", content: "Melek Somai" },
       { name: "twitter:description", content: DESCRIPTION },
@@ -33,32 +33,17 @@ describe("pageMeta", () => {
     ]);
   });
 
-  it("uses a dedicated twitter description when given", () => {
+  it("defaults the Twitter title to the document title", () => {
     const meta = pageMeta({
+      title: "Essays",
       description: DESCRIPTION,
-      twitterTitle: "Title",
-      twitterDescription: "Twitter description",
+      ogImage: "/og/essays.png",
     });
 
+    expect(meta).toContainEqual({ title: "Melek Somai | Essays" });
     expect(meta).toContainEqual({
-      name: "twitter:description",
-      content: "Twitter description",
+      name: "twitter:title",
+      content: "Melek Somai | Essays",
     });
-  });
-
-  it("emits only the card and image tags for image-only pages", () => {
-    const meta = pageMeta({ ogImage: "/og/card.png" });
-
-    expect(meta).toEqual([
-      { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image", content: "https://www.somai.me/og/card.png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:image:type", content: "image/png" },
-      { name: "twitter:image", content: "https://www.somai.me/og/card.png" },
-      { name: "twitter:image:width", content: "1200" },
-      { name: "twitter:image:height", content: "630" },
-    ]);
   });
 });

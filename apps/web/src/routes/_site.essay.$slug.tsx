@@ -49,9 +49,8 @@ export const Route = createFileRoute("/_site/essay/$slug")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? pageMeta({
-          title: `Melek Somai | ${loaderData.metadata.title}`,
+          title: loaderData.metadata.title,
           description: loaderData.metadata.subtitle,
-          twitterTitle: `Melek Somai | ${loaderData.metadata.title}`,
           ogImage: `/og/essay-${loaderData.slug}.png`,
         })
       : [],

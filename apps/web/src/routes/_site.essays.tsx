@@ -8,10 +8,9 @@ export const Route = createFileRoute("/_site/essays")({
   loader: () => fetchEssayList(),
   head: () => ({
     meta: pageMeta({
-      title: "Melek Somai | Essays",
+      title: "Essays",
       description:
         "A space to share thoughts and ideas that are often reflections on my current research.",
-      twitterTitle: "Melek Somai | Essays",
       ogImage: "/og/essays.png",
     }),
   }),
