@@ -1,3 +1,4 @@
+import { unit } from "@workspace/testing/vitest";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 import { mdxPlugin } from "./mdx-plugin";
@@ -12,8 +13,8 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
-    include: ["tests/unit/**/*.test.{ts,tsx}"],
     globals: true,
     restoreMocks: true,
+    projects: [unit()],
   },
 });

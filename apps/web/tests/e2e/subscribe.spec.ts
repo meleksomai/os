@@ -1,11 +1,10 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: e2e assertions */
 import { expect, test } from "@playwright/test";
-import { recordedRequestsFor, uniqueEmail } from "./fakes/resend/client";
 import {
   DUPLICATE_PREFIX,
-  e2eDevVars,
   OUTAGE_PREFIX,
-} from "./fakes/resend/shared";
+} from "@workspace/emailing/testing/fake-resend";
+import { e2eDevVars, recordedRequestsFor, uniqueEmail } from "./helpers/resend";
 
 // The browser's request to the TanStack server function. Routing it lets a
 // test hold or fail the transport itself; everything past it is real: the

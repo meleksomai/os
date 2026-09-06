@@ -1,31 +1,22 @@
-import config from "@workspace/testing";
-import { mergeConfig } from "vitest/config";
+import { contract, integration, unit } from "@workspace/testing/vitest";
+import { defineConfig } from "vitest/config";
+import { INTEGRATION_RESEND_URL } from "./tests/integration/global-setup";
 
 /**
- * Two projects, selected with `vitest --project <name>`:
- * - unit: everything mocked, runs on every PR (`pnpm test`).
- * - contract: the real Resend API, runs on a schedule (`pnpm test:contract`).
+ * Layers, selected with `vitest --project <name>` (see docs/testing.md):
+ * - unit: SDK mocked.
+ * - integration: real SDK against the fake Resend started by global-setup.
+ * - contract: the real Resend API, on a schedule only.
  */
-export default mergeConfig(config, {
+export default defineConfig({
   test: {
     projects: [
-      {
-        extends: true,
-        test: {
-          name: "unit",
-          include: ["tests/unit/**/*.test.ts"],
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: "contract",
-          include: ["tests/contract/**/*.test.ts"],
-          // Live API calls: no parallelism, generous timeout.
-          fileParallelism: false,
-          testTimeout: 30_000,
-        },
-      },
+      unit(),
+      integration({
+        globalSetup: ["./tests/integration/global-setup.ts"],
+        env: { RESEND_BASE_URL: INTEGRATION_RESEND_URL },
+      }),
+      contract(),
     ],
   },
 });

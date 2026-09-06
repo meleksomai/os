@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "vitest run --project unit",
+    "fake-resend": "node testing/fake-resend/serve.ts",
+    "test": "vitest run --project unit --project integration",
     "test:contract": "vitest run --project contract",
     "test:watch": "vitest"
   },
@@ -15,5 +16,10 @@
     "@workspace/testing": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "vitest": "3.2.4"
-  }
+  },
+  "exports": {
+    "./newsletter": "./newsletter.ts",
+    "./testing/fake-resend": "./testing/fake-resend/index.ts"
+  },
+  "type": "module"
 }
