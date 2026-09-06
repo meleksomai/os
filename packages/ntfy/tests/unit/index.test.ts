@@ -50,7 +50,7 @@ describe("publish", () => {
       tags: ["warning", "skull"],
     });
 
-    const body = JSON.parse(mockFetch.mock.calls[0][1].body as string);
+    const body = JSON.parse(mockFetch.mock.calls.at(0)?.[1].body as string);
     expect(body).toEqual({
       topic: "alerts",
       title: "Alert",
