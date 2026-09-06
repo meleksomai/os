@@ -9,6 +9,7 @@
  * reads its base URL at module load. Select with `vitest --project integration`.
  */
 import type { TestProjectInlineConfiguration } from "vitest/config";
+import { tsconfigAlias } from "./tsconfig-alias.ts";
 
 type ProjectTest = NonNullable<TestProjectInlineConfiguration["test"]>;
 
@@ -17,6 +18,8 @@ export function integration(
 ): TestProjectInlineConfiguration {
   return {
     extends: true,
+    // The package's tsconfig `paths` (its `@/` alias), for test imports.
+    resolve: { alias: tsconfigAlias() },
     test: {
       name: "integration",
       include: ["tests/integration/**/*.test.{ts,tsx}"],

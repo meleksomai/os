@@ -9,6 +9,7 @@
  * the vendor's credentials are not set.
  */
 import type { TestProjectInlineConfiguration } from "vitest/config";
+import { tsconfigAlias } from "./tsconfig-alias.ts";
 
 type ProjectTest = NonNullable<TestProjectInlineConfiguration["test"]>;
 
@@ -19,6 +20,8 @@ export function contract(
 ): TestProjectInlineConfiguration {
   return {
     extends: true,
+    // The package's tsconfig `paths` (its `@/` alias), for test imports.
+    resolve: { alias: tsconfigAlias() },
     test: {
       name: "contract",
       include: ["tests/contract/**/*.test.{ts,tsx}"],

@@ -7,7 +7,7 @@ import {
   type MockInstance,
   vi,
 } from "vitest";
-import { cronJob } from "../../../../api/advice/cron";
+import { cronJob } from "@/api/advice/cron";
 
 // Mock dependencies
 vi.mock("@/api/advice/utils", () => ({

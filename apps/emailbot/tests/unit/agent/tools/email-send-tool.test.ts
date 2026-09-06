@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sendEmailTool } from "../../../../agent/tools/email-send-tool";
-import type { Memory } from "../../../../agent/types";
-import { clearTranscript } from "../../../../agent/utils/logger";
+import { sendEmailTool } from "@/agent/tools/email-send-tool";
+import type { Memory } from "@/agent/types";
+import { clearTranscript } from "@/agent/utils/logger";
 
 // Mock Resend
 vi.mock("resend", () => ({
@@ -14,7 +14,7 @@ vi.mock("resend", () => ({
 
 // Import mocked Resend to control behavior per test
 import { Resend } from "resend";
-import type { ToolResult } from "../../../../agent/workflows/agent";
+import type { ToolResult } from "@/agent/workflows/agent";
 
 const mockEnv: Env = {
   EMAIL_ROUTING_ADDRESS: "agent@example.com",

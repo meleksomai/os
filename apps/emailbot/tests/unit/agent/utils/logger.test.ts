@@ -4,7 +4,7 @@ import {
   createLogger,
   getTranscript,
   log,
-} from "../../../../agent/utils/logger";
+} from "@/agent/utils/logger";
 
 describe("logger", () => {
   beforeEach(() => {

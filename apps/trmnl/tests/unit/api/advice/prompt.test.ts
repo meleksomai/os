@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { prompt } from "../../../../api/advice/prompt";
+import { prompt } from "@/api/advice/prompt";
 
 describe("prompt", () => {
   beforeEach(() => {

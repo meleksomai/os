@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { RelativeTime } from "../../../src/blocks/relative-time";
+import { RelativeTime } from "@/blocks/relative-time";
 
 describe("RelativeTime", () => {
   const NOW = new Date("2024-06-15T12:00:00Z");

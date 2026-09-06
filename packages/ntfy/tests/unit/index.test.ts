@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { publish } from "../../index";
+import { publish } from "@/index";
 
 const mockFetch = vi.fn();
 

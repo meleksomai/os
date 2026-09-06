@@ -6,13 +6,13 @@
  */
 import { randomUUID } from "node:crypto";
 import { describe, expect, inject, it } from "vitest";
-import { subscribeContact } from "../../newsletter";
+import { subscribeContact } from "@/newsletter";
 import {
   DUPLICATE_PREFIX,
   FAKE_REQUESTS_PATH,
   OUTAGE_PREFIX,
   type RecordedRequest,
-} from "../../testing/fake-resend/index.ts";
+} from "@/testing/fake-resend";
 
 const apiKey = "re_integration_fake_key";
 const audienceId = "aud_integration_fake";

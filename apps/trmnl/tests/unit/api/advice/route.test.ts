@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import advice from "../../../../api/advice/route";
+import advice from "@/api/advice/route";
 
 // Mock dependencies
 vi.mock("@/utils/cache", () => ({

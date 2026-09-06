@@ -18,6 +18,7 @@ import {
   type WorkersProjectConfigExport,
 } from "@cloudflare/vitest-pool-workers/config";
 import type { TestProjectInlineConfiguration } from "vitest/config";
+import { tsconfigAlias } from "./tsconfig-alias.ts";
 
 // The pool fixes `pool`/`poolOptions`; callers tune everything else.
 type ProjectTest = Omit<
@@ -49,6 +50,8 @@ export function workers({
 }: WorkersOptions): TestProjectInlineConfiguration {
   return {
     extends: true,
+    // The package's tsconfig `paths` (its `@/` alias), for test imports.
+    resolve: { alias: tsconfigAlias() },
     ...defineWorkersProject({
       test: {
         name: "unit",

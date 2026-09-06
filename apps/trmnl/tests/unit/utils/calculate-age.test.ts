@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { calculateAge } from "../../../utils/calculate-age";
+import { calculateAge } from "@/utils/calculate-age";
 
 describe("calculateAge", () => {
   beforeEach(() => {

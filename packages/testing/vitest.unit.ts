@@ -8,6 +8,7 @@
  * setupFiles, environment). Select with `vitest --project unit`.
  */
 import type { TestProjectInlineConfiguration } from "vitest/config";
+import { tsconfigAlias } from "./tsconfig-alias.ts";
 
 type ProjectTest = NonNullable<TestProjectInlineConfiguration["test"]>;
 
@@ -16,6 +17,8 @@ export function unit(
 ): TestProjectInlineConfiguration {
   return {
     extends: true,
+    // The package's tsconfig `paths` (its `@/` alias), for test imports.
+    resolve: { alias: tsconfigAlias() },
     test: {
       name: "unit",
       include: ["tests/unit/**/*.test.{ts,tsx}"],
