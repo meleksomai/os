@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "test": "vitest run",
+    "test:contract": "vitest run --config vitest.contract.config.ts",
     "test:watch": "vitest"
   },
   "dependencies": {

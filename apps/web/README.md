@@ -19,7 +19,7 @@ pnpm dev          # OG images + vite dev server on :3000 (workerd runtime)
 pnpm build        # content collection (+ OG images) + production build into dist/
 pnpm preview      # serve the production build on :4173 (vite preview, workerd)
 pnpm test         # unit tests (vitest + jsdom, tests/unit)
-pnpm e2e          # Playwright against the production build (tests/e2e; run build first)
+pnpm e2e          # Playwright: builds and previews the e2e environment, hermetic (tests/e2e)
 pnpm check-types  # tsc
 pnpm run deploy   # build + wrangler deploy (`run` is needed: pnpm has a built-in `deploy`)
 ```
@@ -32,7 +32,7 @@ Linting and formatting run from the repository root: `pnpm check` / `pnpm fix` (
 content/            essays (*.mdx) and papers.json
 public/             static assets: icons, images, robots.txt
 scripts/            generate-og.ts — runs on plain Node 24 (no transpiler)
-tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), setup.ts, shared helpers
+tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright; fakes/ holds the fake third-party servers), setup.ts, shared helpers
 content-collections.ts  content layer: essays collection + research (papers) singleton, zod schemas, build-time transforms
 mdx-plugin.ts       MDX → page components, shared by vite.config.ts and vitest.config.ts
 components.json     shadcn CLI config for this app; `rsc: true` only makes the CLI add `"use client"` to components it generates, which is inert under Vite/TanStack Start unless Start's RSC mode is enabled
@@ -65,7 +65,18 @@ Server-side features read these variables (locally from `.dev.vars`, in producti
 | `RESEND_API_KEY`            | Newsletter subscription (Resend) |
 | `RESEND_SEGMENT_GENERAL`    | Resend audience id               |
 
-The site renders fully without any of them; the newsletter form reports "Subscription temporarily unavailable" when Resend is not configured. Secrets reach the Worker through `process.env` (Node.js compatibility is enabled by the compatibility date). `vite build` copies `.dev.vars` into `dist/` for `vite preview`, which is why it is part of Turborepo's build inputs.
+The site renders fully without any of them; the newsletter form reports "Subscription temporarily unavailable" when Resend is not configured. Secrets reach the Worker through `process.env` (Node.js compatibility is enabled by the compatibility date). `vite build` copies `.dev.vars` into `dist/server/.dev.vars` for `vite preview`, which is why it is part of Turborepo's build inputs.
+
+Wrangler also reads `.env` files, and the shell environment when required secrets are declared, so a stray `.env.local` feeds the Worker too. Keep local secrets in `.dev.vars` only.
+
+### The `e2e` environment
+
+`wrangler.jsonc` declares one extra Cloudflare environment, `e2e`, selected with `CLOUDFLARE_ENV=e2e`. It is never deployed. It differs from production in two ways:
+
+- `RESEND_BASE_URL` (a var) points the Resend SDK at the fake Resend server in `tests/e2e/fakes/resend/` instead of `api.resend.com`.
+- The secrets come from the committed `.dev.vars.e2e`, which holds dummy values, and take precedence over any local `.dev.vars` (Wrangler loads `.dev.vars.<env>` first).
+
+Any new third-party integration follows the same pattern: read its base URL from a var, give the `e2e` environment a fake, and add a contract test.
 
 ## Cloudflare deployment
 
@@ -90,8 +101,17 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 
 ## Tests
 
-- `tests/unit/**/*.test.ts(x)` — unit tests mirroring `src/`: the content collection, SEO tags, server logic, and the newsletter form with its server function mocked.
-- `tests/e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, SEO tags and OG image dimensions, inline SSR of essays, redirects, 404s, theme switching, and the real newsletter round trip (no secrets, so the server reports unavailability).
+Third-party services are never called from a pull request. Each integration is covered in three layers, following the usual split between hermetic tests and periodic contract tests:
+
+| Layer | What runs | Where the third party is | When |
+| --- | --- | --- | --- |
+| Unit | `tests/unit/**/*.test.ts(x)` (Vitest), `packages/emailing/*.test.ts` | SDK mocked | every PR (`pnpm test`) |
+| End-to-end | `tests/e2e/*.spec.ts` (Playwright) against the production build in workerd | a fake HTTP server under `tests/e2e/fakes/`, reached through the `e2e` environment | every PR (`pnpm e2e`) |
+| Contract | `packages/emailing/*.contract.test.ts` (Vitest) | the real API, with a dedicated Resend audience | scheduled `contract` workflow, or `pnpm --filter @workspace/emailing test:contract` |
+
+- **Unit** tests mirror `src/`: the content collection, SEO tags, server logic, and the newsletter form with its server function mocked.
+- **End-to-end** tests cover page smoke tests, the internal-link crawl, sitemap/robots, SEO tags and OG image dimensions, inline SSR of essays, redirects, 404s, theme switching, and the newsletter round trip: browser → Worker → server function → fake Resend. `playwright.config.ts` starts the fake, then runs `pnpm build && pnpm preview` with `CLOUDFLARE_ENV=e2e`; the preview is never reused, so a stale preview of another environment cannot leak real secrets into the run. The fake records every request it receives (`GET /__fake/requests?email=`), so tests assert what Resend would have been sent, and it answers with scripted failures for addresses starting with `outage-` (500) or `duplicate-` (409 "already exists"). Being at the HTTP boundary rather than the SDK, it exercises the SDK's real behaviour: this is how the adapter's swallowed API errors were found.
+- **Contract** tests run the real adapter (`subscribeContact`) against the real Resend API to check the assumptions the mocks and the fake encode: a contact is created, a repeated subscription still reports success, and the contact can be removed. They need `RESEND_API_KEY` and `RESEND_CONTRACT_AUDIENCE_ID` (an audience used for nothing else; account-level webhooks still fire) and skip without them.
 
 ## Known differences from the Next.js site
 

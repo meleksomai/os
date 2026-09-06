@@ -72,7 +72,8 @@ pnpm --filter emailbot dev
 - `pnpm dev` - start all apps
 - `pnpm build` - build all apps
 - `pnpm test` - run unit tests
-- `pnpm e2e` - run the website's Playwright suite against its production build
+- `pnpm e2e` - run the website's Playwright suite against its production build in workerd; hermetic, third parties are fakes (see apps/web/README.md, Tests)
+- `pnpm --filter @workspace/emailing test:contract` - contract tests against the real Resend API (the scheduled `contract` workflow runs them; needs `RESEND_API_KEY` and `RESEND_CONTRACT_AUDIENCE_ID`)
 - `pnpm check` - run Ultracite checks
 - `pnpm fix` - format + fix lint issues
 

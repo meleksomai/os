@@ -1,9 +1,18 @@
 import { defineConfig, devices } from "@playwright/test";
+import {
+  FAKE_HEALTH_PATH,
+  FAKE_RESEND_URL,
+} from "./tests/e2e/fakes/resend/shared";
 
 /**
- * The suite runs against the production build served by `vite preview`,
- * i.e. the real Worker inside the Cloudflare workerd runtime.
- * Run `pnpm run build` before `pnpm run e2e`.
+ * The suite runs against a production build served by `vite preview`, i.e.
+ * the real Worker inside the workerd runtime, built for the `e2e` Cloudflare
+ * environment (wrangler.jsonc `env.e2e`, selected with CLOUDFLARE_ENV). That
+ * environment points the Resend SDK at the fake server below instead of
+ * api.resend.com, so the suite is hermetic: nothing reaches a third party.
+ *
+ * The preview is always started fresh, never reused: a preview of another
+ * environment on the same port could carry real secrets.
  */
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -23,10 +32,19 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  webServer: {
-    command: "pnpm run preview",
-    url: "http://localhost:4173",
-    reuseExistingServer: !process.env.CI,
-    stdout: process.env.CI ? "pipe" : "ignore",
-  },
+  webServer: [
+    {
+      command: "node tests/e2e/fakes/resend/server.ts",
+      url: `${FAKE_RESEND_URL}${FAKE_HEALTH_PATH}`,
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: "pnpm run build && pnpm run preview",
+      env: { CLOUDFLARE_ENV: "e2e" },
+      url: "http://localhost:4173",
+      timeout: 240_000,
+      reuseExistingServer: false,
+      stdout: process.env.CI ? "pipe" : "ignore",
+    },
+  ],
 });

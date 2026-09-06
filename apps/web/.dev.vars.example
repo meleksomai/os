@@ -1,6 +1,7 @@
 # Local environment for `pnpm dev` / `vite preview`.
 # Copy to .dev.vars and fill in real values. In production these are set as
-# Cloudflare Worker secrets (wrangler secret put <NAME>).
+# Cloudflare Worker secrets (wrangler secret put <NAME>). The e2e suite never
+# uses this file: it runs the `e2e` environment with .dev.vars.e2e.
 
 # Resend (newsletter subscription form)
 RESEND_API_KEY=

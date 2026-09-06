@@ -31,5 +31,23 @@
   // production via `wrangler secret put <NAME>` or the Workers dashboard.
   "secrets": {
     "required": ["RESEND_API_KEY", "RESEND_SEGMENT_GENERAL"]
+  },
+  "env": {
+    // Selected with CLOUDFLARE_ENV=e2e; the Playwright suite builds and
+    // previews it. The Worker talks to the fake Resend server from
+    // tests/e2e/fakes instead of api.resend.com (the SDK reads
+    // RESEND_BASE_URL), with the dummy secrets committed in .dev.vars.e2e.
+    // It is never deployed.
+    "e2e": {
+      "vars": {
+        "RESEND_BASE_URL": "http://127.0.0.1:4174"
+      },
+      "secrets": {
+        "required": ["RESEND_API_KEY", "RESEND_SEGMENT_GENERAL"]
+      },
+      // Neither key is inherited by environments; empty routes also guard
+      // against a stray `wrangler deploy --env e2e` taking over the domain.
+      "routes": []
+    }
   }
 }

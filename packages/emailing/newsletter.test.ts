@@ -13,6 +13,29 @@ import { Resend } from "resend";
 
 const mockCreate = vi.fn();
 
+// The SDK resolves with `{ data, error }` and only throws when it cannot
+// build a request at all. The mocks below mirror those shapes; the contract
+// test checks them against the real API.
+const created = { data: { id: "contact_123" }, error: null, headers: {} };
+const alreadyExists = {
+  data: null,
+  error: {
+    statusCode: 409,
+    name: "validation_error",
+    message: "Contact already exists",
+  },
+  headers: {},
+};
+const serverError = {
+  data: null,
+  error: {
+    statusCode: 500,
+    name: "application_error",
+    message: "Internal server error.",
+  },
+  headers: {},
+};
+
 describe("subscribeContact", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -22,7 +45,7 @@ describe("subscribeContact", () => {
   });
 
   it("returns success when contact is created", async () => {
-    mockCreate.mockResolvedValueOnce({ id: "contact_123" });
+    mockCreate.mockResolvedValueOnce(created);
 
     const result = await subscribeContact({
       email: "test@example.com",
@@ -37,7 +60,7 @@ describe("subscribeContact", () => {
   });
 
   it("returns success when contact already exists", async () => {
-    mockCreate.mockRejectedValueOnce(new Error("Contact already exists"));
+    mockCreate.mockResolvedValueOnce(alreadyExists);
 
     const result = await subscribeContact({
       email: "existing@example.com",
@@ -51,8 +74,23 @@ describe("subscribeContact", () => {
     });
   });
 
-  it("returns error when API fails", async () => {
-    mockCreate.mockRejectedValueOnce(new Error("Network error"));
+  it("returns error when the API answers with an error", async () => {
+    mockCreate.mockResolvedValueOnce(serverError);
+
+    const result = await subscribeContact({
+      email: "test@example.com",
+      audienceId: "aud_123",
+      apiKey: "re_123",
+    });
+
+    expect(result).toEqual({
+      success: false,
+      message: "Something went wrong. Please try again.",
+    });
+  });
+
+  it("returns error when the SDK throws", async () => {
+    mockCreate.mockRejectedValueOnce(new Error("Missing API key"));
 
     const result = await subscribeContact({
       email: "test@example.com",
@@ -67,7 +105,7 @@ describe("subscribeContact", () => {
   });
 
   it("calls Resend with correct parameters", async () => {
-    mockCreate.mockResolvedValueOnce({ id: "contact_123" });
+    mockCreate.mockResolvedValueOnce(created);
 
     await subscribeContact({
       email: "test@example.com",
