@@ -37,6 +37,9 @@ jobs:
       - name: formatting
         run: pnpm check
 
+      - name: dependency versions
+        run: pnpm syncpack
+
       - name: tests
         run: pnpm test
 

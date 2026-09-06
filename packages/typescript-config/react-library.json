@@ -1,8 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "React Library",
+  "display": "React library",
+  // React code that renders in a browser (or with react-dom): JSX plus the
+  // DOM globals.
   "extends": "./base.json",
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"]
   }
 }

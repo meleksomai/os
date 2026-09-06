@@ -1,20 +1,37 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Default",
+  "display": "Base",
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
-    "incremental": false,
-    "isolatedModules": true,
-    "lib": ["es2022", "DOM", "DOM.Iterable"],
-    "module": "NodeNext",
+    // Type checking only. Vite and Wrangler bundle the sources; Node 24 runs
+    // .ts files directly by stripping types. Nothing is ever emitted by tsc.
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    // Only syntax Node can strip: no enums, namespaces, or parameter properties.
+    "erasableSyntaxOnly": true,
+    // Every file is compiled alone (esbuild, Node). `import type` is required
+    // for types; Biome's useImportType keeps that consistent.
+    "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "moduleResolution": "NodeNext",
-    "noUncheckedIndexedAccess": true,
+
+    // How bundlers and modern Node resolve: package.json `exports`,
+    // extensionless relative imports, `.ts` extensions allowed.
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-    "skipLibCheck": true,
+
+    // Every runtime here (workerd, Node 24, evergreen browsers) is ES2023+.
+    // Presets add "DOM" where a browser or React is involved.
+    "target": "ES2023",
+    "lib": ["ES2023"],
+
     "strict": true,
-    "target": "ES2022"
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUncheckedSideEffectImports": true,
+    "skipLibCheck": true,
+
+    // No ambient @types are loaded implicitly: each preset or package lists
+    // the globals its runtime really has (node, vite/client, worker types).
+    "types": []
   }
 }

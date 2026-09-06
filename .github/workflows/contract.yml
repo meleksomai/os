@@ -1,0 +1,51 @@
+name: Contract tests
+
+# Periodic check that our doubles of third-party APIs still match the real
+# thing. Pull requests never run these: PR CI is hermetic (see ci.yml).
+#
+# Required repository secrets:
+#   RESEND_API_KEY               a key scoped to contacts
+#   RESEND_CONTRACT_AUDIENCE_ID  a Resend audience used for nothing else
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  resend:
+    name: Resend
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check out code
+        uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+
+      - name: setup node.js environment
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: install dependencies
+        run: pnpm ci:install
+
+      - name: require secrets
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_CONTRACT_AUDIENCE_ID: ${{ secrets.RESEND_CONTRACT_AUDIENCE_ID }}
+        run: |
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$RESEND_CONTRACT_AUDIENCE_ID" ]; then
+            echo "::error::RESEND_API_KEY and RESEND_CONTRACT_AUDIENCE_ID must be set as repository secrets"
+            exit 1
+          fi
+
+      - name: resend contract tests
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_CONTRACT_AUDIENCE_ID: ${{ secrets.RESEND_CONTRACT_AUDIENCE_ID }}
+        run: pnpm --filter @workspace/emailing test:contract

@@ -1,13 +1,18 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: e2e assertions */
-import { existsSync } from "node:fs";
 import { expect, test } from "@playwright/test";
+import {
+  DUPLICATE_PREFIX,
+  OUTAGE_PREFIX,
+} from "@workspace/emailing/testing/fake-resend";
+import { e2eDevVars, recordedRequestsFor, uniqueEmail } from "./helpers/resend";
 
+// The browser's request to the TanStack server function. Routing it lets a
+// test hold or fail the transport itself; everything past it is real: the
+// server function runs inside workerd and calls the fake Resend server.
 const SERVER_FN = "**/_serverFn/**";
-// With real secrets in a local .dev.vars the round trip would subscribe a
-// test address to the real audience.
-const HAS_LOCAL_SECRETS = existsSync(
-  new URL("../../.dev.vars", import.meta.url)
-);
+const SUBSCRIBER_PREFIX = "subscriber-";
+
+const { apiKey, audienceId } = e2eDevVars();
 
 test.describe("Newsletter Subscription", () => {
   test("contact form section is visible on homepage", async ({ page }) => {
@@ -55,50 +60,87 @@ test.describe("Newsletter Subscription", () => {
     });
 
     await page.goto("/");
-    await page.locator('input[type="email"]').fill("test@example.com");
+    await page
+      .locator('input[type="email"]')
+      .fill(uniqueEmail(SUBSCRIBER_PREFIX));
     await page.getByRole("button", { name: /get updates/i }).click();
 
     await expect(page.getByText(/subscribing/i)).toBeVisible();
     release();
-    await expect(page.getByRole("alert")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("status")).toBeVisible();
   });
 
-  test("shows the server's answer without any mocks", async ({ page }) => {
-    // biome-ignore lint/suspicious/noSkippedTests: a real .dev.vars would subscribe a real address
-    test.skip(HAS_LOCAL_SECRETS, "a local .dev.vars would make this real");
+  test("subscribes the address through the Worker to Resend", async ({
+    page,
+    request,
+  }) => {
+    const email = uniqueEmail(SUBSCRIBER_PREFIX);
+    const typed = `  ${email.toUpperCase()}  `;
 
-    // No Resend secrets in the preview server: the real server function runs
-    // inside the Worker and reports that subscriptions are unavailable. This
-    // exercises the full browser → workerd → server function round trip.
     await page.goto("/");
-    await page.locator('input[type="email"]').fill("test@example.com");
+    await page.locator('input[type="email"]').fill(typed);
     await page.getByRole("button", { name: /get updates/i }).click();
 
-    await expect(page.getByRole("alert")).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByRole("alert")).toContainText(
-      /subscription temporarily unavailable/i
-    );
+    await expect(page.getByRole("status")).toBeVisible();
+    await expect(page.getByRole("status")).toContainText("You're on the list!");
     await expect(page.locator('input[type="email"]')).not.toBeVisible();
+
+    // What Resend would have received: one contact creation on the configured
+    // audience, authenticated with the configured key, address normalised.
+    const received = await recordedRequestsFor(request, email);
+    expect(received).toHaveLength(1);
+    expect(received[0]).toMatchObject({
+      method: "POST",
+      path: `/audiences/${audienceId}/contacts`,
+      authorization: `Bearer ${apiKey}`,
+      body: { email, unsubscribed: false },
+    });
+  });
+
+  test("an address that is already subscribed still succeeds", async ({
+    page,
+    request,
+  }) => {
+    const email = uniqueEmail(DUPLICATE_PREFIX);
+
+    await page.goto("/");
+    await page.locator('input[type="email"]').fill(email);
+    await page.getByRole("button", { name: /get updates/i }).click();
+
+    await expect(page.getByRole("status")).toBeVisible();
+    await expect(page.getByRole("status")).toContainText("You're on the list!");
+    expect(await recordedRequestsFor(request, email)).toHaveLength(1);
+  });
+
+  test("a Resend outage shows the error state", async ({ page, request }) => {
+    const email = uniqueEmail(OUTAGE_PREFIX);
+
+    await page.goto("/");
+    await page.locator('input[type="email"]').fill(email);
+    await page.getByRole("button", { name: /get updates/i }).click();
+
+    await expect(page.getByRole("alert")).toBeVisible();
+    await expect(page.getByRole("alert")).toContainText(
+      "Something went wrong. Please try again."
+    );
+    expect(await recordedRequestsFor(request, email)).toHaveLength(1);
   });
 
   test("shows an error and can retry when the request fails", async ({
     page,
   }) => {
-    let requestCount = 0;
-    await page.route(SERVER_FN, async (route) => {
-      requestCount += 1;
-      if (requestCount === 1) {
-        await route.fulfill({ status: 500, body: "" });
-      } else {
-        await route.continue();
-      }
-    });
+    // The transport itself fails: the server function is never reached.
+    await page.route(SERVER_FN, (route) =>
+      route.fulfill({ status: 500, body: "" })
+    );
 
     await page.goto("/");
-    await page.locator('input[type="email"]').fill("test@example.com");
+    await page
+      .locator('input[type="email"]')
+      .fill(uniqueEmail(SUBSCRIBER_PREFIX));
     await page.getByRole("button", { name: /get updates/i }).click();
 
-    await expect(page.getByRole("alert")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("alert")).toBeVisible();
     await expect(page.getByRole("alert")).toContainText(
       "Something went wrong. Please try again."
     );

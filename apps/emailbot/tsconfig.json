@@ -1,10 +1,9 @@
 {
-  "extends": "@workspace/typescript-config/react-library.json",
+  "extends": "@workspace/typescript-config/worker.json",
   "compilerOptions": {
     "types": ["./worker-configuration.d.ts"],
     "paths": {
-      "@/*": ["./*"],
-      "@workspace/*": ["../../packages/*"]
+      "@/*": ["./*"]
     }
   }
 }

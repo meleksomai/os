@@ -1,10 +1,4 @@
 {
   "extends": "@workspace/typescript-config/react-library.json",
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true
-  },
-  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", ".react-email"]
 }

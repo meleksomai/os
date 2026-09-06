@@ -2,8 +2,16 @@
   "name": "@workspace/emailing",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "exports": {
+    "./newsletter": "./newsletter.ts",
+    "./testing/fake-resend": "./testing/fake-resend/index.ts"
+  },
   "scripts": {
-    "test": "vitest run",
+    "check-types": "tsc --noEmit",
+    "fake-resend": "node testing/fake-resend/serve.ts",
+    "test": "vitest run --project unit --project integration",
+    "test:contract": "vitest run --project contract",
     "test:watch": "vitest"
   },
   "dependencies": {

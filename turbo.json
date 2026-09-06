@@ -12,7 +12,7 @@
       "cache": false
     },
     "e2e": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "//#check": {},

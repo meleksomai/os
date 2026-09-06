@@ -9,7 +9,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
-import { cn } from "@/src/lib/utils";
+import { cn } from "@/lib/utils";
 
 const Select = SelectPrimitive.Root;
 

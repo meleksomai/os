@@ -2,6 +2,7 @@
   "name": "emailbot",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "check-types": "tsc --noEmit",
     "deploy": "npx wrangler deploy --minify",
@@ -28,8 +29,9 @@
     "@types/node": "24.10.4",
     "@types/react": "19.2.3",
     "@types/react-dom": "19.2.3",
+    "@workspace/testing": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "vitest": "3.2.4",
-    "wrangler": "4.60.0"
+    "wrangler": "4.129.0"
   }
 }

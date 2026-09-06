@@ -9,10 +9,10 @@
     "deploy": "pnpm run build && wrangler deploy",
     "dev": "pnpm run generate:content && vite dev --port 3000",
     "e2e": "playwright test",
+    "generate:content": "rm -rf .content-collections/cache && content-collections build",
     "preview": "vite preview --port 4173 --strictPort",
     "test": "pnpm run generate:content && vitest run",
-    "test:watch": "vitest",
-    "generate:content": "rm -rf .content-collections/cache && content-collections build"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@fontsource-variable/geist": "5.2.9",
@@ -52,10 +52,11 @@
     "@types/react": "19.2.3",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.2.0",
+    "@workspace/testing": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "jsdom": "27.0.0",
     "satori": "0.26.0",
-    "schema-dts": "^2.0.0",
+    "schema-dts": "2.0.0",
     "tailwindcss": "4.1.18",
     "typescript": "5.9.3",
     "vite": "7.3.6",

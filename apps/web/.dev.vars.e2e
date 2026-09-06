@@ -1,0 +1,4 @@
+# Dummy secrets for the e2e environment (CLOUDFLARE_ENV=e2e). The Worker
+# talks to the fake Resend server, so these never reach api.resend.com.
+RESEND_API_KEY=re_e2e_fake_key
+RESEND_SEGMENT_GENERAL=aud_e2e_fake

@@ -11,6 +11,25 @@ export interface SubscribeOptions {
   apiKey: string;
 }
 
+const SUBSCRIBED: SubscribeResult = {
+  success: true,
+  message: "Thanks for subscribing!",
+};
+
+const FAILED: SubscribeResult = {
+  success: false,
+  message: "Something went wrong. Please try again.",
+};
+
+/**
+ * Resend answers a repeated subscription with an error rather than an
+ * idempotent success. The contract test verifies this assumption against
+ * the real API.
+ */
+function isAlreadySubscribed(error: { message: string }): boolean {
+  return error.message.includes("already exists");
+}
+
 export async function subscribeContact(
   options: SubscribeOptions
 ): Promise<SubscribeResult> {
@@ -19,21 +38,18 @@ export async function subscribeContact(
   const resend = new Resend(apiKey);
 
   try {
-    await resend.contacts.create({
+    // The SDK never throws on an API error: it resolves with `error` set.
+    const { error } = await resend.contacts.create({
       email,
       unsubscribed: false,
       audienceId,
     });
 
-    return { success: true, message: "Thanks for subscribing!" };
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("already exists")) {
-      return { success: true, message: "Thanks for subscribing!" };
+    if (error === null || isAlreadySubscribed(error)) {
+      return SUBSCRIBED;
     }
-
-    return {
-      success: false,
-      message: "Something went wrong. Please try again.",
-    };
+    return FAILED;
+  } catch {
+    return FAILED;
   }
 }

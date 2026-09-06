@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node library",
+  // Packages that run on Node (scripts, fakes, tests) or are plain
+  // TypeScript libraries consumed as source by the apps.
+  "extends": "./base.json",
+  "compilerOptions": {
+    "types": ["node"]
+  }
+}
