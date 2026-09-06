@@ -21,16 +21,9 @@ export default defineConfig({
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     mdxPlugin(),
     tanstackStart({
-      // Prerender by crawling links from "/": the static pages land in
-      // dist/client and every crawled page feeds sitemap.xml. Essays are
-      // crawled but not rendered: they negotiate markdown on their URL, so
-      // they stay server-rendered.
-      prerender: {
-        enabled: true,
-        crawlLinks: true,
-        autoSubfolderIndex: false,
-        filter: (page) => !page.path.startsWith("/essay/"),
-      },
+      // Prerender every page reachable from "/": the static HTML lands in
+      // dist/client and the crawled pages feed sitemap.xml.
+      prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: false },
       pages: [{ path: "/" }],
       sitemap: { host: siteConfig.url },
       importProtection: {

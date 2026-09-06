@@ -53,7 +53,6 @@ Modules that must never reach the browser carry the `.server.ts` suffix; TanStac
 | URL                                         | Source                                              |
 | ------------------------------------------- | --------------------------------------------------- |
 | `/`, `/essays`, `/papers`, `/essay/:slug`   | `src/routes/index.tsx`, `essays.tsx`, `papers.tsx`, `essay/$slug.tsx` |
-| `/essay/:slug` with `Accept: text/markdown` | content negotiation in `essay/$slug.tsx`            |
 | `/essay/:slug/md`, `/essay/:slug.md`        | `src/routes/essay/$slug.md.ts`, `essay/{$slug}[.]md.ts` |
 | `/sitemap.xml`                              | built by `tanstackStart({ prerender, sitemap })` from the pages crawled at build time (static asset) |
 | `/robots.txt`, `/og/*.png`, `/images/**`    | static files in `public/` (OG images generated at build) |
@@ -93,7 +92,7 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 ## Tests
 
 - `tests/unit/**/*.test.ts(x)` — unit tests mirroring `src/`: the MDX-to-markdown conversion (inline MDX samples), essay catalog and markdown renditions (compared with the checked-in `tests/fixtures/agents.md`), the papers singleton, SEO tags, dates, server logic, and the newsletter form with its server function mocked.
-- `tests/e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, markdown negotiation, SEO tags and OG image dimensions, inline SSR of essays, redirects, 404s, theme switching, and the real newsletter round trip (no secrets, so the server reports unavailability).
+- `tests/e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, markdown endpoints, SEO tags and OG image dimensions, inline SSR of essays, redirects, 404s, theme switching, and the real newsletter round trip (no secrets, so the server reports unavailability).
 
 ## Known differences from the Next.js site
 
@@ -101,5 +100,5 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 - Trailing-slash redirects are 307 (the router's default) instead of 308, and the markdown endpoints are not redirected.
 - Unknown essays on the markdown endpoints answer a plain-text 404 instead of the HTML 404 page.
 - The markdown renditions are produced from the MDX parse tree (`mdx-to-markdown.ts`) instead of the raw source: no frontmatter, imports or JSX tags; `<Quote>` becomes a blockquote with its attribution and `<ThemeImage>` an image; formatting is normalised (`*emphasis*`, `<autolinks>`), and the reading time counts the words of its text.
-- The static pages are prerendered at build time (`tanstackStart({ prerender: { crawlLinks, filter } })` crawling from `/`): `/`, `/essays` and `/papers` are served as static HTML by the Worker's assets. Essays are crawled for the sitemap but not prerendered: they negotiate markdown on their URL, so they stay server-rendered. The sitemap is Start's built-in one from the crawled pages: one entry per page, no duplicate root entry and no `/research`, `lastmod` = build date. Start also writes `pages.json` next to it.
+- Every page reachable from `/` is prerendered at build time (`tanstackStart({ prerender: { crawlLinks } })`) and served as static HTML by the Worker's assets; the Worker serves the markdown endpoints, the newsletter server function and the 404 page. The essay URL no longer negotiates markdown on the `Accept` header (tracked in https://github.com/meleksomai/os/issues/101); the renditions live at `/essay/:slug/md` and `/essay/:slug.md`. The sitemap is Start's built-in one from the crawled pages: one entry per page, no duplicate root entry and no `/research`, `lastmod` = build date. Start also writes `pages.json` next to it.
 - `/favicon.svg` is served (it was 404 before); the `/baby` page, Vercel analytics and feature flags are gone.

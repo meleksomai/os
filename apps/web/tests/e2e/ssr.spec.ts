@@ -25,13 +25,3 @@ test("essay body is rendered inline in the HTML, not streamed later", async ({
   );
   expect(article).toContain("Over the holidays");
 });
-
-test("essay responses vary on Accept", async ({ request }) => {
-  const html = await request.get("/essay/agents", { headers: BROWSER_HEADERS });
-  expect(html.headers().vary).toContain("Accept");
-
-  const markdown = await request.get("/essay/agents", {
-    headers: { accept: "text/markdown" },
-  });
-  expect(markdown.headers().vary).toContain("Accept");
-});

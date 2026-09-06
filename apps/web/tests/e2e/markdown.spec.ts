@@ -27,42 +27,6 @@ test.describe("essay markdown endpoints", () => {
     expect(await response.text()).toBe(AGENTS_RENDITION);
   });
 
-  test("Accept: text/markdown on the essay URL negotiates markdown", async ({
-    request,
-  }) => {
-    const response = await request.get("/essay/agents", {
-      headers: { accept: "text/markdown" },
-    });
-
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toBe(MARKDOWN_CONTENT_TYPE);
-    expect(await response.text()).toBe(AGENTS_RENDITION);
-  });
-
-  test("Accept: text/plain on the essay URL negotiates markdown", async ({
-    request,
-  }) => {
-    const response = await request.get("/essay/agents", {
-      headers: { accept: "text/plain" },
-    });
-
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toBe(MARKDOWN_CONTENT_TYPE);
-  });
-
-  test("browser Accept header still receives HTML", async ({ request }) => {
-    const response = await request.get("/essay/agents", {
-      headers: {
-        accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      },
-    });
-
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toContain("text/html");
-    expect(await response.text()).toContain("<article");
-  });
-
   test("every essay has a working markdown rendition", async ({ request }) => {
     for (const slug of essaySlugsOnDisk()) {
       const response = await request.get(`/essay/${slug}/md`);
@@ -80,11 +44,5 @@ test.describe("essay markdown endpoints", () => {
 
     const mdExtension = await request.get("/essay/does-not-exist.md");
     expect(mdExtension.status()).toBe(404);
-
-    const negotiated = await request.get("/essay/does-not-exist", {
-      headers: { accept: "text/markdown" },
-    });
-    expect(negotiated.status()).toBe(404);
-    expect(await negotiated.text()).toBe("Essay not found");
   });
 });
