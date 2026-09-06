@@ -53,7 +53,7 @@ Modules that must never reach the browser carry the `.server.ts` suffix; TanStac
 | URL                                         | Source                                              |
 | ------------------------------------------- | --------------------------------------------------- |
 | `/`, `/essays`, `/papers`, `/essay/:slug`   | `src/routes/index.tsx`, `essays.tsx`, `papers.tsx`, `essay/$slug.tsx` |
-| `/essay/:slug/md`, `/essay/:slug.md`        | `src/routes/essay/$slug.md.ts`, `essay/{$slug}[.]md.ts` |
+| `/essay/:slug.md` (`/essay/:slug/md` redirects to it) | `src/routes/essay/{$slug}[.]md.ts` (`$slug.md.ts` is the redirect) |
 | `/sitemap.xml`                              | built by `tanstackStart({ prerender, sitemap })` from the pages crawled at build time (static asset) |
 | `/robots.txt`, `/og/*.png`, `/images/**`    | static files in `public/` (OG images generated at build) |
 
@@ -100,5 +100,5 @@ Cutover from Vercel happens in the Cloudflare dashboard:
 - Trailing-slash redirects are 307 (the router's default) instead of 308, and the markdown endpoints are not redirected.
 - Unknown essays on the markdown endpoints answer a plain-text 404 instead of the HTML 404 page.
 - The markdown renditions are produced from the MDX parse tree (`mdx-to-markdown.ts`) instead of the raw source: no frontmatter, imports or JSX tags; `<Quote>` becomes a blockquote with its attribution and `<ThemeImage>` an image; formatting is normalised (`*emphasis*`, `<autolinks>`), and the reading time counts the words of its text.
-- Every page reachable from `/` is prerendered at build time (`tanstackStart({ prerender: { crawlLinks } })`) and served as static HTML by the Worker's assets; the Worker serves the markdown endpoints, the newsletter server function and the 404 page. The essay URL no longer negotiates markdown on the `Accept` header (tracked in https://github.com/meleksomai/os/issues/101); the renditions live at `/essay/:slug/md` and `/essay/:slug.md`. The sitemap is Start's built-in one from the crawled pages: one entry per page, no duplicate root entry and no `/research`, `lastmod` = build date. Start also writes `pages.json` next to it.
+- Every page reachable from `/` is prerendered at build time (`tanstackStart({ prerender: { crawlLinks } })`) and served as static HTML by the Worker's assets; the Worker serves the markdown endpoints, the newsletter server function and the 404 page. The essay URL no longer negotiates markdown on the `Accept` header (tracked in https://github.com/meleksomai/os/issues/101); the rendition lives at `/essay/:slug.md` (`/essay/:slug/md` redirects to it). The sitemap is Start's built-in one from the crawled pages: one entry per page, no duplicate root entry and no `/research`, `lastmod` = build date. Start also writes `pages.json` next to it.
 - `/favicon.svg` is served (it was 404 before); the `/baby` page, Vercel analytics and feature flags are gone.

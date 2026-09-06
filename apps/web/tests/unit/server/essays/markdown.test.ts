@@ -11,7 +11,7 @@ const FENCE_WITH_IMPORT = /```[^\n]*\n[\s\S]*?^import /m;
 // The rendition of content/agents.mdx as produced by content-collections.ts
 // (mdx-to-markdown.ts), reviewed against the previous deployment's output on
 // 2026-09-05. Regenerate it on purpose when the conversion changes:
-//   pnpm build && pnpm preview & curl -s http://localhost:4173/essay/agents/md > tests/fixtures/agents.md
+//   pnpm build && pnpm preview & curl -s http://localhost:4173/essay/agents.md > tests/fixtures/agents.md
 const checkedInRendition = readFileSync(
   path.join(import.meta.dirname, "../../../fixtures/agents.md"),
   "utf8"

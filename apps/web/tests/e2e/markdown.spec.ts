@@ -11,15 +11,20 @@ const AGENTS_RENDITION = readFileSync(
 );
 
 test.describe("essay markdown endpoints", () => {
-  test("GET /essay/:slug/md serves the raw markdown", async ({ request }) => {
-    const response = await request.get("/essay/agents/md");
+  test("GET /essay/:slug/md redirects to the .md rendition", async ({
+    request,
+  }) => {
+    const response = await request.get("/essay/agents/md", {
+      maxRedirects: 0,
+    });
 
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toBe(MARKDOWN_CONTENT_TYPE);
-    expect(await response.text()).toBe(AGENTS_RENDITION);
+    expect(response.status()).toBe(308);
+    expect(response.headers().location).toBe("/essay/agents.md");
   });
 
-  test("GET /essay/:slug.md serves the same rendition", async ({ request }) => {
+  test("GET /essay/:slug.md serves the markdown rendition", async ({
+    request,
+  }) => {
     const response = await request.get("/essay/agents.md");
 
     expect(response.status()).toBe(200);
@@ -29,8 +34,8 @@ test.describe("essay markdown endpoints", () => {
 
   test("every essay has a working markdown rendition", async ({ request }) => {
     for (const slug of essaySlugsOnDisk()) {
-      const response = await request.get(`/essay/${slug}/md`);
-      expect(response.status(), `/essay/${slug}/md`).toBe(200);
+      const response = await request.get(`/essay/${slug}.md`);
+      expect(response.status(), `/essay/${slug}.md`).toBe(200);
       expect((await response.text()).startsWith("# ")).toBe(true);
     }
   });
