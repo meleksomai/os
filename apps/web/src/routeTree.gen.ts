@@ -13,8 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as EssaysRouteImport } from './routes/essays'
 import { Route as PapersRouteImport } from './routes/papers'
 import { Route as EssaySlugRouteImport } from './routes/essay/$slug'
-import { Route as EssayChar123slugChar125DotmdRouteImport } from './routes/essay/{$slug}[.]md'
-import { Route as EssaySlugMdRouteImport } from './routes/essay/$slug.md'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,76 +34,39 @@ const EssaySlugRoute = EssaySlugRouteImport.update({
   path: '/essay/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EssayChar123slugChar125DotmdRoute =
-  EssayChar123slugChar125DotmdRouteImport.update({
-    id: '/essay/{$slug}.md',
-    path: '/essay/{$slug}.md',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const EssaySlugMdRoute = EssaySlugMdRouteImport.update({
-  id: '/md',
-  path: '/md',
-  getParentRoute: () => EssaySlugRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/essays': typeof EssaysRoute
   '/papers': typeof PapersRoute
-  '/essay/$slug': typeof EssaySlugRouteWithChildren
-  '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
-  '/essay/$slug/md': typeof EssaySlugMdRoute
+  '/essay/$slug': typeof EssaySlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/essays': typeof EssaysRoute
   '/papers': typeof PapersRoute
-  '/essay/$slug': typeof EssaySlugRouteWithChildren
-  '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
-  '/essay/$slug/md': typeof EssaySlugMdRoute
+  '/essay/$slug': typeof EssaySlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/essays': typeof EssaysRoute
   '/papers': typeof PapersRoute
-  '/essay/$slug': typeof EssaySlugRouteWithChildren
-  '/essay/{$slug}.md': typeof EssayChar123slugChar125DotmdRoute
-  '/essay/$slug/md': typeof EssaySlugMdRoute
+  '/essay/$slug': typeof EssaySlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/essays'
-    | '/papers'
-    | '/essay/$slug'
-    | '/essay/{$slug}.md'
-    | '/essay/$slug/md'
+  fullPaths: '/' | '/essays' | '/papers' | '/essay/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/essays'
-    | '/papers'
-    | '/essay/$slug'
-    | '/essay/{$slug}.md'
-    | '/essay/$slug/md'
-  id:
-    | '__root__'
-    | '/'
-    | '/essays'
-    | '/papers'
-    | '/essay/$slug'
-    | '/essay/{$slug}.md'
-    | '/essay/$slug/md'
+  to: '/' | '/essays' | '/papers' | '/essay/$slug'
+  id: '__root__' | '/' | '/essays' | '/papers' | '/essay/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EssaysRoute: typeof EssaysRoute
   PapersRoute: typeof PapersRoute
-  EssaySlugRoute: typeof EssaySlugRouteWithChildren
-  EssayChar123slugChar125DotmdRoute: typeof EssayChar123slugChar125DotmdRoute
+  EssaySlugRoute: typeof EssaySlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -138,41 +99,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EssaySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/essay/{$slug}.md': {
-      id: '/essay/{$slug}.md'
-      path: '/essay/{$slug}.md'
-      fullPath: '/essay/{$slug}.md'
-      preLoaderRoute: typeof EssayChar123slugChar125DotmdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/essay/$slug/md': {
-      id: '/essay/$slug/md'
-      path: '/md'
-      fullPath: '/essay/$slug/md'
-      preLoaderRoute: typeof EssaySlugMdRouteImport
-      parentRoute: typeof EssaySlugRoute
-    }
   }
 }
-
-interface EssaySlugRouteChildren {
-  EssaySlugMdRoute: typeof EssaySlugMdRoute
-}
-
-const EssaySlugRouteChildren: EssaySlugRouteChildren = {
-  EssaySlugMdRoute: EssaySlugMdRoute,
-}
-
-const EssaySlugRouteWithChildren = EssaySlugRoute._addFileChildren(
-  EssaySlugRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EssaysRoute: EssaysRoute,
   PapersRoute: PapersRoute,
-  EssaySlugRoute: EssaySlugRouteWithChildren,
-  EssayChar123slugChar125DotmdRoute: EssayChar123slugChar125DotmdRoute,
+  EssaySlugRoute: EssaySlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -10,6 +10,11 @@ import {
   Heading5,
   Heading6,
 } from "@workspace/ui/blocks/headings";
+import { Highlight } from "@workspace/ui/blocks/highlight";
+import { Quote } from "@workspace/ui/blocks/quote";
+import { RelativeTime } from "@workspace/ui/blocks/relative-time";
+import { ThemeImage } from "@workspace/ui/blocks/themed-image";
+import { GitHubIcon, XIcon } from "@workspace/ui/components/icons";
 import { parseGitHubAlert } from "@workspace/ui/lib/gmf";
 import { cn } from "@workspace/ui/lib/utils";
 import type { MDXComponents } from "mdx/types";
@@ -33,6 +38,14 @@ function isFootnotesSection(props: React.HTMLAttributes<HTMLElement>) {
 }
 
 export const mdxComponents = {
+  // Components the essays use directly (`<Quote>`, `<ThemeImage>`, ...),
+  // provided here so essays need no import statements.
+  Quote,
+  ThemeImage,
+  RelativeTime,
+  Highlight,
+  GitHubIcon,
+  XIcon,
   // Allows customizing built-in components, e.g. to add styling.
   h1: (props: ComponentPropsWithoutRef<"h1">) => <Heading1 {...props} />,
   h2: (props: ComponentPropsWithoutRef<"h2">) => <Heading2 {...props} />,

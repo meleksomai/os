@@ -5,7 +5,6 @@ import {
 } from "@content-collections/core";
 import readingTime from "reading-time";
 import { z } from "zod";
-import { mdxToMarkdown, plainText } from "./mdx-to-markdown";
 
 /**
  * The site's content, validated and shaped at build time. The generated
@@ -43,9 +42,8 @@ const essays = defineCollection({
   directory: "content",
   include: "*.mdx",
   schema: essayFrontmatter,
-  transform: async ({ content, _meta, ...frontmatter }, { cache }) => {
-    const markdown = await cache(content, mdxToMarkdown);
-    const { text, minutes, time, words } = readingTime(plainText(markdown));
+  transform: ({ content, _meta, ...frontmatter }) => {
+    const { text, minutes, time, words } = readingTime(content);
     return {
       ...frontmatter,
       slug: _meta.path,
@@ -55,18 +53,6 @@ const essays = defineCollection({
       readingTime: { text, minutes, time, words },
     };
   },
-});
-
-/** The plain-markdown rendition of each essay, served at /essay/:slug.md; kept apart so it never travels with an `Essay`. */
-const renditions = defineCollection({
-  name: "renditions",
-  directory: "content",
-  include: "*.mdx",
-  schema: essayFrontmatter,
-  transform: async ({ content, _meta }, { cache }) => ({
-    slug: _meta.path,
-    markdown: await cache(content, mdxToMarkdown),
-  }),
 });
 
 /** A record of the Paperpile export in content/papers.json; only these fields are kept. */
@@ -96,4 +82,4 @@ const research = defineSingleton({
   }),
 });
 
-export default defineConfig({ content: [essays, renditions, research] });
+export default defineConfig({ content: [essays, research] });

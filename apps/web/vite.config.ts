@@ -23,7 +23,7 @@ export default defineConfig({
     tanstackStart({
       // Prerender every page reachable from "/": the static HTML lands in
       // dist/client and the crawled pages feed sitemap.xml.
-      prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: false },
+      prerender: { enabled: true, crawlLinks: true },
       pages: [{ path: "/" }],
       sitemap: { host: siteConfig.url },
       importProtection: {
