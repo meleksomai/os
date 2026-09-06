@@ -39,8 +39,11 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
     },
     {
-      command: "pnpm run build && pnpm run preview",
-      env: { CLOUDFLARE_ENV: "e2e" },
+      // Only the build selects the environment; the preview serves the
+      // resolved config in dist/server. (The build's prerender pass boots
+      // that resolved config too and logs a harmless "No environment found
+      // in configuration with name e2e".)
+      command: "CLOUDFLARE_ENV=e2e pnpm run build && pnpm run preview",
       url: "http://localhost:4173",
       timeout: 240_000,
       reuseExistingServer: false,
