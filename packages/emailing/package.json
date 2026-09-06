@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "vitest run",
-    "test:contract": "vitest run --config vitest.contract.config.ts",
+    "test": "vitest run --project unit",
+    "test:contract": "vitest run --project contract",
     "test:watch": "vitest"
   },
   "dependencies": {

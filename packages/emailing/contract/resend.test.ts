@@ -4,16 +4,17 @@
  * The unit tests and the web app's e2e suite work against doubles of Resend
  * (mocked SDK, fake HTTP server). This test is the periodic check that those
  * doubles still describe reality: it exercises the same assumptions with a
- * dedicated Resend audience and cleans up after itself. It never runs in the
- * regular `pnpm test`; the scheduled `contract` GitHub workflow runs
- * `pnpm --filter @workspace/emailing test:contract` with the secrets set.
+ * dedicated Resend audience and cleans up after itself. It is the `contract`
+ * Vitest project (vitest.config.ts), not part of `pnpm test`; the scheduled
+ * `contract` GitHub workflow runs `pnpm --filter @workspace/emailing
+ * test:contract` with the secrets set.
  *
  * Required environment: RESEND_API_KEY, RESEND_CONTRACT_AUDIENCE_ID (an
  * audience used for nothing else). Account-level webhooks still fire for it.
  */
 import { Resend } from "resend";
-import { afterAll, describe, expect, it } from "vitest";
-import { subscribeContact } from "./newsletter";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { subscribeContact } from "../newsletter";
 
 const apiKey = process.env.RESEND_API_KEY;
 const audienceId = process.env.RESEND_CONTRACT_AUDIENCE_ID;
@@ -23,8 +24,14 @@ const configured = Boolean(apiKey && audienceId);
 const email = `contract-${Date.now().toString(36)}@somai.me`;
 
 describe.skipIf(!configured)("Resend contract", () => {
-  const resend = new Resend(apiKey ?? "");
   const audience = audienceId ?? "";
+  // Built in a hook: the describe body still runs at collection time when
+  // the suite is skipped, and the SDK throws on an empty key.
+  let resend: Resend;
+
+  beforeAll(() => {
+    resend = new Resend(apiKey);
+  });
 
   afterAll(async () => {
     await resend.contacts.remove({ audienceId: audience, email });
