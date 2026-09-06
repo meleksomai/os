@@ -1,4 +1,4 @@
-import { unit } from "@workspace/testing/vitest";
+import { unit } from "@workspace/testing/vitest.unit";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 import { mdxPlugin } from "./mdx-plugin";

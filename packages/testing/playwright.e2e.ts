@@ -1,6 +1,8 @@
 /**
- * Shared Playwright defaults for the end-to-end layer (tests/e2e in an app).
+ * End-to-end layer: the app's production build driven through a browser,
+ * with a fake for every third party. Runs on every pull request.
  *
+ *   import { e2e } from "@workspace/testing/playwright.e2e";
  *   export default defineConfig({
  *     ...e2e,
  *     use: { ...e2e.use, baseURL: "http://localhost:4173" },

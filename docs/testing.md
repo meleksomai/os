@@ -55,7 +55,7 @@ In the package that wraps the vendor:
 
 1. Put the adapter there, reading the vendor's base URL from a var with the production URL as the default. Most SDKs already support this; otherwise pass it explicitly.
 2. Write the fake under `testing/fake-<vendor>/`: the endpoints we use, request recording, scripted failures, a `start` function and a `serve.ts`. Export it from the package.
-3. Declare the layers in `vitest.config.ts` with `unit()`, `integration()`, `contract()` from `@workspace/testing/vitest`, and write `tests/unit`, `tests/integration` (real SDK against the fake, started by `globalSetup`), and `tests/contract` (real API, cleans up). Add the contract secrets to the `contract` workflow.
+3. Declare the layers in `vitest.config.ts` with `unit()`, `integration()`, `contract()` from `@workspace/testing/vitest.<layer>`, and write `tests/unit`, `tests/integration` (real SDK against the fake, started by `globalSetup`), and `tests/contract` (real API, cleans up). Add the contract secrets to the `contract` workflow.
 
 In the app that uses it:
 
@@ -64,7 +64,7 @@ In the app that uses it:
 
 ## Layout
 
-Every package keeps its tests under `tests/`, one folder per layer: `tests/unit`, `tests/integration`, `tests/contract`, and `tests/e2e` (apps only). `@workspace/testing` defines the layers once: `unit()`, `integration()`, `contract()` from `@workspace/testing/vitest` are Vitest projects that look in the matching folder and inherit the package's root config, and `e2e` from `@workspace/testing/playwright` holds the Playwright defaults. A package's `vitest.config.ts` only lists the layers it has; a layer is selected by name (`vitest --project contract`), never by filename suffix. Fakes live in `testing/` of the package that wraps the vendor.
+Every package keeps its tests under `tests/`, one folder per layer: `tests/unit`, `tests/integration`, `tests/contract`, and `tests/e2e` (apps only). `@workspace/testing` defines each layer in its own file: `unit()` from `@workspace/testing/vitest.unit`, `integration()` from `@workspace/testing/vitest.integration`, and `contract()` from `@workspace/testing/vitest.contract` are Vitest projects that look in the matching folder and inherit the package's root config; `e2e` from `@workspace/testing/playwright.e2e` holds the Playwright defaults. A package's `vitest.config.ts` only lists the layers it has; a layer is selected by name (`vitest --project contract`), never by filename suffix. Fakes live in `testing/` of the package that wraps the vendor.
 
 ## What we do not do
 

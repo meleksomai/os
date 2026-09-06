@@ -1,4 +1,6 @@
-import { contract, integration, unit } from "@workspace/testing/vitest";
+import { contract } from "@workspace/testing/vitest.contract";
+import { integration } from "@workspace/testing/vitest.integration";
+import { unit } from "@workspace/testing/vitest.unit";
 import { defineConfig } from "vitest/config";
 import { INTEGRATION_RESEND_URL } from "./tests/integration/global-setup";
 

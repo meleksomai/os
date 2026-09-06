@@ -15,7 +15,9 @@
   },
   "type": "module",
   "exports": {
-    "./vitest": "./vitest.ts",
-    "./playwright": "./playwright.ts"
+    "./vitest.unit": "./vitest.unit.ts",
+    "./vitest.integration": "./vitest.integration.ts",
+    "./vitest.contract": "./vitest.contract.ts",
+    "./playwright.e2e": "./playwright.e2e.ts"
   }
 }

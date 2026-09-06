@@ -4,7 +4,7 @@ import {
   FAKE_RESEND_HOST,
   FAKE_RESEND_PORT,
 } from "@workspace/emailing/testing/fake-resend";
-import { e2e } from "@workspace/testing/playwright";
+import { e2e } from "@workspace/testing/playwright.e2e";
 
 /**
  * The suite runs against a production build served by `vite preview`, i.e.
