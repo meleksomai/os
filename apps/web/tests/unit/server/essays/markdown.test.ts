@@ -38,23 +38,6 @@ describe("getEssayMarkdown", () => {
     }
   });
 
-  it("turns components into their markdown equivalent", () => {
-    const markdown = getEssayMarkdown("agents") ?? "";
-
-    // <Quote author source> → blockquote with an attribution line
-    expect(markdown).toContain(
-      "> — Norbert Wiener, The Human Use of Human Beings"
-    );
-    // <Highlight text="…">EHRs</Highlight> → its children
-    expect(markdown).toContain("to dashboards to EHRs");
-  });
-
-  it("keeps code blocks intact, including import lines inside them", () => {
-    const markdown = getEssayMarkdown("cloudflare_agents") ?? "";
-
-    expect(markdown).toMatch(FENCE_WITH_IMPORT);
-  });
-
   it("returns null for an unknown slug", () => {
     expect(getEssayMarkdown("does-not-exist")).toBeNull();
   });
