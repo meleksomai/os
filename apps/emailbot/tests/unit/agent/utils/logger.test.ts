@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { clearTranscript, createLogger, getTranscript, log } from "./logger";
+import {
+  clearTranscript,
+  createLogger,
+  getTranscript,
+  log,
+} from "../../../../agent/utils/logger";
 
 describe("logger", () => {
   beforeEach(() => {

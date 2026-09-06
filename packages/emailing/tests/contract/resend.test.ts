@@ -14,7 +14,7 @@
  */
 import { Resend } from "resend";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { subscribeContact } from "../newsletter";
+import { subscribeContact } from "../../newsletter";
 
 const apiKey = process.env.RESEND_API_KEY;
 const audienceId = process.env.RESEND_CONTRACT_AUDIENCE_ID;

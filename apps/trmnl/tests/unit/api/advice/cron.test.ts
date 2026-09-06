@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/suspicious/noEmptyBlockStatements: unit testing */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { cronJob } from "./cron";
+import { cronJob } from "../../../../api/advice/cron";
 
 // Mock dependencies
 vi.mock("@/api/advice/utils", () => ({

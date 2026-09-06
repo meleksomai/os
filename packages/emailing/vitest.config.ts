@@ -13,14 +13,14 @@ export default mergeConfig(config, {
         extends: true,
         test: {
           name: "unit",
-          include: ["*.test.ts"],
+          include: ["tests/unit/**/*.test.ts"],
         },
       },
       {
         extends: true,
         test: {
           name: "contract",
-          include: ["contract/**/*.test.ts"],
+          include: ["tests/contract/**/*.test.ts"],
           // Live API calls: no parallelism, generous timeout.
           fileParallelism: false,
           testTimeout: 30_000,

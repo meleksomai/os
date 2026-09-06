@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createThreadBasedEmailResolver } from "./resolvers";
+import { createThreadBasedEmailResolver } from "../../resolvers";
 
 describe("createThreadBasedEmailResolver", () => {
   const AGENT_NAME = "TestAgent";

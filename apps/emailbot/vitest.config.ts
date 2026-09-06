@@ -9,6 +9,7 @@ export default defineWorkersProject({
     },
   },
   test: {
+    include: ["tests/unit/**/*.test.ts"],
     poolOptions: {
       workers: {
         singleWorker: true,

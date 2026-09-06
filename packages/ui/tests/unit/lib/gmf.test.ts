@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import { parseGitHubAlert } from "./gmf";
+import { parseGitHubAlert } from "../../../src/lib/gmf";
 
 describe("parseGitHubAlert()", () => {
   describe("returns null for non-alert content", () => {

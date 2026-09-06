@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { generateAndCacheAdvice } from "./utils";
+import { generateAndCacheAdvice } from "../../../../api/advice/utils";
 
 // Mock dependencies
 vi.mock("ai", () => ({

@@ -30,7 +30,7 @@ This is the standard split: hermetic tests for the pipeline, periodic contract t
 
 The site's subscribe form calls a TanStack server function, which calls `subscribeContact` in `packages/emailing`, which calls the Resend SDK.
 
-**Unit** (`packages/emailing/newsletter.test.ts`, `apps/web/tests/unit`): the SDK is mocked with the response shapes it really returns. The SDK does not throw on API errors; it resolves `{ data: null, error }`.
+**Unit** (`packages/emailing/tests/unit`, `apps/web/tests/unit`): the SDK is mocked with the response shapes it really returns. The SDK does not throw on API errors; it resolves `{ data: null, error }`.
 
 **End-to-end** (`apps/web/tests/e2e/subscribe.spec.ts`):
 
@@ -40,7 +40,7 @@ The site's subscribe form calls a TanStack server function, which calls `subscri
 - The fake implements only the endpoints we use, records every request, and scripts failures by address prefix (`outage-` gives a 500, `duplicate-` gives a 409 "already exists"). Behaviour lives in the address, not in shared state, so tests run in parallel.
 - Tests assert on the UI and on what Resend would have received: path, bearer token, normalised address.
 
-**Contract** (`packages/emailing/contract/resend.test.ts`): runs `subscribeContact` against Resend with a unique address in a dedicated audience, checks the contact exists, checks a repeat still reports success, removes the contact. Needs `RESEND_API_KEY` and `RESEND_CONTRACT_AUDIENCE_ID`; skips without them.
+**Contract** (`packages/emailing/tests/contract/resend.test.ts`): runs `subscribeContact` against Resend with a unique address in a dedicated audience, checks the contact exists, checks a repeat still reports success, removes the contact. Needs `RESEND_API_KEY` and `RESEND_CONTRACT_AUDIENCE_ID`; skips without them.
 
 **What it caught.** The adapter only handled thrown errors, so any Resend failure reported "Thanks for subscribing!". The unit tests had mocked a rejection the SDK never produces. The fake, sitting at the HTTP boundary, exercised the SDK's real behaviour and the outage test failed.
 
@@ -50,8 +50,12 @@ The site's subscribe form calls a TanStack server function, which calls `subscri
 2. Add the var to `env.e2e` in the Worker's `wrangler.jsonc`, pointing at a new fake, and add dummy secrets to `.dev.vars.e2e`.
 3. Write the fake under `tests/e2e/fakes/<vendor>/`: the endpoints we use, request recording, scripted failures. Register it as a Playwright `webServer`.
 4. Write e2e tests that assert both the UI and the recorded requests.
-5. Write the contract test under `contract/` in the package that owns the adapter, as a file of the package's `contract` Vitest project (see `packages/emailing/vitest.config.ts`). It runs the real adapter, verifies the assumptions the fake encodes, and cleans up. Add its secrets to the `contract` workflow.
+5. Write the contract test under `tests/contract/` in the package that owns the adapter, as a file of the package's `contract` Vitest project (see `packages/emailing/vitest.config.ts`). It runs the real adapter, verifies the assumptions the fake encodes, and cleans up. Add its secrets to the `contract` workflow.
 6. Unit tests mock the SDK with its real response shapes.
+
+## Layout
+
+Every package keeps its tests under `tests/`, one folder per layer: `tests/unit`, `tests/e2e` (apps only), `tests/contract`. Each folder is a Vitest project or, for e2e, the Playwright `testDir`, so a layer is selected by name (`vitest --project contract`) and never by filename suffix.
 
 ## What we do not do
 

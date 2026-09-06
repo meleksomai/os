@@ -6,7 +6,7 @@ import {
   getAdvice,
   ONE_DAY,
   setAdvice,
-} from "./cache";
+} from "../../../utils/cache";
 
 const createMockKV = () => ({
   get: vi.fn(),
