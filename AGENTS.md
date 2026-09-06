@@ -1,3 +1,11 @@
+# Project conventions
+
+Read these before changing tests, tsconfig, or dependencies:
+
+- `docs/testing.md` — the test layers (unit, integration, contract, e2e), where each lives, and why pull requests never call a third party.
+- `packages/typescript-config/README.md` — the tsconfig presets and what the base decides.
+- `pnpm check` lints and formats (Biome); `pnpm check-types` type-checks; `pnpm test` runs unit + integration; `pnpm e2e` runs Playwright; `pnpm syncpack` checks dependency versions. Versions are exact, never ranges.
+
 # Ultracite Code Standards
 
 This project uses **Ultracite**, a zero-config Biome preset that enforces strict code quality standards through automated formatting and linting.

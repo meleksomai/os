@@ -2,22 +2,23 @@
   "name": "@workspace/testing",
   "version": "0.0.0",
   "private": true,
-  "scripts": {
-    "check-types": "tsc --noEmit",
-    "clean": "git clean -xdf .cache .turbo dist node_modules"
-  },
-  "devDependencies": {
-    "@playwright/test": "1.57.0",
-    "@types/node": "24.10.4",
-    "@workspace/typescript-config": "workspace:*",
-    "typescript": "5.9.3",
-    "vitest": "3.2.4"
-  },
   "type": "module",
   "exports": {
     "./vitest.unit": "./vitest.unit.ts",
     "./vitest.integration": "./vitest.integration.ts",
     "./vitest.contract": "./vitest.contract.ts",
-    "./playwright.e2e": "./playwright.e2e.ts"
+    "./playwright.e2e": "./playwright.e2e.ts",
+    "./vitest.workers": "./vitest.workers.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.11.1",
+    "@playwright/test": "1.57.0",
+    "@types/node": "24.10.4",
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
   }
 }

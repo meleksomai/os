@@ -1,40 +1,31 @@
-/** biome-ignore-all lint/correctness/noGlobalDirnameFilename: config typechecks as CommonJS where import.meta is unavailable */
-import path from "node:path";
-import { defineWorkersProject } from "@cloudflare/vitest-pool-workers/config";
+import { workers } from "@workspace/testing/vitest.workers";
+import { defineConfig } from "vitest/config";
 
-export default defineWorkersProject({
+export default defineConfig({
   environments: {
     ssr: {
       keepProcessEnv: true,
     },
   },
   test: {
-    include: ["tests/unit/**/*.test.ts"],
-    poolOptions: {
-      workers: {
-        singleWorker: true,
+    projects: [
+      workers({
+        configPath: "./wrangler.test.jsonc",
         miniflare: {
           compatibilityDate: "2025-12-23",
           compatibilityFlags: ["nodejs_compat"],
         },
-        wrangler: {
-          configPath: "./wrangler.test.jsonc",
+        test: {
+          // https://github.com/cloudflare/workers-sdk/issues/9822
+          deps: {
+            optimizer: {
+              ssr: {
+                include: ["mimetext", "postal-mime", "agents"],
+              },
+            },
+          },
         },
-      },
-    },
-    // https://github.com/cloudflare/workers-sdk/issues/9822
-    deps: {
-      optimizer: {
-        ssr: {
-          include: ["mimetext", "postal-mime", "agents"],
-        },
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./"),
-      "@repo": path.resolve(__dirname, "../../packages"),
-    },
+      }),
+    ],
   },
 });

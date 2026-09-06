@@ -1,5 +1,12 @@
 /** biome-ignore-all lint/suspicious/noEmptyBlockStatements: unit testing */
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type MockInstance,
+  vi,
+} from "vitest";
 import { cronJob } from "../../../../api/advice/cron";
 
 // Mock dependencies
@@ -18,9 +25,13 @@ describe("cronJob", () => {
   const mockController = {} as ScheduledController;
   const mockCtx = {} as ExecutionContext;
 
+  // Assert on the spy itself: inside workerd `console.log` resolves to a
+  // bound wrapper, not to the spy.
+  let logSpy: MockInstance<typeof console.log>;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, "log").mockImplementation(() => {});
+    logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
   });
 
   it("logs when cron is triggered", async () => {
@@ -32,7 +43,7 @@ describe("cronJob", () => {
 
     await cronJob(mockController, mockEnv, mockCtx);
 
-    expect(console.log).toHaveBeenCalledWith("cron processing triggered...");
+    expect(logSpy).toHaveBeenCalledWith("cron processing triggered...");
   });
 
   it("calls generateAndCacheAdvice with env", async () => {

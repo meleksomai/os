@@ -2,6 +2,11 @@
   "name": "@workspace/emailing",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "exports": {
+    "./newsletter": "./newsletter.ts",
+    "./testing/fake-resend": "./testing/fake-resend/index.ts"
+  },
   "scripts": {
     "check-types": "tsc --noEmit",
     "fake-resend": "node testing/fake-resend/serve.ts",
@@ -17,10 +22,5 @@
     "@workspace/testing": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "vitest": "3.2.4"
-  },
-  "exports": {
-    "./newsletter": "./newsletter.ts",
-    "./testing/fake-resend": "./testing/fake-resend/index.ts"
-  },
-  "type": "module"
+  }
 }

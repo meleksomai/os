@@ -28,8 +28,10 @@ packages/
   emailing/           # Resend newsletter helpers
   ntfy/               # ntfy.sh notifications
   transactional/      # React Email templates
-  testing/            # Shared Vitest preset
-  typescript-config/  # Shared TS configs
+  testing/            # Test layers: Vitest projects (unit/integration/contract) + Playwright defaults
+  typescript-config/  # tsconfig presets: base, node, react-library, worker
+docs/
+  testing.md          # How we test, and why
 ```
 
 ## Tech stack
@@ -74,7 +76,9 @@ pnpm --filter emailbot dev
 - `pnpm test` - run unit tests
 - `pnpm e2e` - run the website's Playwright suite against its production build in workerd; hermetic, third parties are fakes (see apps/web/README.md, Tests)
 - `pnpm --filter @workspace/emailing test:contract` - contract tests against the real Resend API (the scheduled `contract` workflow runs them; needs `RESEND_API_KEY` and `RESEND_CONTRACT_AUDIENCE_ID`)
-- `pnpm check` - run Ultracite checks
+- `pnpm check` - lint and format check (Biome via Ultracite; never type-checks)
+- `pnpm check-types` - type-check every package (tsc)
+- `pnpm syncpack` - check dependency versions are exact and consistent across packages
 - `pnpm fix` - format + fix lint issues
 
 ## Status
