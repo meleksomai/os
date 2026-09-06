@@ -82,7 +82,7 @@ Workers Builds (git integration):
 Cutover from Vercel happens in the Cloudflare dashboard:
 
 1. Verify the deployed Worker on its `workers.dev` URL.
-2. Remove the `www` CNAME to Vercel and add `www.somai.me` as a Custom Domain of the Worker.
+2. Remove the `www` CNAME to Vercel. `www.somai.me` is declared as a Custom Domain in `wrangler.jsonc` (`routes`), so the next deploy creates the DNS record and certificate; a deploy while the CNAME still exists fails with a "record already exists" error.
 3. Point the apex at a proxied placeholder record (`A 192.0.2.0`) with a Redirect Rule `https://somai.me/*` → `https://www.somai.me/${1}`.
 4. Enable HSTS under *SSL/TLS → Edge Certificates* (production sends `max-age=63072000` today; nothing in this repo sets it).
 5. Optionally enable Web Analytics (automatic setup, no code) and set `"workers_dev": false` in `wrangler.jsonc` so the site has a single origin.
