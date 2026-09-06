@@ -19,6 +19,11 @@
   },
   "overrides": [
     {
+      // The shared tsconfig presets are commented, as tsconfig.json may be
+      "includes": ["packages/typescript-config/*.json"],
+      "json": { "parser": { "allowComments": true } }
+    },
+    {
       // TanStack Router file-based routes use $params, [.] escapes, and {$param} patterns
       "includes": ["apps/web/src/routes/**"],
       "linter": {

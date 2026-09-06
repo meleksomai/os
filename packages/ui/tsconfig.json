@@ -1,21 +1,9 @@
 {
   "extends": "@workspace/typescript-config/react-library.json",
   "compilerOptions": {
-    "allowJs": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "*.ts",
-    "*.mts"
-  ],
-  "exclude": ["node_modules"]
+  "include": ["src", "tests", "*.ts", "*.mts"]
 }

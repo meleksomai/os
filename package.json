@@ -38,6 +38,9 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "workerd"
-    ]
+    ],
+    "overrides": {
+      "@types/node": "24.10.4"
+    }
   }
 }

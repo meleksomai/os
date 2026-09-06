@@ -11,7 +11,7 @@ import { createReplyContactAgent } from "./workflows/reply-contact-workflow";
  * Simple, educational architecture - easy to understand and extend
  */
 export class HelloEmailAgent extends Agent<Env, Memory> {
-  initialState: Memory = {
+  override initialState: Memory = {
     lastUpdated: null,
     messages: [],
     context: "",
@@ -69,7 +69,7 @@ export class HelloEmailAgent extends Agent<Env, Memory> {
   /**
    * Main entry point for handling incoming emails
    */
-  async _onEmail(email: AgentEmail): Promise<void> {
+  override async _onEmail(email: AgentEmail): Promise<void> {
     clearTranscript();
 
     // Migrate old instances

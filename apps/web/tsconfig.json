@@ -1,18 +1,11 @@
 {
-  "extends": "@workspace/typescript-config/base.json",
+  "extends": "@workspace/typescript-config/react-library.json",
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "erasableSyntaxOnly": true,
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"],
-      "content-collections": ["./.content-collections/generated"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"]
-    },
-    "types": ["vite/client"]
+      "content-collections": ["./.content-collections/generated"]
+    }
   },
   "include": [
     "mdx-plugin.ts",

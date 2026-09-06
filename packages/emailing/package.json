@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "check-types": "tsc --noEmit",
     "fake-resend": "node testing/fake-resend/serve.ts",
     "test": "vitest run --project unit --project integration",
     "test:contract": "vitest run --project contract",
