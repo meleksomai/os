@@ -13,5 +13,11 @@
     // Prerendered pages are flat .html files served at their extensionless URL.
     "html_handling": "drop-trailing-slash"
   },
-  "upload_source_maps": true
+  "upload_source_maps": true,
+  // Secrets are not stored here. The newsletter form needs RESEND_API_KEY and
+  // RESEND_SEGMENT_GENERAL: locally in .dev.vars (see .dev.vars.example), in
+  // production via `wrangler secret put <NAME>` or the Workers dashboard.
+  "secrets": {
+    "required": ["RESEND_API_KEY", "RESEND_SEGMENT_GENERAL"]
+  }
 }
