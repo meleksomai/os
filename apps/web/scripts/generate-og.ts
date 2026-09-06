@@ -1,14 +1,8 @@
 /**
- * Pre-renders the Open Graph images at build time (the previous deployment
- * rendered them per request with next/og). Runs on plain Node 24 — no
- * transpiler — and writes PNGs into public/og/ (gitignored).
- *
- * Output: public/og/{home,essays,papers}.png and public/og/essay-<slug>.png
- *
- * The essays come from the generated content collection, so
- * `pnpm run generate:content` runs first (see package.json). Only plain
- * modules may be value-imported from src/ (types are erased); anything that
- * uses Vite features such as import.meta.glob cannot run here.
+ * Renders the Open Graph images at build time (the previous deployment
+ * rendered them per request with next/og) into public/og/ (gitignored).
+ * Runs in Node inside the content-collections build; only plain modules may
+ * be value-imported from src/ (types are erased).
  *
  * TODO(#99): replace this build-time step with a request-time server route
  * (takumi-js ImageResponse, edge-cached), the pattern tanstack.com uses on
@@ -17,11 +11,9 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 import { Resvg } from "@resvg/resvg-js";
 import type { ReactNode } from "react";
 import satori from "satori";
-import { allEssays } from "../.content-collections/generated/index.js";
 import { siteConfig } from "../src/config/site.ts";
 
 interface OgTarget {
@@ -38,10 +30,10 @@ interface OgNode {
   };
 }
 
-const appRoot = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  ".."
-);
+// The app root: content-collections bundles this module into its cache, so
+// import.meta.url would point there; both the CLI and the Vite plugin run
+// from apps/web.
+const appRoot = process.cwd();
 const assetsDir = path.join(appRoot, "assets");
 const outputDir = path.join(appRoot, "public", "og");
 
@@ -179,14 +171,6 @@ async function renderPng(
 }
 
 /** One card per essay, from the collection content-collections.ts builds. */
-function essayTargets(): OgTarget[] {
-  return allEssays.map(({ slug, title, subtitle }) => ({
-    name: `essay-${slug}.png`,
-    title,
-    subtitle,
-  }));
-}
-
 const staticTargets: OgTarget[] = [
   {
     name: "home.png",
@@ -207,9 +191,22 @@ const staticTargets: OgTarget[] = [
   },
 ];
 
-async function main() {
-  const [fonts, essays] = await Promise.all([loadFonts(), essayTargets()]);
-  const targets = [...staticTargets, ...essays];
+/**
+ * Writes public/og/{home,essays,papers}.png and one card per essay. Called by
+ * the essays collection after each build (content-collections.ts).
+ */
+export async function generateOgImages(
+  essays: Array<{ slug: string; title: string; subtitle: string }>
+): Promise<void> {
+  const fonts = await loadFonts();
+  const targets = [
+    ...staticTargets,
+    ...essays.map(({ slug, title, subtitle }) => ({
+      name: `essay-${slug}.png`,
+      title,
+      subtitle,
+    })),
+  ];
 
   await mkdir(outputDir, { recursive: true });
   await Promise.all(
@@ -221,7 +218,6 @@ async function main() {
     })
   );
 
-  process.stdout.write(`Generated ${targets.length} OG images in public/og\n`);
+  process.stdout.write(`Generated ${targets.length} OG images in public/og
+`);
 }
-
-await main();

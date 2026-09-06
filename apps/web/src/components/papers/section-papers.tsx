@@ -1,5 +1,7 @@
 import { Heading2 } from "@workspace/ui/blocks/headings";
-import type { Paper } from "@/server/papers/schema";
+import type { Research } from "content-collections";
+
+type Paper = Research["papers"][number];
 
 export const PapersSection = ({ papers }: { papers: Paper[] }) => (
   <div className="flex flex-col gap-4">

@@ -1,16 +1,20 @@
 import {
+  createDefaultImport,
   defineCollection,
   defineConfig,
   defineSingleton,
 } from "@content-collections/core";
+import type { MDXContent } from "mdx/types";
 import readingTime from "reading-time";
 import { z } from "zod";
+import { generateOgImages } from "./scripts/generate-og";
 
 /**
- * The site's content, validated and shaped at build time. The generated
- * `content-collections` module (`allEssays`, `research`) is read only by
- * `src/server/<domain>/server.ts`, which import protection keeps out of the
- * client; a Biome rule (biome.jsonc) rejects the import anywhere else.
+ * The site's content, validated and shaped at build time into the generated
+ * `content-collections` module (`allEssays`, `research`), which the routes
+ * import directly. Each essay document carries its compiled MDX component
+ * (the pattern of content-collections' TanStack Start + Cloudflare sample),
+ * so the essays ship in the client bundle.
  */
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -36,7 +40,7 @@ const essayFrontmatter = z.object({
   content: z.string(),
 });
 
-/** What the pages need about an essay; this is the `Essay` type the app uses. */
+/** An essay as the pages use it: its frontmatter, derived fields, and its page component. */
 const essays = defineCollection({
   name: "essays",
   directory: "content",
@@ -51,8 +55,11 @@ const essays = defineCollection({
         new Date(frontmatter.publishedAt)
       ),
       readingTime: { text, minutes, time, words },
+      // The compiled MDX (mdx-plugin.ts), imported by the generated module.
+      mdx: createDefaultImport<MDXContent>(`../../content/${_meta.filePath}`),
     };
   },
+  onSuccess: (essays) => generateOgImages(essays),
 });
 
 /** A record of the Paperpile export in content/papers.json; only these fields are kept. */

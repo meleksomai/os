@@ -1,13 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { allEssays } from "content-collections";
 import { EssaySection } from "@/components/home/section-essays";
 import IntroSection from "@/components/home/section-intro";
 import { siteConfig } from "@/config/site";
 import { generateJsonLd, personJsonLd } from "@/lib/jsonld";
 import { generateSeo } from "@/lib/seo";
-import { fetchAllEssays } from "@/server/essays/functions";
 
 export const Route = createFileRoute("/")({
-  loader: () => fetchAllEssays(),
   head: () => ({
     ...generateSeo({
       title: "Home",
@@ -21,8 +20,9 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const essays = Route.useLoaderData();
-  const featured = essays.filter((essay) => essay.featured);
+  const featured = allEssays
+    .filter((essay) => essay.featured)
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 
   return (
     <div className="space-y-18 py-12 md:space-y-20 lg:space-y-24">

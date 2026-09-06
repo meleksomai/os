@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { research } from "content-collections";
 import { HeaderSection } from "@/components/papers/section-header";
 import { PapersSection } from "@/components/papers/section-papers";
 import { generateSeo } from "@/lib/seo";
-import { fetchPapers } from "@/server/papers/functions";
 
 export const Route = createFileRoute("/papers")({
-  loader: () => fetchPapers(),
   head: () =>
     generateSeo({
       title: "Research Papers",
@@ -18,7 +17,7 @@ export const Route = createFileRoute("/papers")({
 });
 
 function PapersPage() {
-  const papers = Route.useLoaderData();
+  const papers = research.papers;
 
   return (
     <div className="flex flex-col gap-20">

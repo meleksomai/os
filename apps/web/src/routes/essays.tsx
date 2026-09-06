@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { allEssays } from "content-collections";
 import { EssaysSection } from "@/components/essays/section-essays";
 import { HeaderSection } from "@/components/essays/section-header";
 import { generateSeo } from "@/lib/seo";
-import { fetchAllEssays } from "@/server/essays/functions";
 
 export const Route = createFileRoute("/essays")({
-  loader: () => fetchAllEssays(),
   head: () =>
     generateSeo({
       title: "Essays",
@@ -18,7 +17,9 @@ export const Route = createFileRoute("/essays")({
 });
 
 function EssaysPage() {
-  const posts = Route.useLoaderData();
+  const posts = [...allEssays].sort((a, b) =>
+    b.publishedAt.localeCompare(a.publishedAt)
+  );
 
   return (
     <div className="flex flex-col gap-20">

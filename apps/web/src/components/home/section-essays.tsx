@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Heading2, Heading3 } from "@workspace/ui/blocks/headings";
 import { ArrowRightIcon } from "@workspace/ui/components/icons";
 import { useReveal } from "@workspace/ui/hooks/use-reveal";
-import type { Essay } from "@/server/essays/schema";
+import type { Essay } from "content-collections";
 
 export function EssaySection({ essays }: { essays?: Essay[] }) {
   const { ref, isVisible } = useReveal(0.2);
