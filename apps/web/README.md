@@ -35,6 +35,7 @@ scripts/            generate-og.ts — runs on plain Node 24 (no transpiler)
 tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), setup.ts, shared helpers
 content-collections.ts  content layer: essays collection + research (papers) singleton, zod schemas, build-time transforms
 mdx-plugin.ts       MDX → page components, shared by vite.config.ts and vitest.config.ts
+components.json     shadcn CLI config for this app; `rsc: true` only makes the CLI add `"use client"` to components it generates, which is inert under Vite/TanStack Start unless Start's RSC mode is enabled
 .content-collections/   generated (gitignored): `pnpm run generate:content`, also run by dev/build/test/check-types
 src/
   router.tsx        getRouter(): preload on intent, error/not-found defaults
