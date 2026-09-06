@@ -21,14 +21,8 @@ test-results
 # Turbo
 .turbo
 
-# Vercel
-.vercel
-
 # Build Outputs
 .react-email/
-.next/
-next-env.d.ts
-out/
 build
 dist
 
@@ -46,7 +40,7 @@ npm-debug.log*
 .tsconfig.tsbuildinfo
 
 
-# Cloudflare workers
+# Cloudflare Workers
 .dev.vars*
 !.dev.vars.example
-.wrangler
+.wrangler/

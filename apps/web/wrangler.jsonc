@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "somai-me",
+  "main": "@tanstack/react-start/server-entry",
+  // Dates from 2026-08-04 enable Node.js compatibility (and process.env
+  // populated from secrets) without a flag. Keep it at or before the workerd
+  // release bundled by the pinned @cloudflare/vite-plugin.
+  "compatibility_date": "2026-09-01",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    // Prerendered pages are flat .html files served at their extensionless URL.
+    "html_handling": "drop-trailing-slash"
+  },
+  "upload_source_maps": true,
+  // Secrets are not stored here. The newsletter form needs RESEND_API_KEY and
+  // RESEND_SEGMENT_GENERAL: locally in .dev.vars (see .dev.vars.example), in
+  // production via `wrangler secret put <NAME>` or the Workers dashboard.
+  "secrets": {
+    "required": ["RESEND_API_KEY", "RESEND_SEGMENT_GENERAL"]
+  }
+}

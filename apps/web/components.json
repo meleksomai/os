@@ -5,14 +5,13 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "../packages/ui/src/styles/globals.css",
+    "css": "../../packages/ui/src/styles/globals.css",
     "baseColor": "stone",
     "cssVariables": true
   },
   "iconLibrary": "hugeicons",
   "aliases": {
     "components": "@/components",
-    "hooks": "@/hooks",
     "lib": "@/lib",
     "utils": "@workspace/ui/lib/utils",
     "ui": "@workspace/ui/components"

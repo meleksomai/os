@@ -1,0 +1,7 @@
+# Local environment for `pnpm dev` / `vite preview`.
+# Copy to .dev.vars and fill in real values. In production these are set as
+# Cloudflare Worker secrets (wrangler secret put <NAME>).
+
+# Resend (newsletter subscription form)
+RESEND_API_KEY=
+RESEND_SEGMENT_GENERAL=

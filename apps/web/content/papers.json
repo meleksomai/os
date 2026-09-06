@@ -1,0 +1,2046 @@
+{
+  "papers": [
+    {
+      "_id": "09b286b6-23eb-0654-b9d2-302362e7f8e8",
+      "abstract": "Importance: Accurate prediction of surgical case duration is critical for operating room (OR) management, as inefficient scheduling can lead to reduced patient and surgeon satisfaction while incurring considerable financial costs. Objective: To evaluate the feasibility and accuracy of large language models (LLMs) in predicting surgical case length using unstructured clinical data compared to existing estimation methods. Design, Setting, and Participants: This was a retrospective study analyzing elective surgical cases performed between January 2017 and December 2023 at a single academic medical center and affiliated community hospital ORs. Analysis included 125 493 eligible surgical cases, with 1950 used for LLM fine-tuning and 2500 for evaluation. An additional 500 cases from a community site were used for external validation. Cases were randomly sampled using strata to ensure representation across surgical specialties. Exposures: Eleven LLMs, including base models (GPT-4, GPT-3.5, Mistral, Llama-3, Phi-3) and 2 fine-tuned variants (GPT-4 fine-tuned, GPT-3.5 fine-tuned), were used to predict surgical case length based on clinical notes. Main Outcomes and Measures: The primary outcome was average error between predicted and actual surgical case length (wheels-in to wheels-out time). The secondary outcome was prediction accuracy, defined as predicted length within 20% of actual duration. Results: Fine-tuned GPT-4 achieved the best performance with a mean absolute error (MAE) of 47.64 minutes (95% CI, 45.71-49.56) and R2 of 0.61, matching the performance of current OR scheduling (MAE, 49.34 minutes; 95% CI, 47.60-51.09; R2, 0.63; P = .10). Both GPT-4 fine-tuned and GPT-3.5 fine-tuned significantly outperformed current scheduling methods in accuracy (46.12% and 46.08% vs 40.92%, respectively; P < .001). GPT-4 fine-tuned outperformed all other models during external validation with similar performance metrics (MAE, 48.66 minutes; 95% CI, 45.31-52.00; accuracy, 46.0%). Base models demonstrated variable performance, with GPT-4 showing the highest performance among non-fine-tuned models (MAE, 59.20 minutes; 95% CI, 56.88 - 61.52). Conclusion and Relevance: The findings in this study suggest that fine-tuned LLMs can predict surgical case length with accuracy comparable to or exceeding current institutional scheduling methods. This indicates potential for LLMs to enhance operating room efficiency through improved case length prediction using existing clinical documentation.",
+      "author": [
+        {
+          "first": "Adhitya",
+          "last": "Ramamurthi",
+          "initials": "A",
+          "formatted": "Ramamurthi A"
+        },
+        {
+          "first": "Bhabishya",
+          "last": "Neupane",
+          "initials": "B",
+          "formatted": "Neupane B"
+        },
+        {
+          "first": "Priya",
+          "last": "Deshpande",
+          "initials": "P",
+          "formatted": "Deshpande P"
+        },
+        {
+          "first": "Ryan",
+          "last": "Hanson",
+          "initials": "R",
+          "formatted": "Hanson R"
+        },
+        {
+          "first": "Srujan",
+          "last": "Vegesna",
+          "initials": "S",
+          "formatted": "Vegesna S"
+        },
+        {
+          "first": "Deborah",
+          "last": "Cray",
+          "initials": "D",
+          "formatted": "Cray D"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Kellie R",
+          "last": "Brown",
+          "initials": "KR",
+          "formatted": "Brown KR"
+        },
+        {
+          "first": "Sachin S",
+          "last": "Pawar",
+          "initials": "SS",
+          "formatted": "Pawar SS"
+        },
+        {
+          "first": "Bradley",
+          "last": "Taylor",
+          "initials": "B",
+          "formatted": "Taylor B"
+        },
+        {
+          "first": "Anai N",
+          "last": "Kothari",
+          "initials": "AN",
+          "formatted": "Kothari AN"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1001/jamasurg.2025.2154",
+      "citekey": "Ramamurthi2025-gr",
+      "created": 1765220733.4369998,
+      "doi": "10.1001/jamasurg.2025.2154",
+      "dup_sha1": "136e2645378a859274efcffdb1ad3968ea8d193e",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:de35442a2c19e573c83ed6a5fb856be22696460d",
+        "dup_sha1:136e2645378a859274efcffdb1ad3968ea8d193e",
+        "doi:10.1001/jamasurg.2025.2154",
+        "pmc:PMC12242817",
+        "pmid:40632526",
+        "url:http://dx.doi.org/10.1001/jamasurg.2025.2154",
+        "url:https://jamanetwork.com/journals/jamasurgery/fullarticle/2835953",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/40632526",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12242817"
+      ],
+      "incomplete": 0,
+      "issn": "2168-6254",
+      "issn_alt": "2168-6262",
+      "issue": "8",
+      "journal": "JAMA Surg.",
+      "journalfull": "JAMA surgery",
+      "kind": "Commentary",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "894-902",
+      "pmc": "PMC12242817",
+      "pmid": "40632526",
+      "pub_id": "4515eb51-dd38-02a6-b674-a8844527fd10",
+      "published": {
+        "year": "2025",
+        "month": "8",
+        "day": "1"
+      },
+      "publisher": "American Medical Association (AMA)",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "de35442a2c19e573c83ed6a5fb856be22696460d",
+      "subfolders": ["All Papers/R"],
+      "title": "Applying large language models for surgical case length prediction",
+      "url": [
+        "https://jamanetwork.com/journals/jamasurgery/fullarticle/2835953",
+        "http://dx.doi.org/10.1001/jamasurg.2025.2154",
+        "https://www.ncbi.nlm.nih.gov/pubmed/40632526",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12242817"
+      ],
+      "volume": "160",
+      "xref": [
+        {
+          "type": "CommentOn",
+          "pmid": "40632543"
+        }
+      ]
+    },
+    {
+      "_id": "557fa92d-e37e-0d1d-8206-700bb3a72477",
+      "abstract": "Large language models (LLMs) have emerged as a popular resource for generating information relevant to a user query. Such models are created through a resource-intensive training process utilizing an extensive, static corpus of textual data. This static nature results in limitations for adoption in domains with rapidly changing knowledge, proprietary information, and sensitive data. In this work, methods are outlined for augmenting general-purpose LLMs, known as foundation models, with domain-specific information using an embeddings-based approach for incorporating up-to-date, peer-reviewed scientific manuscripts. This is achieved through open-source tools such as Llama-Index and publicly available models such as Llama-2 to maximize transparency, user privacy and control, and replicability. While scientific manuscripts are used as an example use case, this approach can be extended to any text data source. Additionally, methods for evaluating model performance following this enhancement are discussed. These methods enable the rapid development of LLM systems for highly specialized domains regardless of the comprehensiveness of information in the training corpus.",
+      "author": [
+        {
+          "first": "Nathan M",
+          "last": "Wolfrath",
+          "initials": "NM",
+          "formatted": "Wolfrath NM"
+        },
+        {
+          "first": "Nathaniel B",
+          "last": "Verhagen",
+          "initials": "NB",
+          "formatted": "Verhagen NB"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Anai N",
+          "last": "Kothari",
+          "initials": "AN",
+          "formatted": "Kothari AN"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.3791/66796",
+      "citekey": "Wolfrath2024-zw",
+      "created": 1765220733.4359999,
+      "doi": "10.3791/66796",
+      "dup_sha1": "fe4ff7111a96c1dea7a617c327c4ae957d4cfe67",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:281106cda9a35bb8e3974efded46bfe0f7f6d36f",
+        "dup_sha1:fe4ff7111a96c1dea7a617c327c4ae957d4cfe67",
+        "doi:10.3791/66796",
+        "pmid:39714043",
+        "url:http://dx.doi.org/10.3791/66796",
+        "url:https://app.jove.com/t/66796/augmenting-large-language-models-via-vector-embeddings-to-improve",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/39714043"
+      ],
+      "incomplete": 0,
+      "issn": "1940-087X",
+      "issue": "214",
+      "journal": "J. Vis. Exp.",
+      "journalfull": "Journal of visualized experiments: JoVE",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "e66796",
+      "pmid": "39714043",
+      "pub_id": "6536bff9-b5c1-0959-a42e-fbf962081a62",
+      "published": {
+        "year": "2024",
+        "month": "12",
+        "day": "6"
+      },
+      "publisher": "MyJove Corporation",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "281106cda9a35bb8e3974efded46bfe0f7f6d36f",
+      "subfolders": ["All Papers/W"],
+      "title": "Augmenting large language models via vector embeddings to improve domain-specific responsiveness",
+      "url": [
+        "https://app.jove.com/t/66796/augmenting-large-language-models-via-vector-embeddings-to-improve",
+        "http://dx.doi.org/10.3791/66796",
+        "https://www.ncbi.nlm.nih.gov/pubmed/39714043"
+      ]
+    },
+    {
+      "_id": "dd199af8-721e-03ac-95ae-15d0b495bb7f",
+      "author": [
+        {
+          "last": "Abbasi",
+          "first": "Mohammad Hossein",
+          "orcid": "0000-0001-5812-2359",
+          "initials": "MH",
+          "formatted": "Abbasi MH"
+        },
+        {
+          "last": "Somai",
+          "first": "Melek",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "last": "Saber",
+          "first": "Hamidreza",
+          "initials": "H",
+          "formatted": "Saber H"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1016/j.ibmed.2024.100179",
+      "citekey": "Abbasi2024-du",
+      "copyright": "http://creativecommons.org/licenses/by-nc-nd/4.0/",
+      "created": 1765220733.4349997,
+      "doi": "10.1016/j.ibmed.2024.100179",
+      "dup_sha1": "b8a61f59f823072584968ffd646e707ee4d6a695",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:07ed03cf385c02fdbd5979ac93009962866b3f40",
+        "dup_sha1:b8a61f59f823072584968ffd646e707ee4d6a695",
+        "doi:10.1016/j.ibmed.2024.100179",
+        "url:http://dx.doi.org/10.1016/j.ibmed.2024.100179",
+        "url:https://linkinghub.elsevier.com/retrieve/pii/S2666521224000462"
+      ],
+      "incomplete": 0,
+      "issn": "2666-5212",
+      "issue": "100179",
+      "journal": "Intell. Based Med.",
+      "journalfull": "Intelligence-based medicine",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "100179",
+      "pub_id": "631b8f96-4fe5-0f1c-a20b-bef316c6ba16",
+      "published": {
+        "year": "2024"
+      },
+      "publisher": "Elsevier BV",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "07ed03cf385c02fdbd5979ac93009962866b3f40",
+      "subfolders": ["All Papers/A"],
+      "title": "The trend of artificial intelligence application in medicine and neurology; the state-of-the-art systematic scoping review 2010–2022",
+      "url": [
+        "https://linkinghub.elsevier.com/retrieve/pii/S2666521224000462",
+        "http://dx.doi.org/10.1016/j.ibmed.2024.100179"
+      ],
+      "volume": "10"
+    },
+    {
+      "_id": "303ad52d-5cf6-068c-9133-e87f4ed99e95",
+      "abstract": "OBJECTIVES: Transitions of care are pivotal, vulnerable times as patients are discharged from the hospital. Telephonic care coordination is standard care, but labor intensive. We implemented a patient postdischarge digital engagement (PDDE) program to scale coordination. We hypothesized that PDDE could reduce readmissions for low-risk patients and supplement care coordination for medium- and high-risk patients. STUDY DESIGN: Pragmatic, stepped-wedge cluster randomization trial with 5 implementation waves based upon primary care clinic region. METHODS: All inpatient hospital discharges between March 2020 and November 2020 were stratified by readmission risk. Low-risk patients were offered access to PDDE, and moderate-risk and high-risk patients were offered access to PDDE and care coordination. Readmission was defined as an unplanned inpatient admission within 30 days from discharge. An intention-to-treat primary analysis was conducted using mixed-effects logistic regression clustering for wave; a treatment-on-the-treated analysis was also conducted to assess the impact among program users. RESULTS: A total of 5490 patient discharges were examined (2735 control; 2755 intervention); 1949 patients were high risk, 2032 were medium risk, and 1509 were low risk. PDDE intervention did not significantly affect readmission among low-risk (95% CI, -0.23 to 0.90; P = .23), medium-risk (95% CI, -0.14 to 0.60; P = .21), and high-risk (95% CI, -0.32 to 0.64; P = .48) groups after adjustment for time and patient factors. In a treatment-on-the-treated analysis, among patients who activated the PDDE program, readmission was also similar among the low-, medium-, and high-risk cohorts. CONCLUSIONS: Our study expanded resource-limited care coordination by offering low-risk patients a service they were unable to receive previously while having no impact on readmission. PDDE efficiently provided additional touch points between patients and providers.",
+      "author": [
+        {
+          "first": "Alexandra",
+          "last": "Polovneff",
+          "initials": "A",
+          "formatted": "Polovneff A"
+        },
+        {
+          "first": "Neemit",
+          "last": "Shah",
+          "initials": "N",
+          "formatted": "Shah N"
+        },
+        {
+          "first": "Abhishek",
+          "last": "Janardan",
+          "initials": "A",
+          "formatted": "Janardan A"
+        },
+        {
+          "first": "Erika",
+          "last": "Smith",
+          "initials": "E",
+          "formatted": "Smith E"
+        },
+        {
+          "first": "Ivan",
+          "last": "Pasillas",
+          "initials": "I",
+          "formatted": "Pasillas I"
+        },
+        {
+          "first": "Natalie",
+          "last": "Mortensen",
+          "initials": "N",
+          "formatted": "Mortensen N"
+        },
+        {
+          "first": "Jeana M",
+          "last": "Holt",
+          "initials": "JM",
+          "formatted": "Holt JM"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Rodney",
+          "last": "Sparapani",
+          "initials": "R",
+          "formatted": "Sparapani R"
+        },
+        {
+          "first": "Bradley",
+          "last": "Crotty",
+          "initials": "B",
+          "formatted": "Crotty B"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.37765/ajmc.2024.89498",
+      "citekey": "Polovneff2024-qs",
+      "created": 1765220733.4339998,
+      "doi": "10.37765/ajmc.2024.89498",
+      "dup_sha1": "f0dcd582cc5b1e0e60ada38f0e4b66dcda070ca1",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:65beedc2da89cadee221245addec227c78d1a318",
+        "dup_sha1:f0dcd582cc5b1e0e60ada38f0e4b66dcda070ca1",
+        "doi:10.37765/ajmc.2024.89498",
+        "pmid:38381546",
+        "url:http://dx.doi.org/10.37765/ajmc.2024.89498",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/38381546"
+      ],
+      "incomplete": 0,
+      "issn": "1088-0224",
+      "issn_alt": "1936-2692",
+      "issue": "2",
+      "journal": "Am. J. Manag. Care",
+      "journalfull": "The American journal of managed care",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "e32-e38",
+      "pmid": "38381546",
+      "pub_id": "242549e0-4bbc-0771-8d04-b0b064a1e97d",
+      "published": {
+        "year": "2024",
+        "month": "2",
+        "day": "1"
+      },
+      "publisher": "Clinical Care Targeted Communications Group, LLC",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "65beedc2da89cadee221245addec227c78d1a318",
+      "subfolders": ["All Papers/P"],
+      "title": "Scaling care coordination through digital engagement: stepped-wedge trial assessing readmissions",
+      "url": [
+        "https://www.ajmc.com/view/scaling-care-coordination-through-digital-engagement-stepped-wedge-trial-assessing-readmissions",
+        "http://dx.doi.org/10.37765/ajmc.2024.89498",
+        "https://www.ncbi.nlm.nih.gov/pubmed/38381546"
+      ],
+      "volume": "30"
+    },
+    {
+      "_id": "26ad008d-cc70-0f1e-8d69-570d3746b500",
+      "abstract": "Few data exist that highlight areas where telemedicine shines or struggles from the patient perspective. We conducted a retrospective analysis of patient experience data from 19,465 visits using a logistic regression to model the odds a virtual visit addressed a patient's medical needs. Patient age (80 years: OR 0.58; 95% CI, 0.50-0.67 vs 40-64 years), race (Black: 0.68; 95% CI, 0.60-0.76 vs White), and connection (telephone conversion: OR 0.59; 95% CI, 0.53-0.66 vs video success) were associated with a lower likelihood of addressing medical needs; results varied modestly across specialties. These data suggest that while telehealth is generally well accepted by patients, differences are seen among patient factors and specialty.",
+      "author": [
+        {
+          "first": "Obinnaya",
+          "last": "Wamuo",
+          "initials": "O",
+          "formatted": "Wamuo O"
+        },
+        {
+          "first": "Noorie",
+          "last": "Hyun",
+          "initials": "N",
+          "formatted": "Hyun N"
+        },
+        {
+          "first": "Jeana M",
+          "last": "Holt",
+          "initials": "JM",
+          "formatted": "Holt JM"
+        },
+        {
+          "first": "Melek M",
+          "last": "Somai",
+          "initials": "MM",
+          "formatted": "Somai MM"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "orcid": "0000-0001-6271-4816",
+          "formatted": "Crotty BH"
+        }
+      ],
+      "autoCleaned": 1,
+      "citekey": "Wamuo2023-di",
+      "created": 1765220733.4329998,
+      "dup_sha1": "919dbfa5a0ceb4f407ce2810f53a818077658d4e",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:823be544c2d617382ff6c05930df9eada87bf979",
+        "dup_sha1:919dbfa5a0ceb4f407ce2810f53a818077658d4e",
+        "pmid:37141478",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/37141478"
+      ],
+      "incomplete": 0,
+      "issn": "1098-1861",
+      "issn_alt": "2379-3961",
+      "issue": "2",
+      "journal": "WMJ",
+      "journalfull": "WMJ: official publication of the State Medical Society of Wisconsin",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "124-126",
+      "pmid": "37141478",
+      "pub_id": "04a70434-a268-0a26-b68b-e736f9ae38f2",
+      "published": {
+        "year": "2023",
+        "month": "5"
+      },
+      "pubtype": "PP_ARTICLE",
+      "sha1": "823be544c2d617382ff6c05930df9eada87bf979",
+      "subfolders": ["All Papers/W"],
+      "title": "Patient and provider factors associated with successfully addressing medical needs using telehealth: A cross-sectional survey",
+      "url": ["https://www.ncbi.nlm.nih.gov/pubmed/37141478"],
+      "volume": "122"
+    },
+    {
+      "_id": "6dc237da-99a8-02e6-ab5a-022982bf344b",
+      "abstract": "OBJECTIVES: While patient interest in telehealth increases, clinicians' perspectives may influence longer-term adoption. We sought to identify facilitators and barriers to continued clinician incorporation of telehealth into practice. METHODS: A cross-sectional 24-item web-based survey was emailed to 491 providers with ≥50 video visits (VVs) within an academic health system between 1 March 2020 and 31 December 2020. We quantitatively summarised the characteristics and perceptions of respondents by using descriptive and test statistics. We used systematic content analysis to qualitatively code open-ended responses, double coding at least 25%. RESULTS: 247 providers (50.3%) responded to the survey. Seventy-nine per cent were confident in their ability to deliver excellent clinical care through VV. In comparison, 48% were confident in their ability to troubleshoot technical issues. Most clinicians (87%) expressed various concerns about VV. Providers across specialties generally agreed that VV reduced infection risk (71%) and transportation barriers (71%). Three overarching themes in the qualitative data included infrastructure and training, usefulness and expectation setting for patients and providers. DISCUSSION: As healthcare systems plan for future delivery directions, they must address the tension between patients' and providers' expectations of care within the digital space. Telehealth creates new friction, one where the healthcare system must fit into the patient's life rather than the usual dynamic of the patient fitting into the healthcare system. CONCLUSION: Telehealth infrastructure and patient and clinician technological acumen continue to evolve. Clinicians in this survey offered valuable insights into the directions healthcare organisations can take to right-size this healthcare delivery modality.",
+      "author": [
+        {
+          "first": "Jeana M",
+          "last": "Holt",
+          "initials": "JM",
+          "orcid": "0000-0003-3392-0164",
+          "formatted": "Holt JM"
+        },
+        {
+          "first": "Rachel",
+          "last": "Cusatis",
+          "initials": "R",
+          "formatted": "Cusatis R"
+        },
+        {
+          "first": "Natalie",
+          "last": "Mortensen",
+          "initials": "N",
+          "formatted": "Mortensen N"
+        },
+        {
+          "first": "Nathan",
+          "last": "Wolfrath",
+          "initials": "N",
+          "formatted": "Wolfrath N"
+        },
+        {
+          "first": "Noorie",
+          "last": "Hyun",
+          "initials": "N",
+          "formatted": "Hyun N"
+        },
+        {
+          "first": "Aaron N",
+          "last": "Winn",
+          "initials": "AN",
+          "formatted": "Winn AN"
+        },
+        {
+          "first": "Sherry-Ann",
+          "last": "Brown",
+          "initials": "SA",
+          "formatted": "Brown SA"
+        },
+        {
+          "first": "Melek M",
+          "last": "Somai",
+          "initials": "MM",
+          "formatted": "Somai MM"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1136/bmjhci-2022-100626",
+      "citekey": "Holt2022-km",
+      "created": 1765220733.4309998,
+      "doi": "10.1136/bmjhci-2022-100626",
+      "dup_sha1": "6e1112166ede7913c96639cd28674fa23f85f2b3",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:291cd061a4e5a883ff47ac3ddddea4583d559c0c",
+        "dup_sha1:6e1112166ede7913c96639cd28674fa23f85f2b3",
+        "doi:10.1136/bmjhci-2022-100626",
+        "pmc:PMC9791455",
+        "pmid:36564094",
+        "url:http://dx.doi.org/10.1136/bmjhci-2022-100626",
+        "url:https://informatics.bmj.com/lookup/doi/10.1136/bmjhci-2022-100626",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/36564094",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9791455"
+      ],
+      "incomplete": 0,
+      "issn": "2632-1009",
+      "issue": "1",
+      "journal": "BMJ Health Care Inform.",
+      "journalfull": "BMJ health & care informatics",
+      "keywords": "delivery of health care; health communication; outcome and process assessment, health care; patient-centered care; telemedicine",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "e100626",
+      "pmc": "PMC9791455",
+      "pmid": "36564094",
+      "pub_id": "087ca259-c52e-0446-bc38-3be51f5b4bd4",
+      "published": {
+        "year": "2022",
+        "month": "12"
+      },
+      "publisher": "BMJ",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "291cd061a4e5a883ff47ac3ddddea4583d559c0c",
+      "subfolders": ["All Papers/H"],
+      "title": "Twenty-first century house calls: a survey of ambulatory care providers to inform organisational telehealth strategy",
+      "url": [
+        "https://informatics.bmj.com/lookup/doi/10.1136/bmjhci-2022-100626",
+        "http://dx.doi.org/10.1136/bmjhci-2022-100626",
+        "https://www.ncbi.nlm.nih.gov/pubmed/36564094",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9791455"
+      ],
+      "volume": "29"
+    },
+    {
+      "_id": "8035f3c6-c994-0782-8cd7-5ef53daaf21c",
+      "abstract": "Metformin, a diabetes drug with anti-aging cellular responses, has complex actions that may alter dementia onset. Mixed results are emerging from prior observational studies. To address this complexity, we deploy a causal inference approach accounting for the competing risk of death in emulated clinical trials using two distinct electronic health record systems. In intention-to-treat analyses, metformin use associates with lower hazard of all-cause mortality and lower cause-specific hazard of dementia onset, after accounting for prolonged survival, relative to sulfonylureas. In parallel systems pharmacology studies, the expression of two AD-related proteins, APOE and SPP1, was suppressed by pharmacologic concentrations of metformin in differentiated human neural cells, relative to a sulfonylurea. Together, our findings suggest that metformin might reduce the risk of dementia in diabetes patients through mechanisms beyond glycemic control, and that SPP1 is a candidate biomarker for metformin's action in the brain.",
+      "author": [
+        {
+          "first": "Marie-Laure",
+          "last": "Charpignon",
+          "initials": "ML",
+          "orcid": "0000-0002-5786-2627",
+          "formatted": "Charpignon ML"
+        },
+        {
+          "first": "Bella",
+          "last": "Vakulenko-Lagun",
+          "initials": "B",
+          "formatted": "Vakulenko-Lagun B"
+        },
+        {
+          "first": "Bang",
+          "last": "Zheng",
+          "initials": "B",
+          "orcid": "0000-0003-1814-6692",
+          "formatted": "Zheng B"
+        },
+        {
+          "first": "Colin",
+          "last": "Magdamo",
+          "initials": "C",
+          "formatted": "Magdamo C"
+        },
+        {
+          "first": "Bowen",
+          "last": "Su",
+          "initials": "B",
+          "formatted": "Su B"
+        },
+        {
+          "first": "Kyle",
+          "last": "Evans",
+          "initials": "K",
+          "formatted": "Evans K"
+        },
+        {
+          "first": "Steve",
+          "last": "Rodriguez",
+          "initials": "S",
+          "formatted": "Rodriguez S"
+        },
+        {
+          "first": "Artem",
+          "last": "Sokolov",
+          "initials": "A",
+          "orcid": "0000-0002-8056-0504",
+          "formatted": "Sokolov A"
+        },
+        {
+          "first": "Sarah",
+          "last": "Boswell",
+          "initials": "S",
+          "orcid": "0000-0002-3118-3378",
+          "formatted": "Boswell S"
+        },
+        {
+          "first": "Yi-Han",
+          "last": "Sheu",
+          "initials": "YH",
+          "formatted": "Sheu YH"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Lefkos",
+          "last": "Middleton",
+          "initials": "L",
+          "formatted": "Middleton L"
+        },
+        {
+          "first": "Bradley T",
+          "last": "Hyman",
+          "initials": "BT",
+          "orcid": "0000-0002-7959-9401",
+          "formatted": "Hyman BT"
+        },
+        {
+          "first": "Rebecca A",
+          "last": "Betensky",
+          "initials": "RA",
+          "formatted": "Betensky RA"
+        },
+        {
+          "first": "Stan N",
+          "last": "Finkelstein",
+          "initials": "SN",
+          "formatted": "Finkelstein SN"
+        },
+        {
+          "first": "Roy E",
+          "last": "Welsch",
+          "initials": "RE",
+          "formatted": "Welsch RE"
+        },
+        {
+          "first": "Ioanna",
+          "last": "Tzoulaki",
+          "initials": "I",
+          "orcid": "0000-0002-4275-9328",
+          "formatted": "Tzoulaki I"
+        },
+        {
+          "first": "Deborah",
+          "last": "Blacker",
+          "initials": "D",
+          "formatted": "Blacker D"
+        },
+        {
+          "first": "Sudeshna",
+          "last": "Das",
+          "initials": "S",
+          "orcid": "0000-0002-9486-6811",
+          "formatted": "Das S"
+        },
+        {
+          "first": "Mark W",
+          "last": "Albers",
+          "initials": "MW",
+          "orcid": "0000-0001-7855-3455",
+          "formatted": "Albers MW"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1038/s41467-022-35157-w",
+      "citekey": "Charpignon2022-bu",
+      "copyright": "https://creativecommons.org/licenses/by/4.0",
+      "created": 1765220733.4299998,
+      "doi": "10.1038/s41467-022-35157-w",
+      "dup_sha1": "1c04fc64f29649714f7acc6d353bb49a30a508ba",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:7b3ffbe88c6926ebf916bbf7b8e2c40bf88e8e12",
+        "dup_sha1:1c04fc64f29649714f7acc6d353bb49a30a508ba",
+        "doi:10.1038/s41467-022-35157-w",
+        "pmc:PMC9741618",
+        "pmid:36496454",
+        "url:http://dx.doi.org/10.1038/s41467-022-35157-w",
+        "url:https://www.nature.com/articles/s41467-022-35157-w",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/36496454",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9741618"
+      ],
+      "incomplete": 0,
+      "issn": "2041-1723",
+      "issue": "1",
+      "journal": "Nat. Commun.",
+      "journalfull": "Nature communications",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "number": "7652",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "7652",
+      "pmc": "PMC9741618",
+      "pmid": "36496454",
+      "pub_id": "99f01129-cf3a-0359-b5f1-7f0f72165a8c",
+      "published": {
+        "year": "2022",
+        "month": "12",
+        "day": "10"
+      },
+      "publisher": "Springer Science and Business Media LLC",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "7b3ffbe88c6926ebf916bbf7b8e2c40bf88e8e12",
+      "subfolders": ["All Papers/C"],
+      "title": "Causal inference in medical records and complementary systems pharmacology for metformin drug repurposing towards dementia",
+      "url": [
+        "https://www.nature.com/articles/s41467-022-35157-w",
+        "http://dx.doi.org/10.1038/s41467-022-35157-w",
+        "https://www.ncbi.nlm.nih.gov/pubmed/36496454",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9741618"
+      ],
+      "volume": "13"
+    },
+    {
+      "_id": "7ff8e193-1f6f-0f6a-aeed-f1124724baab",
+      "abstract": "OBJECTIVE: Use the RE-AIM framework to examine the implementation of a patient contextual data (PCD) Tool designed to share patients' needs, values, and preferences with care teams ahead of clinical encounters. MATERIALS & METHODS: Observational study that follows initial PCD Tool scaling across primary care at a Midwestern academic health network. Program invitations, enrollment, patient submissions, and clinician views were tracked over a 1-year study period. Logistic regression modeled the likelihood of using the PCD Tool, accounting for patient covariates. RESULTS: Of 58,874 patients who could be contacted by email, 9,183 (15.6%) became PCD Tool users. Overall, 76% of primary care providers had patients who used the PCD Tool. Older age, female gender, non-minority race, patient portal activation, and Medicare coverage were significantly associated with increased likelihood of use. Number of office visits, medical issues, and behavioral health conditions also associated with use. Primary care staff viewed 18.7% of available PCD Tool summaries, 1.1% to 57.6% per clinic. DISCUSSION: The intervention mainly reached non-minority patients and patients who used more health services. Given the requirement for an email address on file, some patients may have been underrepresented. Overall, patient reach and adoption and clinician adoption, implementation, and maintenance of this Tool were modest but stable, consistent with a non-directive approach to fostering adoption by introducing the Tool in the absence of clear expectations for use. CONCLUSION: Healthcare organizations must implement effective methods to increase the reach, adoption, implementation, and maintenance of PCD tools across all patient populations. Assisting people, particularly racial minorities, with PCD Tool registration and actively supporting clinician use are critical steps in implementing technology that facilitates care.",
+      "author": [
+        {
+          "first": "Jeana M",
+          "last": "Holt",
+          "initials": "JM",
+          "formatted": "Holt JM"
+        },
+        {
+          "first": "Charles",
+          "last": "Spanbauer",
+          "initials": "C",
+          "formatted": "Spanbauer C"
+        },
+        {
+          "first": "Rachel",
+          "last": "Cusatis",
+          "initials": "R",
+          "formatted": "Cusatis R"
+        },
+        {
+          "first": "Aaron N",
+          "last": "Winn",
+          "initials": "AN",
+          "formatted": "Winn AN"
+        },
+        {
+          "first": "Akkeneel",
+          "last": "Talsma",
+          "initials": "A",
+          "formatted": "Talsma A"
+        },
+        {
+          "first": "Onur",
+          "last": "Asan",
+          "initials": "O",
+          "formatted": "Asan O"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Ryan",
+          "last": "Hanson",
+          "initials": "R",
+          "formatted": "Hanson R"
+        },
+        {
+          "first": "Jennifer",
+          "last": "Moore",
+          "initials": "J",
+          "formatted": "Moore J"
+        },
+        {
+          "first": "Gregory",
+          "last": "Makoul",
+          "initials": "G",
+          "formatted": "Makoul G"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1016/j.ijmedinf.2022.104810",
+      "citekey": "Holt2022-tf",
+      "created": 1765220733.4279997,
+      "doi": "10.1016/j.ijmedinf.2022.104810",
+      "dup_sha1": "018608444ffd4d813ddb24ea14f7fa93cf2b967d",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:61370bda535c37dfa106313a6e1228838af13435",
+        "dup_sha1:018608444ffd4d813ddb24ea14f7fa93cf2b967d",
+        "doi:10.1016/j.ijmedinf.2022.104810",
+        "pmid:35714549",
+        "url:http://dx.doi.org/10.1016/j.ijmedinf.2022.104810",
+        "url:https://linkinghub.elsevier.com/retrieve/pii/S1386505622001241",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/35714549"
+      ],
+      "incomplete": 0,
+      "issn": "1386-5056",
+      "issn_alt": "1872-8243",
+      "issue": "104810",
+      "journal": "Int. J. Med. Inform.",
+      "journalfull": "International journal of medical informatics",
+      "keywords": "Consumer Health Informatics; Health Information Technology; Implementation Science; Patient-Centered Care; Professional-Patient Relations",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "104810",
+      "pmid": "35714549",
+      "pub_id": "12461ac7-bcf3-05cc-a7e2-d745a6bdad12",
+      "published": {
+        "year": "2022",
+        "month": "9"
+      },
+      "publisher": "Elsevier BV",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "61370bda535c37dfa106313a6e1228838af13435",
+      "subfolders": ["All Papers/H"],
+      "title": "Real-world implementation evaluation of an electronic health record-integrated consumer informatics tool that collects patient-generated contextual data",
+      "url": [
+        "https://linkinghub.elsevier.com/retrieve/pii/S1386505622001241",
+        "http://dx.doi.org/10.1016/j.ijmedinf.2022.104810",
+        "https://www.ncbi.nlm.nih.gov/pubmed/35714549"
+      ],
+      "volume": "165"
+    },
+    {
+      "_id": "487040f7-2108-0bea-927f-b73184ad1e59",
+      "abstract": "Importance: Telemedicine provides patients access to episodic and longitudinal care. Policy discussions surrounding future support for telemedicine require an understanding of factors associated with successful video visits. Objective: To assess patient and clinician factors associated with successful and with failed video visits. Design, Setting, and Participants: This was a quality improvement study of 137 846 scheduled video visits at a single academic health system in southeastern Wisconsin between March 1 and December 31, 2020, supplemented with patient experience survey data. Patient information was gathered using demographic information abstracted from the electronic health record and linked with block-level socioeconomic data from the US Census Bureau. Data on perceived clinician experience with technology was obtained using the survey. Main Outcomes and Measures: The primary outcome of interest was the successful completion of a scheduled video visit or the conversion of the video visit to a telephone-based service. Visit types and administrative data were used to categorize visits. Mixed-effects modeling with pseudo R2 values was performed to compare the relative associations of patient and clinician factors with video visit failures. Results: In total, 75 947 patients and 1155 clinicians participated in 137 846 scheduled video encounters, 17 190 patients (23%) were 65 years or older, and 61 223 (81%) patients were of White race and ethnicity. Of the scheduled video encounters, 123 473 (90%) were successful, and 14 373 (10%) were converted to telephone services. A total of 16 776 patients (22%) completed a patient experience survey. Lower clinician comfort with technology (odds ratio [OR], 0.15; 95% CI, 0.08-0.28), advanced patient age (66-80 years: OR, 0.28; 95% CI, 0.26-0.30), lower patient socioeconomic status (including low high-speed internet availability) (OR, 0.85; 95% CI, 0.77-0.92), and patient racial and ethnic minority group status (Black or African American: OR, 0.75; 95% CI, 0.69-0.81) were associated with conversion to telephone visits. Patient characteristics accounted for systematic components for success; marginal pseudo R2 values decreased from 23% (95% CI, 21.1%-26.1%) to 7.8% (95% CI, 6.3%-9.4%) with exclusion of patient factors. Conclusions and Relevance: As policy makers consider expanding telehealth coverage and hospital systems focus on investments, consideration of patient support, equity, and friction should guide decisions. In particular, this quality improvement study suggests that underserved patients may become disproportionately vulnerable by cuts in coverage for telephone-based services.",
+      "author": [
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        },
+        {
+          "first": "Noorie",
+          "last": "Hyun",
+          "initials": "N",
+          "formatted": "Hyun N"
+        },
+        {
+          "first": "Alexandra",
+          "last": "Polovneff",
+          "initials": "A",
+          "formatted": "Polovneff A"
+        },
+        {
+          "first": "Yilu",
+          "last": "Dong",
+          "initials": "Y",
+          "formatted": "Dong Y"
+        },
+        {
+          "first": "Michael C",
+          "last": "Decker",
+          "initials": "MC",
+          "formatted": "Decker MC"
+        },
+        {
+          "first": "Natalie",
+          "last": "Mortensen",
+          "initials": "N",
+          "formatted": "Mortensen N"
+        },
+        {
+          "first": "Jeana M",
+          "last": "Holt",
+          "initials": "JM",
+          "formatted": "Holt JM"
+        },
+        {
+          "first": "Aaron N",
+          "last": "Winn",
+          "initials": "AN",
+          "formatted": "Winn AN"
+        },
+        {
+          "first": "Purushottam W",
+          "last": "Laud",
+          "initials": "PW",
+          "formatted": "Laud PW"
+        },
+        {
+          "first": "Melek M",
+          "last": "Somai",
+          "initials": "MM",
+          "formatted": "Somai MM"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1001/jamanetworkopen.2021.32917",
+      "citekey": "Crotty2021-xk",
+      "created": 1765220733.4269998,
+      "doi": "10.1001/jamanetworkopen.2021.32917",
+      "dup_sha1": "52239c7aa54ff36e596b593ced9e5b486e4c3336",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:7effaa5480189802e1efa1317204ceac618af4cb",
+        "dup_sha1:52239c7aa54ff36e596b593ced9e5b486e4c3336",
+        "doi:10.1001/jamanetworkopen.2021.32917",
+        "pmc:PMC8569484",
+        "pmid:34735013",
+        "url:http://dx.doi.org/10.1001/jamanetworkopen.2021.32917",
+        "url:https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2785800",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/34735013",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8569484"
+      ],
+      "incomplete": 0,
+      "issn": "2574-3805",
+      "issue": "11",
+      "journal": "JAMA Netw. Open",
+      "journalfull": "JAMA network open",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "e2132917",
+      "pmc": "PMC8569484",
+      "pmid": "34735013",
+      "pub_id": "0d42224d-53da-0b60-a4f0-df036f983a3f",
+      "published": {
+        "year": "2021",
+        "month": "11",
+        "day": "1"
+      },
+      "publisher": "American Medical Association",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "7effaa5480189802e1efa1317204ceac618af4cb",
+      "subfolders": ["All Papers/C"],
+      "title": "Analysis of clinician and patient factors and completion of telemedicine appointments using video",
+      "url": [
+        "https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2785800",
+        "http://dx.doi.org/10.1001/jamanetworkopen.2021.32917",
+        "https://www.ncbi.nlm.nih.gov/pubmed/34735013",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8569484"
+      ],
+      "volume": "4"
+    },
+    {
+      "_id": "2f706d16-bba9-0dbe-9b33-bc8118c501ce",
+      "abstract": "BACKGROUND: The telemedicine industry has been experiencing fast growth in recent years. The outbreak of coronavirus disease 2019 (COVID-19) further accelerated the deployment and utilization of telemedicine services. An analysis of the socioeconomic characteristics of telemedicine users to understand potential socioeconomic gaps and disparities is critical for improving the adoption of telemedicine services among patients. OBJECTIVES: This study aims to measure the correlation of socioeconomic determinants with the use of telemedicine services in Milwaukee metropolitan area. METHODS: Electronic health record review of patients using telemedicine services compared with those not using telemedicine services within an academic-community health system: patient demographics (e.g., age, gender, race, and ethnicity), insurance status, and socioeconomic determinants obtained through block-level census data in Milwaukee area. The telemedicine users were compared with all other patients using regression analysis. The telemedicine adoption rates were calculated across regional ZIP codes to analyze the geographic patterns of telemedicine adoption. RESULTS: A total of 104,139 patients used telemedicine services during the study period. Patients who used video visits were younger (median age 48.12), more likely to be White (odds ratio [OR] 1.34; 95% confidence interval [CI], 1.31-1.37), and have private insurance (OR 1.43; CI, 1.41-1.46); patients who used telephone visits were older (median age 57.58), more likely to be Black (OR 1.31; CI 1.28-1.35), and have public insurance (OR 1.30; CI 1.27-1.32). In general, Latino and Asian populations were less likely to use telemedicine; women used more telemedicine services in general than men. In the multiple regression analysis of social determinant factors across 126 ZIP codes, college education (coefficient 1.41, p = 0.01) had a strong correlation to video telemedicine adoption rate. CONCLUSION: Adoption of telemedicine services was significantly impacted by the social determinant factors of health, such as income, education level, race, and insurance type. The study reveals the potential inequities and disparities in telemedicine adoption.",
+      "author": [
+        {
+          "first": "Jake",
+          "last": "Luo",
+          "initials": "J",
+          "formatted": "Luo J"
+        },
+        {
+          "first": "Ling",
+          "last": "Tong",
+          "initials": "L",
+          "formatted": "Tong L"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Bradley",
+          "last": "Taylor",
+          "initials": "B",
+          "formatted": "Taylor B"
+        },
+        {
+          "first": "Kristen",
+          "last": "Osinski",
+          "initials": "K",
+          "formatted": "Osinski K"
+        },
+        {
+          "first": "Ben",
+          "last": "George",
+          "initials": "B",
+          "formatted": "George B"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1055/s-0041-1733848",
+      "citekey": "Luo2021-vj",
+      "created": 1765220733.4259999,
+      "doi": "10.1055/s-0041-1733848",
+      "dup_sha1": "780e4f67aa78c518fcc1527e42a91d6d909949ab",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:e01336095aaf92c9d26ec561dbd5364f8881b41a",
+        "dup_sha1:780e4f67aa78c518fcc1527e42a91d6d909949ab",
+        "doi:10.1055/s-0041-1733848",
+        "pmc:PMC8426040",
+        "pmid:34496419",
+        "url:http://dx.doi.org/10.1055/s-0041-1733848",
+        "url:http://www.thieme-connect.de/DOI/DOI?10.1055/s-0041-1733848",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/34496419",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8426040"
+      ],
+      "incomplete": 0,
+      "issn": "1869-0327",
+      "issue": "4",
+      "journal": "Appl. Clin. Inform.",
+      "journalfull": "Applied clinical informatics",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "836-844",
+      "pmc": "PMC8426040",
+      "pmid": "34496419",
+      "pub_id": "0790fe3e-d37c-0e5b-ae84-f158e4adae0b",
+      "published": {
+        "year": "2021",
+        "month": "8"
+      },
+      "publisher": "Georg Thieme Verlag KG",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "e01336095aaf92c9d26ec561dbd5364f8881b41a",
+      "subfolders": ["All Papers/L"],
+      "title": "Telemedicine Adoption during the COVID-19 Pandemic: Gaps and Inequalities",
+      "url": [
+        "http://www.thieme-connect.de/DOI/DOI?10.1055/s-0041-1733848",
+        "http://dx.doi.org/10.1055/s-0041-1733848",
+        "https://www.ncbi.nlm.nih.gov/pubmed/34496419",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8426040"
+      ],
+      "volume": "12"
+    },
+    {
+      "_id": "350cbb0a-4a8e-00a6-9b2f-49e4f9e2ec33",
+      "abstract": "BACKGROUND: Patient contextual data (PCD) are often missing from electronic health records, limiting the opportunity to incorporate preferences and life circumstances into care. Engaging patients through tools that collect and summarize such data may improve communication and patient activation. However, differential tool adoption by race might widen health care disparities. OBJECTIVE: Determine if a digital tool designed to collect and present PCD improves communication and patient activation; secondarily, evaluate if use impacts outcomes by race. DESIGN, SETTING, AND PARTICIPANTS: A pragmatic, two-armed, non-blinded, randomized controlled trial conducted during 2019 in a primary care setting. INTERVENTION: The PCD tool (PatientWisdom) invited patients to identify preferences, values, goals, and barriers to care. Patients were randomized to a standard pre-visit email or facilitated enrollment with dedicated outreach to encourage use of the tool. MAIN OUTCOMES AND MEASURES: Outcomes of interest were post-visit patient communication and patient activation measured by the Communication Assessment Tool (CAT) and Patient Activation Measure (PAM), respectively. Outcomes were evaluated using treatment-on-the-treated (TOT) and intention-to-treat (ITT) principles. KEY RESULTS: A total of 301 patients were enrolled. Facilitated enrollment resulted in a five-fold increase in uptake of the PCD tool. TOT analysis indicated that the PCD tool was associated with notable increases in specific CAT items rated as excellent: \"treated me with respect\" (+ 13 percentage points; p = 0.04), \"showed interest in my ideas\" (+ 14 percentage points; p = 0.03), \"showed care and concern\" (+ 16 percentage points; p = 0.02), and \"spent about the right amount of time with me\" (+ 11 percentage points; p = 0.05). There were no significant pre/post-visit differences in PAM scores between arms (- 4.41 percentage points; p = 0.58). ITT results were similar. We saw no evidence of the treatment effect varying by race in ITT or TOT analyses. CONCLUSIONS AND RELEVANCE: The inclusion of PCD enhanced essential aspects of patient-provider communication but did not affect patient activation. Outcomes did not differ by race. TRIAL REGISTRATION: Clincaltrials.gov identifier: NCT03766841.",
+      "author": [
+        {
+          "first": "Jeana M",
+          "last": "Holt",
+          "initials": "JM",
+          "orcid": "0000-0003-3392-0164",
+          "formatted": "Holt JM"
+        },
+        {
+          "first": "Rachel",
+          "last": "Cusatis",
+          "initials": "R",
+          "formatted": "Cusatis R"
+        },
+        {
+          "first": "Aaron",
+          "last": "Winn",
+          "initials": "A",
+          "formatted": "Winn A"
+        },
+        {
+          "first": "Onur",
+          "last": "Asan",
+          "initials": "O",
+          "formatted": "Asan O"
+        },
+        {
+          "first": "Charles",
+          "last": "Spanbauer",
+          "initials": "C",
+          "formatted": "Spanbauer C"
+        },
+        {
+          "first": "Joni S",
+          "last": "Williams",
+          "initials": "JS",
+          "formatted": "Williams JS"
+        },
+        {
+          "first": "Kathryn E",
+          "last": "Flynn",
+          "initials": "KE",
+          "formatted": "Flynn KE"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Akkeneel",
+          "last": "Talsma",
+          "initials": "A",
+          "formatted": "Talsma A"
+        },
+        {
+          "first": "Purushottam",
+          "last": "Laud",
+          "initials": "P",
+          "formatted": "Laud P"
+        },
+        {
+          "first": "Gregory",
+          "last": "Makoul",
+          "initials": "G",
+          "formatted": "Makoul G"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1007/s11606-020-06583-7",
+      "citekey": "Holt2021-wk",
+      "created": 1765220733.4249997,
+      "doi": "10.1007/s11606-020-06583-7",
+      "dup_sha1": "524bcc9a9eab67df04cbcc0d4b9334bfee4cb70c",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:d07f2672eab5ce0d44ccff3464a4800538912b1e",
+        "dup_sha1:524bcc9a9eab67df04cbcc0d4b9334bfee4cb70c",
+        "doi:10.1007/s11606-020-06583-7",
+        "pmc:PMC8606508",
+        "pmid:33559067",
+        "url:http://dx.doi.org/10.1007/s11606-020-06583-7",
+        "url:https://link.springer.com/10.1007/s11606-020-06583-7",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/33559067",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8606508"
+      ],
+      "incomplete": 0,
+      "issn": "0884-8734",
+      "issn_alt": "1525-1497",
+      "issue": "11",
+      "journal": "J. Gen. Intern. Med.",
+      "journalfull": "Journal of general internal medicine",
+      "keywords": "health care disparities; health information technology; patient contextual data; patient participation; patient-provider communication; primary health care; randomized controlled trial",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "3321-3329",
+      "pmc": "PMC8606508",
+      "pmid": "33559067",
+      "pub_id": "ec56c77c-0666-0795-9151-a0a4f2df44f7",
+      "published": {
+        "year": "2021",
+        "month": "11"
+      },
+      "publisher": "Springer Science and Business Media LLC",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "d07f2672eab5ce0d44ccff3464a4800538912b1e",
+      "subfolders": ["All Papers/H"],
+      "title": "Impact of pre-visit contextual data collection on patient-physician communication and patient activation: A randomized trial",
+      "url": [
+        "https://link.springer.com/10.1007/s11606-020-06583-7",
+        "http://dx.doi.org/10.1007/s11606-020-06583-7",
+        "https://www.ncbi.nlm.nih.gov/pubmed/33559067",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8606508"
+      ],
+      "volume": "36",
+      "xref": [
+        {
+          "type": "CommentIn",
+          "pmid": "35296980"
+        },
+        {
+          "type": "CommentIn",
+          "pmid": "35319084"
+        }
+      ]
+    },
+    {
+      "_id": "ded75567-1a05-0c2b-99cc-349f59f5580d",
+      "author": [
+        {
+          "first": "Jeana M",
+          "last": "Holt",
+          "initials": "JM",
+          "formatted": "Holt JM"
+        },
+        {
+          "first": "Rachel",
+          "last": "Cusatis",
+          "initials": "R",
+          "formatted": "Cusatis R"
+        },
+        {
+          "first": "Aaron",
+          "last": "Winn",
+          "initials": "A",
+          "formatted": "Winn A"
+        },
+        {
+          "first": "Onur",
+          "last": "Asan",
+          "initials": "O",
+          "formatted": "Asan O"
+        },
+        {
+          "first": "Charles",
+          "last": "Spanbauer",
+          "initials": "C",
+          "formatted": "Spanbauer C"
+        },
+        {
+          "first": "Joni S",
+          "last": "Williams",
+          "initials": "JS",
+          "formatted": "Williams JS"
+        },
+        {
+          "first": "Kathryn E",
+          "last": "Flynn",
+          "initials": "KE",
+          "formatted": "Flynn KE"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Purushottam",
+          "last": "Laud",
+          "initials": "P",
+          "formatted": "Laud P"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        }
+      ],
+      "autoCleaned": 1,
+      "citekey": "Holt2020-sj",
+      "created": 1765220733.4239998,
+      "dup_sha1": "006a5f15a7dfd0d0ea27c03b987f8e4219a2b9fc",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:39b3dbf662933d0bd5a5e33d2f29f4d12a08dfc0",
+        "dup_sha1:006a5f15a7dfd0d0ea27c03b987f8e4219a2b9fc"
+      ],
+      "incomplete": 0,
+      "issn": "1929-0748",
+      "issue": "9",
+      "journal": "JMIR Res. Protoc.",
+      "journalfull": "JMIR research protocols",
+      "labels": [],
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "e20309",
+      "pub_id": "697a130c-2964-0719-b2bd-3badd4ce73b5",
+      "published": {
+        "year": "2020"
+      },
+      "publisher": "JMIR Publications Inc., Toronto, Canada",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "39b3dbf662933d0bd5a5e33d2f29f4d12a08dfc0",
+      "subfolders": ["All Papers/H"],
+      "title": "The impact of Previsit contextual data collection on patient-provider communication and patient activation: Study protocol for a randomized controlled trial",
+      "volume": "9"
+    },
+    {
+      "_id": "aaaf7fb3-4c0a-063d-9b5c-9d7fee643dff",
+      "_titleNE": {
+        "bg": {
+          "6": {
+            "ner": "last_names",
+            "str": "Mena"
+          },
+          "v": "1"
+        },
+        "sf": {},
+        "ct": {}
+      },
+      "author": [
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Sylvia",
+          "last": "Levy",
+          "initials": "S",
+          "formatted": "Levy S"
+        },
+        {
+          "first": "Zied",
+          "last": "Mhirsi",
+          "initials": "Z",
+          "formatted": "Mhirsi Z"
+        }
+      ],
+      "autoCleaned": 1,
+      "citekey": "Somai2020-wk",
+      "created": 1765220733.4229999,
+      "dup_sha1": "eab7298e4e5dabacfe5ddc5193e6a18e8d091cdf",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:7860b849a6b910b2321bf5942777738faee43a3f",
+        "dup_sha1:eab7298e4e5dabacfe5ddc5193e6a18e8d091cdf"
+      ],
+      "incomplete": 0,
+      "journal": "Leveraging Data Science for Global Health",
+      "labels": [],
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "373",
+      "published": {
+        "year": "2020"
+      },
+      "publisher": "Springer Nature",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "7860b849a6b910b2321bf5942777738faee43a3f",
+      "subfolders": ["All Papers/S"],
+      "title": "Cancer in the MENA region using open source data and spatial analysis"
+    },
+    {
+      "_id": "8593144e-7df0-0bdd-aaa5-bd291f9792cb",
+      "author": [
+        {
+          "first": "Marie-Laure",
+          "last": "Charpignon",
+          "initials": "ML",
+          "formatted": "Charpignon ML"
+        },
+        {
+          "first": "Bella",
+          "last": "Vakulenko-Lagun",
+          "initials": "B",
+          "formatted": "Vakulenko-Lagun B"
+        },
+        {
+          "first": "Bang",
+          "last": "Zheng",
+          "initials": "B",
+          "formatted": "Zheng B"
+        },
+        {
+          "first": "Colin",
+          "last": "Magdamo",
+          "initials": "C",
+          "formatted": "Magdamo C"
+        },
+        {
+          "first": "Bowen",
+          "last": "Su",
+          "initials": "B",
+          "formatted": "Su B"
+        },
+        {
+          "first": "Kyle",
+          "last": "Evans",
+          "initials": "K",
+          "formatted": "Evans K"
+        },
+        {
+          "first": "Steve",
+          "last": "Rodriguez",
+          "initials": "S",
+          "formatted": "Rodriguez S"
+        },
+        {
+          "first": "Artem",
+          "last": "Sokolov",
+          "initials": "A",
+          "formatted": "Sokolov A"
+        },
+        {
+          "first": "Sarah",
+          "last": "Boswell",
+          "initials": "S",
+          "formatted": "Boswell S"
+        },
+        {
+          "first": "Yi-Han",
+          "last": "Sheu",
+          "initials": "YH",
+          "formatted": "Sheu YH"
+        },
+        {
+          "collective": "Others",
+          "initials": "",
+          "formatted": "Others",
+          "first": ""
+        }
+      ],
+      "autoCleaned": 1,
+      "citekey": "Charpignon2021-mn",
+      "created": 1765220733.4209998,
+      "dup_sha1": "aa1e02e2f772e7dd025c9a2a76fc7a16990016fc",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:528330487660b8ed744f893e6dbf27f5a38dc3a6",
+        "dup_sha1:aa1e02e2f772e7dd025c9a2a76fc7a16990016fc"
+      ],
+      "incomplete": 0,
+      "journal": "medRxiv",
+      "journalfull": "medRxiv: the preprint server for health sciences",
+      "labels": [],
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "2021-2008",
+      "published": {
+        "year": "2021"
+      },
+      "publisher": "Cold Spring Harbor Laboratory Press",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "528330487660b8ed744f893e6dbf27f5a38dc3a6",
+      "subfolders": ["All Papers/C"],
+      "title": "Drug repurposing of metformin for Alzheimer’s disease: Combining causal inference in medical records data and systems pharmacology for biomarker identification"
+    },
+    {
+      "_id": "a3463ba2-587d-0760-95d3-3af948c4b8c6",
+      "abstract": "Depression and anxiety disorders are prevalent mental health conditions; yet they are often unrecognized, under-addressed and/or under-treated, and specialty treatment for these conditions is oftentimes difficult to access. By acting either as a bridge to therapy or as a form of therapy, digital tools, such as those that provide internet-based cognitive behavioral therapy (iCBT), may help clinicians support their patients' mental health needs. At one academic health system, a digital mental health program was deployed in primary care and outpatient behavioral health programs to help patients meet needs identified through screening or clinical visits. Over the first two years of operation, 138 clinicians (40% of eligible clinicians) prescribed the program to 2,228 unique patients, from which 1,117 (48.9%) enrolled. Patients who enrolled tended to be younger and healthier than non-enrollees. On average, enrolled patients spent 114.6 minutes within the iCBT program. Clinical improvement was assessed using pre- and post PHQ-9 and GAD-7 scores for depression and anxiety, respectively. Pre/Post scores were compared using Wilcoxon Rank Sum test. Patients with at least moderate depression had an average 23% reduction in PHQ-9 scores (median change -3(interquartile range 7), p<0.001) and those with at least moderate anxiety had a 26% reduction in GAD-7 scores (-4(7), p<0.001). Improvements were clinically and statistically significant. Future steps include performing a cost analysis to understand whether models utilizing iCBT are net cost-saving for health systems.",
+      "author": [
+        {
+          "first": "Zakariyah",
+          "last": "Sharif-Sidi",
+          "initials": "Z",
+          "formatted": "Sharif-Sidi Z"
+        },
+        {
+          "first": "Christine",
+          "last": "Shen",
+          "initials": "C",
+          "formatted": "Shen C"
+        },
+        {
+          "first": "William",
+          "last": "Wong",
+          "initials": "W",
+          "formatted": "Wong W"
+        },
+        {
+          "first": "Ryan",
+          "last": "Hanson",
+          "initials": "R",
+          "formatted": "Hanson R"
+        },
+        {
+          "first": "Lawrence",
+          "last": "Miller",
+          "initials": "L",
+          "formatted": "Miller L"
+        },
+        {
+          "first": "Karen",
+          "last": "Fickel",
+          "initials": "K",
+          "formatted": "Fickel K"
+        },
+        {
+          "first": "Erin",
+          "last": "Green",
+          "initials": "E",
+          "formatted": "Green E"
+        },
+        {
+          "first": "Jaymes",
+          "last": "Burns",
+          "initials": "J",
+          "formatted": "Burns J"
+        },
+        {
+          "first": "Caitlin",
+          "last": "Dunn",
+          "initials": "C",
+          "formatted": "Dunn C"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        }
+      ],
+      "autoCleaned": 1,
+      "booktitle": "",
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1016/j.hjdsi.2021.100521",
+      "citekey": "Sharif-Sidi2021-sy",
+      "created": 1765220733.4199998,
+      "doi": "10.1016/j.hjdsi.2021.100521",
+      "dup_sha1": "8e06be1425c95ec1e3bff84deabf7e8db8f84ff6",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:ba1abca93084bff3b28fb54c9785c8aa25528ffa",
+        "dup_sha1:8e06be1425c95ec1e3bff84deabf7e8db8f84ff6",
+        "doi:10.1016/j.hjdsi.2021.100521",
+        "pmid:33601212",
+        "url:http://dx.doi.org/10.1016/j.hjdsi.2021.100521",
+        "url:https://linkinghub.elsevier.com/retrieve/pii/S221307642100004X",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/33601212"
+      ],
+      "incomplete": 0,
+      "institution": "",
+      "issn": "2213-0764",
+      "issn_alt": "2213-0772",
+      "issue": "2",
+      "journal": "Healthc. (Amst.)",
+      "journalfull": "Healthcare (Amsterdam, Netherlands)",
+      "keywords": "Consumer informatics; Depression; Digital health; Electronic health records",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "number": "100521",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "100521",
+      "pmid": "33601212",
+      "published": {
+        "year": "2021",
+        "month": "6"
+      },
+      "publisher": "Elsevier BV",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "ba1abca93084bff3b28fb54c9785c8aa25528ffa",
+      "subfolders": ["All Papers/S"],
+      "title": "Addressing depression and behavioral health needs through a digital program at scale",
+      "url": [
+        "https://linkinghub.elsevier.com/retrieve/pii/S221307642100004X",
+        "http://dx.doi.org/10.1016/j.hjdsi.2021.100521",
+        "https://www.ncbi.nlm.nih.gov/pubmed/33601212"
+      ],
+      "volume": "9"
+    },
+    {
+      "_id": "892f183d-97e3-0bfc-a7c8-2d4bba99349e",
+      "address": "Cham",
+      "author": [
+        {
+          "last": "Somai",
+          "first": "Melek",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "last": "Levy",
+          "first": "Sylvia",
+          "initials": "S",
+          "formatted": "Levy S"
+        },
+        {
+          "last": "Mhirsi",
+          "first": "Zied",
+          "initials": "Z",
+          "formatted": "Mhirsi Z"
+        }
+      ],
+      "autoCleaned": 1,
+      "booktitle": "Leveraging Data Science for Global Health",
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1007/978-3-030-47994-7_23",
+      "citekey": "Somai2020-nh",
+      "copyright": "https://creativecommons.org/licenses/by/4.0",
+      "created": 1765220733.4179997,
+      "doi": "10.1007/978-3-030-47994-7_23",
+      "dup_sha1": "1856d699eb557ba6e432494de722e908c54a85bb",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:edf48dc4707b6c14e31b652487df96e9119ce4ae",
+        "dup_sha1:1856d699eb557ba6e432494de722e908c54a85bb",
+        "doi:10.1007/978-3-030-47994-7_23",
+        "url:http://dx.doi.org/10.1007/978-3-030-47994-7_23",
+        "url:http://link.springer.com/10.1007/978-3-030-47994-7_23"
+      ],
+      "incomplete": 0,
+      "isbn": "9783030479930",
+      "isbn_alt": "9783030479947",
+      "labels": [],
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "373-382",
+      "published": {
+        "year": "2020"
+      },
+      "publisher": "Springer International Publishing",
+      "pubtype": "PP_BOOK_CHAPTER",
+      "sha1": "edf48dc4707b6c14e31b652487df96e9119ce4ae",
+      "subfolders": ["All Papers/S"],
+      "title": "Data science in global health—highlighting the burdens of human Papillomavirus and cervical cancer in the MENA region using open source data and spatial analysis",
+      "url": [
+        "http://link.springer.com/10.1007/978-3-030-47994-7_23",
+        "http://dx.doi.org/10.1007/978-3-030-47994-7_23"
+      ]
+    },
+    {
+      "_id": "964e0d07-1163-0724-8465-fea0eb51a0f1",
+      "abstract": "Telemedicine has been an essential form of care since the onset of the COVID-19 pandemic. However, telemedicine may exacerbate disparities for populations with limited digital literacy or access, such as older adults, racial minorities, patients of low income, rural residences, or limited English proficiency. From March 2020 to March 2022, this retrospective cohort study analyzed the use of in-person, phone/message, and telemedical care at a single tertiary care center in an oncology department. We investigated the association between economic, racial, ethnic, socioeconomic factors and forms of care, including in-person visits, telemedicine-based visits, and telephone/messages. The study results show that telemedicine utilization is lower among patients 65 and older, female patients, American Indian or Alaska Native patients, uninsured patients, and patients who require interpreters during clinical visits. As a result, it is unlikely that telemedicine will provide equal access to clinical care for all populations. On the other hand, in-person care utilization remains low in low-income and rural-living patients compared to the general population, while telephone and message use remains high in low-income and rural-living patients. We conclude that telemedicine is currently unable to close the utilization gap for populations of low socioeconomic status. Patients with low socioeconomic status use in-person care less frequently. For the disadvantaged, unusually high telephone or message utilization is unlikely to provide the same quality as in-person or telemedical care. Understanding the causes of disparity and promoting a solution to improve equal access to care for all patients is critical.",
+      "author": [
+        {
+          "first": "Ling",
+          "last": "Tong",
+          "initials": "L",
+          "formatted": "Tong L"
+        },
+        {
+          "first": "Ben",
+          "last": "George",
+          "initials": "B",
+          "formatted": "George B"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "formatted": "Somai M"
+        },
+        {
+          "first": "Bradley W",
+          "last": "Taylor",
+          "initials": "BW",
+          "formatted": "Taylor BW"
+        },
+        {
+          "first": "Kristen",
+          "last": "Osinski",
+          "initials": "K",
+          "formatted": "Osinski K"
+        },
+        {
+          "first": "Jake",
+          "last": "Luo",
+          "initials": "J",
+          "formatted": "Luo J"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1016/j.ipemt.2022.100010",
+      "citekey": "Tong2022-bz",
+      "copyright": "http://creativecommons.org/licenses/by/4.0/",
+      "created": 1765220733.432,
+      "doi": "10.1016/j.ipemt.2022.100010",
+      "dup_sha1": "53a395a4e970b2d64e95e50b5c8c6662f7de87fa",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:67e80554a4db19fea1a6ba1e64b9371191534b6a",
+        "dup_sha1:53a395a4e970b2d64e95e50b5c8c6662f7de87fa",
+        "doi:10.1016/j.ipemt.2022.100010",
+        "pmc:PMC9617798",
+        "pmid:36340828",
+        "url:http://dx.doi.org/10.1016/j.ipemt.2022.100010",
+        "url:https://linkinghub.elsevier.com/retrieve/pii/S2667258822000073",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/36340828",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9617798"
+      ],
+      "incomplete": 0,
+      "issn": "2667-2588",
+      "issue": "100010",
+      "journal": "IPEM Transl.",
+      "journalfull": "IPEM-translation",
+      "keywords": "Health Disparity; Oncology; Remote Care; Telemedicine",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "100010",
+      "pmc": "PMC9617798",
+      "pmid": "36340828",
+      "pub_id": "a241a98c-1bf6-0255-8f20-32af56dd860d",
+      "published": {
+        "year": "2022",
+        "month": "11"
+      },
+      "publisher": "Elsevier BV",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "67e80554a4db19fea1a6ba1e64b9371191534b6a",
+      "subfolders": ["All Papers/T"],
+      "title": "Telemedicine and health disparities: Association between patient characteristics and telemedicine, in-person, telephone and message-based care during the COVID-19 pandemic",
+      "url": [
+        "https://linkinghub.elsevier.com/retrieve/pii/S2667258822000073",
+        "http://dx.doi.org/10.1016/j.ipemt.2022.100010",
+        "https://www.ncbi.nlm.nih.gov/pubmed/36340828",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9617798"
+      ],
+      "volume": "3"
+    },
+    {
+      "_id": "4e38fbc8-8d9f-0030-a2b9-b2b318a4c883",
+      "abstract": "Importance: Health care systems have implemented remote patient monitoring (RPM) programs to manage patients with COVID-19 at home, but the associations between participation and outcomes or resource utilization are unclear. Objective: To assess whether an RPM program for COVID-19 is associated with lower or higher likelihood of hospitalization and whether patients who are admitted present earlier or later for hospital care. Design, Setting, and Participants: This retrospective, observational, cohort study of RPM was performed at Froedtert & Medical College of Wisconsin Health Network, an academic health system in southeastern Wisconsin. Participants included patients with internal primary care physicians and a positive SARS-CoV-2 test in the ambulatory setting between March 30, 2020, and December 15, 2020. Data analysis was performed from February 15, 2021, to February 2, 2022. Exposures: Activation of RPM program. Main Outcomes and Measures: Hospitalizations within 2 to 14 days of a positive test. Inverse propensity score weighting was used to account for differences between groups. Sensitivity analyses were performed looking at usage of the RPM among patients who activated the program. Results: A total of 10 660 COVID-19-positive ambulatory patients were eligible, and 9378 (88.0%) had email or mobile numbers on file and were invited into the RPM program; the mean (SD) age was 46.9 (16.3) years and 5448 patients (58.1%) were women. Patients who activated monitoring (5364 patients [57.2%]) had a mean (SD) of 35.3 (33.0) check-ins and a mean (SD) of 1.27 (2.79) (median [IQR], 0 [0-1]) free-text comments. A total of 878 patients (16.4%) experienced at least 1 alert; 128 of 5364 activated patients (2.4%) and 158 of 4014 inactivated patients (3.9%) were hospitalized (χ21 = 18.65; P < .001). In weighted regression analysis, activation of RPM was associated with a lower odds of hospitalization (odds ratio, 0.68; 95% CI, 0.54-0.86; P = .001) adjusted for demographics, comorbidities, and time period. Monitored patients had a longer mean (SD) time between test and hospitalization (6.67 [3.21] days vs 5.24 [3.03] days), a shorter length of stay (4.44 [4.43] days vs 7.14 [8.63] days), and less intensive care use (15 patients [0.3%] vs 44 patients [1.1%]). Conclusions and Relevance: These findings suggest that activation of an RPM program is associated with lower hospitalization, intensive care use, and length of stay among patients with COVID-19.",
+      "author": [
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        },
+        {
+          "first": "Yilu",
+          "last": "Dong",
+          "initials": "Y",
+          "formatted": "Dong Y"
+        },
+        {
+          "first": "Purushottam",
+          "last": "Laud",
+          "initials": "P",
+          "formatted": "Laud P"
+        },
+        {
+          "first": "Ryan J",
+          "last": "Hanson",
+          "initials": "RJ",
+          "formatted": "Hanson RJ"
+        },
+        {
+          "first": "Bradley",
+          "last": "Gershkowitz",
+          "initials": "B",
+          "formatted": "Gershkowitz B"
+        },
+        {
+          "first": "Annie C",
+          "last": "Penlesky",
+          "initials": "AC",
+          "formatted": "Penlesky AC"
+        },
+        {
+          "first": "Neemit",
+          "last": "Shah",
+          "initials": "N",
+          "formatted": "Shah N"
+        },
+        {
+          "first": "Michael",
+          "last": "Anderes",
+          "initials": "M",
+          "formatted": "Anderes M"
+        },
+        {
+          "first": "Erin",
+          "last": "Green",
+          "initials": "E",
+          "formatted": "Green E"
+        },
+        {
+          "first": "Karen",
+          "last": "Fickel",
+          "initials": "K",
+          "formatted": "Fickel K"
+        },
+        {
+          "first": "Siddhartha",
+          "last": "Singh",
+          "initials": "S",
+          "formatted": "Singh S"
+        },
+        {
+          "first": "Melek M",
+          "last": "Somai",
+          "initials": "MM",
+          "formatted": "Somai MM"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1001/jamanetworkopen.2022.21050",
+      "citekey": "Crotty2022-he",
+      "created": 1765220733.429,
+      "doi": "10.1001/jamanetworkopen.2022.21050",
+      "dup_sha1": "e6eff11cb9e90cdfc5e97a2710c11b2255e9e2be",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:12e2ee80c9e295a1d89d97b47dab24974fd9b45d",
+        "dup_sha1:e6eff11cb9e90cdfc5e97a2710c11b2255e9e2be",
+        "doi:10.1001/jamanetworkopen.2022.21050",
+        "pmc:PMC9264036",
+        "pmid:35797044",
+        "url:http://dx.doi.org/10.1001/jamanetworkopen.2022.21050",
+        "url:https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2793927",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/35797044",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9264036"
+      ],
+      "incomplete": 0,
+      "issn": "2574-3805",
+      "issue": "7",
+      "journal": "JAMA Netw. Open",
+      "journalfull": "JAMA network open",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "e2221050",
+      "pmc": "PMC9264036",
+      "pmid": "35797044",
+      "pub_id": "15dfbb94-06ed-0fc9-be83-851d5ac02653",
+      "published": {
+        "year": "2022",
+        "month": "7",
+        "day": "1"
+      },
+      "publisher": "American Medical Association (AMA)",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "12e2ee80c9e295a1d89d97b47dab24974fd9b45d",
+      "subfolders": ["All Papers/C"],
+      "title": "Hospitalization outcomes among patients with COVID-19 undergoing remote monitoring",
+      "url": [
+        "https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2793927",
+        "http://dx.doi.org/10.1001/jamanetworkopen.2022.21050",
+        "https://www.ncbi.nlm.nih.gov/pubmed/35797044",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9264036"
+      ],
+      "volume": "5"
+    },
+    {
+      "_id": "eb21d71d-4dc1-0d14-9b44-300255b277e3",
+      "abstract": "Although telemedicine has been an important conduit for clinical care during the COVID-19 pandemic, not all patients have been able to meaningfully participate in this mode of health care provision. Challenges with accessing telemedicine using consumer technology can interfere with the ability of patients and clinicians to meaningfully connect and lead to significant investments in time by clinicians and their staff. In this narrative case, we identify issues related to patients' use of technology, make comparisons between telehealth adoption and the deployment of electronic health records, and propose that building intuitive and supported digital care experiences for patients is required to make virtual care sustainable.",
+      "author": [
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "orcid": "0000-0001-6271-4816",
+          "formatted": "Crotty BH"
+        },
+        {
+          "first": "Melek",
+          "last": "Somai",
+          "initials": "M",
+          "orcid": "0000-0002-2692-9681",
+          "formatted": "Somai M"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.2196/25688",
+      "citekey": "Crotty2022-ht",
+      "created": 1765220733.422,
+      "doi": "10.2196/25688",
+      "dup_sha1": "6bb9dacb7e0d1681cf7fecb7877ab3a94a5d0b4a",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:fcbf27625a5132ff21a41a0c20c900879f89f624",
+        "dup_sha1:6bb9dacb7e0d1681cf7fecb7877ab3a94a5d0b4a",
+        "doi:10.2196/25688",
+        "pmc:PMC9077509",
+        "pmid:35452399",
+        "url:http://dx.doi.org/10.2196/25688",
+        "url:https://jopm.jmir.org/2022/1/e25688",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/35452399",
+        "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9077509"
+      ],
+      "incomplete": 0,
+      "issn": "2152-7202",
+      "issue": "1",
+      "journal": "J. Particip. Med.",
+      "journalfull": "Journal of participatory medicine",
+      "keywords": "access; challenge; consumer informatics; digital health; electronic health record; patient experience; telehealth; telemedicine; virtual care",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "e25688",
+      "pmc": "PMC9077509",
+      "pmid": "35452399",
+      "published": {
+        "year": "2022",
+        "month": "4",
+        "day": "22"
+      },
+      "publisher": "JMIR Publications Inc.",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "fcbf27625a5132ff21a41a0c20c900879f89f624",
+      "subfolders": ["All Papers/C"],
+      "title": "Bugs in the virtual clinic: Confronting telemedicine's challenges through empathy and support",
+      "url": [
+        "https://jopm.jmir.org/2022/1/e25688",
+        "http://dx.doi.org/10.2196/25688",
+        "https://www.ncbi.nlm.nih.gov/pubmed/35452399",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9077509"
+      ],
+      "volume": "14",
+      "xref": [
+        {
+          "type": "HasPreprint",
+          "doi": "10.2196/preprints.25688"
+        }
+      ]
+    },
+    {
+      "_id": "090530d6-3104-0255-9e5b-097f6b14ad9e",
+      "abstract": "BACKGROUND: Patients and physicians engaging together in the electronic health record (EHR) during clinical visits may provide opportunities to both improve patient understanding and reduce medical errors. OBJECTIVE: To assess the potential impact of a patient EHR display intervention on patient quality and safety. We hypothesized that if patients had a dedicated display with an explicit invitation to follow clinicians in the EHR that this would identify several opportunities to engage patients in their care quality and safety. MATERIAL AND METHODS: Physician-patient outpatient encounters (24 patients and 8 physicians) were videotaped. Encounters took place in a hospital-based general internal medicine outpatient clinic where physicians and patients had their respective EHR monitors. Following the visits, each patient and physician was interviewed for 30 min to understand their perception of the mirrored-screen setting. RESULTS: The following 7 themes were identified (a) curiosity, (b) opportunity to ask questions, (c) error identification, (d) control over medications, (e) awareness, (f) shared understanding & decision-making, (g) data privacy. These themes collectively comprised a conceptual model for how patient engagement in electronic health record use, through a dedicated second screen or an explicitly shared screen, relates to safety and quality opportunities. Therefore, the double EHR screen provides an explicit invitation for patients to join the process to influence safety. CONCLUSION: Desired outcomes include real-time error identification and better-shared understanding and decision-making, leading to better downstream follow-through with care plans.",
+      "author": [
+        {
+          "first": "Onur",
+          "last": "Asan",
+          "initials": "O",
+          "formatted": "Asan O"
+        },
+        {
+          "first": "Avishek",
+          "last": "Choudhury",
+          "initials": "A",
+          "formatted": "Choudhury A"
+        },
+        {
+          "first": "Melek M",
+          "last": "Somai",
+          "initials": "MM",
+          "formatted": "Somai MM"
+        },
+        {
+          "first": "Bradley H",
+          "last": "Crotty",
+          "initials": "BH",
+          "formatted": "Crotty BH"
+        }
+      ],
+      "autoCleaned": 1,
+      "citedByLink": "http://scholar.google.com/scholar?hl=en&lr=&num=30&cites=http://dx.doi.org/10.1016/j.ijmedinf.2020.104345",
+      "citekey": "Asan2021-to",
+      "created": 1765220733.419,
+      "doi": "10.1016/j.ijmedinf.2020.104345",
+      "dup_sha1": "63163e0dc36b68fcc5ce4931461fe2a77de820cb",
+      "folders": ["6dc0f05f-97ae-4762-8bb6-b1319a0d594e"],
+      "foldersNamed": ["My Library"],
+      "id_list": [
+        "sha1:58bc7fd38604a70338171d900cf3c048189f6d04",
+        "dup_sha1:63163e0dc36b68fcc5ce4931461fe2a77de820cb",
+        "doi:10.1016/j.ijmedinf.2020.104345",
+        "pmid:33260089",
+        "url:http://dx.doi.org/10.1016/j.ijmedinf.2020.104345",
+        "url:https://linkinghub.elsevier.com/retrieve/pii/S1386505620314891",
+        "url:https://www.ncbi.nlm.nih.gov/pubmed/33260089"
+      ],
+      "incomplete": 0,
+      "issn": "1386-5056",
+      "issn_alt": "1872-8243",
+      "issue": "104345",
+      "journal": "Int. J. Med. Inform.",
+      "journalfull": "International journal of medical informatics",
+      "keywords": "Electronic health record; Healthcare quality; Medical informatics; OpenNotes; Patient engagement; Patient safety",
+      "kind": "Research Article",
+      "labels": [],
+      "language": "en",
+      "original_citekey": "",
+      "owner": "C156195C6F1E11E8B45631DAEEF500C0",
+      "pages": "104345",
+      "pmid": "33260089",
+      "published": {
+        "year": "2021",
+        "month": "2"
+      },
+      "publisher": "Elsevier BV",
+      "pubtype": "PP_ARTICLE",
+      "sha1": "58bc7fd38604a70338171d900cf3c048189f6d04",
+      "subfolders": ["All Papers/A"],
+      "title": "Augmenting patient safety through participation by design - An assessment of dual monitors for patients in the outpatient clinic",
+      "url": [
+        "https://linkinghub.elsevier.com/retrieve/pii/S1386505620314891",
+        "http://dx.doi.org/10.1016/j.ijmedinf.2020.104345",
+        "https://www.ncbi.nlm.nih.gov/pubmed/33260089"
+      ],
+      "volume": "146"
+    }
+  ]
+}

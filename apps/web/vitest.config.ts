@@ -1,20 +1,19 @@
-import path from "node:path";
+import tsConfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
+import { mdxPlugin } from "./mdx-plugin";
 
+// The essay tests read the generated content collection, so run
+// `pnpm run generate:content` (or `pnpm test`, which does) before a bare `vitest`.
 export default defineConfig({
+  plugins: [tsConfigPaths({ projects: ["./tsconfig.json"] }), mdxPlugin()],
   esbuild: {
     jsx: "automatic",
   },
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "."),
-    },
-  },
   test: {
     environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
-    include: ["**/*.test.ts", "**/*.test.tsx"],
-    exclude: ["node_modules", "dist", "e2e", ".next", ".turbo"],
+    setupFiles: ["./tests/setup.ts"],
+    include: ["tests/unit/**/*.test.{ts,tsx}"],
     globals: true,
+    restoreMocks: true,
   },
 });

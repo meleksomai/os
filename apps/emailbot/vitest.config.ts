@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/noGlobalDirnameFilename: config typechecks as CommonJS where import.meta is unavailable */
 import path from "node:path";
 import { defineWorkersProject } from "@cloudflare/vitest-pool-workers/config";
 
@@ -31,8 +32,8 @@ export default defineWorkersProject({
   },
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "./"),
-      "@repo": path.resolve(import.meta.dirname, "../../packages"),
+      "@": path.resolve(__dirname, "./"),
+      "@repo": path.resolve(__dirname, "../../packages"),
     },
   },
 });

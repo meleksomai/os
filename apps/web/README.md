@@ -1,70 +1,100 @@
-# somai.me
+# web — somai.me
 
-Welcome to the GitHub repository for my personal website [somai.me](https://somai.me)! I created this site to serve as a portfolio showcasing my projects, research publications, and experiences. It is also a playground to experiment with new web technologies.
+The personal website [somai.me](https://www.somai.me), built with [TanStack Start](https://tanstack.com/start) and deployed to [Cloudflare Workers](https://workers.cloudflare.com/).
 
-## Technologies Used
+## Stack
 
-- **[Next.js 16](https://nextjs.org/)**: The latest version of the React framework, leveraging the App Router and React Server Components.
-- **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework for rapid UI development.
-- **[shadcn/ui](https://ui.shadcn.com/)**: Beautifully designed components built with Radix UI and Tailwind CSS.
-- **[Biome](https://biomejs.dev/)**: A fast formatter and linter, replacing ESLint and Prettier (via [Ultracite](https://github.com/ultracite/ultracite)).
-- **[Radix UI](https://www.radix-ui.com/)**: Unstyled, accessible components for building high-quality design systems.
-- **[Motion](https://motion.dev/)**: A modern animation library for React (formerly Framer Motion).
-- **[MDX](https://mdxjs.com/)**: Markdown for the component era, allowing React components inside Markdown.
-- **[Turborepo](https://turbo.build/)**: High-performance build system for JavaScript and TypeScript monorepos.
-- **[pnpm](https://pnpm.io/)**: Fast, disk space efficient package manager.
-- **[Vercel](https://vercel.com/)**: For hosting and deployment
+- **[TanStack Start](https://tanstack.com/start)** — full-stack React framework on Vite: SSR, server functions, server routes.
+- **[TanStack Router](https://tanstack.com/router)** — type-safe file-based routing (`src/routes`).
+- **[Cloudflare Workers](https://workers.cloudflare.com/)** — runtime and hosting via `@cloudflare/vite-plugin` and Wrangler. `vite dev` and `vite preview` run the app inside workerd, the same runtime as production.
+- **[content-collections](https://www.content-collections.dev/)** — the content layer: `content-collections.ts` validates the essays' frontmatter and `content/papers.json` with zod at build time and generates a typed `content-collections` module the routes import directly: `allEssays` (frontmatter + slug, formatted date, reading time, and the compiled MDX component, the pattern of content-collections' TanStack Start + Cloudflare sample) and `research` (papers). The essays therefore ship in the client bundle. The collection's `onSuccess` hook renders the OG images (`scripts/generate-og.ts`).
+- **[MDX](https://mdxjs.com/)** — essays in `content/*.mdx`, compiled to page components by the remark/rehype chain in `mdx-plugin.ts` (GFM footnotes, rehype-pretty-code/Shiki), the same approach as the content-collections TanStack Start + Cloudflare sample (its own MDX runtime needs `new Function`, which Workers forbid).
+- **[Tailwind CSS v4](https://tailwindcss.com/)** + `@workspace/ui` for the design system.
+- **[Satori](https://github.com/vercel/satori) + resvg** — Open Graph images pre-rendered at build time by `scripts/generate-og.ts` into `public/og/`.
 
-## Getting Started
+## Commands
 
-If you're interested in running this project locally, follow the steps below:
+```bash
+pnpm dev          # OG images + vite dev server on :3000 (workerd runtime)
+pnpm build        # content collection (+ OG images) + production build into dist/
+pnpm preview      # serve the production build on :4173 (vite preview, workerd)
+pnpm test         # unit tests (vitest + jsdom, tests/unit)
+pnpm e2e          # Playwright against the production build (tests/e2e; run build first)
+pnpm check-types  # tsc
+pnpm run deploy   # build + wrangler deploy (`run` is needed: pnpm has a built-in `deploy`)
+```
 
-### Prerequisites
+Linting and formatting run from the repository root: `pnpm check` / `pnpm fix` (Ultracite).
 
-Make sure you have the following software installed on your system:
+## Layout
 
-- [Node.js](https://nodejs.org/) (Latest LTS recommended)
-- [Git](https://git-scm.com/)
-- [pnpm](https://pnpm.io/)
+```
+content/            essays (*.mdx) and papers.json
+public/             static assets: icons, images, robots.txt
+scripts/            generate-og.ts — runs on plain Node 24 (no transpiler)
+tests/              unit/ (Vitest, mirrors src/), e2e/ (Playwright), setup.ts, shared helpers
+content-collections.ts  content layer: essays collection + research (papers) singleton, zod schemas, build-time transforms
+mdx-plugin.ts       MDX → page components, shared by vite.config.ts and vitest.config.ts
+components.json     shadcn CLI config for this app; `rsc: true` only makes the CLI add `"use client"` to components it generates, which is inert under Vite/TanStack Start unless Start's RSC mode is enabled
+.content-collections/   generated (gitignored): `pnpm run generate:content`, also run by dev/build/test/check-types
+src/
+  router.tsx        getRouter(): preload on intent, error/not-found defaults
+  routes/           file-based routes, one file per route; essay/ groups the essay routes; the root route renders the navbar/footer layout
+  server/           newsletter: schema.ts (client-safe types), functions.ts (createServerFn), server.ts (server-only logic)
+  lib/              seo (one generateSeo() for the root defaults and every page), jsonld (Schema.org structured data)
+  components/       UI components
+  routeTree.gen.ts  generated by TanStack Router; committed so CI can type-check before building
+```
 
-### Installation
+Modules that must never reach the browser carry the `.server.ts` suffix; TanStack Start's import protection fails the client build if one leaks.
 
-1. Clone the repository to your local machine:
+## Route map
 
-   ```bash
-   git clone https://github.com/meleksomai/website.git
-   ```
+| URL                                         | Source                                              |
+| ------------------------------------------- | --------------------------------------------------- |
+| `/`, `/essays`, `/papers`, `/essay/:slug`   | `src/routes/index.tsx`, `essays.tsx`, `papers.tsx`, `essay/$slug.tsx` |
+| `/sitemap.xml`                              | built by `tanstackStart({ prerender, sitemap })` from the pages crawled at build time (static asset) |
+| `/robots.txt`, `/og/*.png`, `/images/**`    | static files in `public/` (OG images generated at build) |
 
-2. Move into the project directory:
+## Environment
 
-   ```bash
-   cd website
-   ```
+Server-side features read these variables (locally from `.dev.vars`, in production from Worker secrets — see `.dev.vars.example`):
 
-3. Install the project dependencies:
+| Variable                    | Used by                          |
+| --------------------------- | -------------------------------- |
+| `RESEND_API_KEY`            | Newsletter subscription (Resend) |
+| `RESEND_SEGMENT_GENERAL`    | Resend audience id               |
 
-   ```bash
-   pnpm i
-   ```
+The site renders fully without any of them; the newsletter form reports "Subscription temporarily unavailable" when Resend is not configured. Secrets reach the Worker through `process.env` (Node.js compatibility is enabled by the compatibility date). `vite build` copies `.dev.vars` into `dist/` for `vite preview`, which is why it is part of Turborepo's build inputs.
 
-4. Start the development server:
+## Cloudflare deployment
 
-   ```bash
-   pnpm dev
-   ```
+`wrangler.jsonc` defines the Worker (`somai-me`) using TanStack Start's default server entry. `vite build` emits the Worker bundle (with source maps) and the static assets into `dist/` plus a resolved config at `dist/server/wrangler.json`, which `wrangler deploy` picks up automatically.
 
-Now the project should be up and running at [http://localhost:3000](http://localhost:3000)!
+Workers Builds (git integration):
 
-## Contributing
+- **Root directory**: `apps/web`
+- **Build command**: `pnpm turbo build --filter=web`
+- **Deploy command**: `pnpm exec wrangler deploy`
+- **Build variables**: `NODE_VERSION=24`, `PNPM_VERSION=10.4.1`
+- **Secrets**: `RESEND_API_KEY` and `RESEND_SEGMENT_GENERAL`, via *Settings → Variables & Secrets* or `wrangler secret put`.
 
-While this is primarily a personal project, contributions or suggestions are always welcome. If you have any ideas for improvements or have noticed any bugs, please open an issue.
+Cutover from Vercel happens in the Cloudflare dashboard:
 
-## License
+1. Verify the deployed Worker on its `workers.dev` URL.
+2. Remove the `www` CNAME to Vercel and add `www.somai.me` as a Custom Domain of the Worker.
+3. Point the apex at a proxied placeholder record (`A 192.0.2.0`) with a Redirect Rule `https://somai.me/*` → `https://www.somai.me/${1}`.
+4. Enable HSTS under *SSL/TLS → Edge Certificates* (production sends `max-age=63072000` today; nothing in this repo sets it).
+5. Optionally enable Web Analytics (automatic setup, no code) and set `"workers_dev": false` in `wrangler.jsonc` so the site has a single origin.
+6. Remove the domain from the Vercel project, then delete the project.
 
-This project is open source and available under the [MIT License](LICENCE).
+## Tests
 
-## Acknowledgements
+- `tests/unit/**/*.test.ts(x)` — unit tests mirroring `src/`: the content collection, SEO tags, server logic, and the newsletter form with its server function mocked.
+- `tests/e2e/*.spec.ts` — Playwright against the production build in workerd: page smoke tests, internal-link crawl, sitemap/robots, SEO tags and OG image dimensions, inline SSR of essays, redirects, 404s, theme switching, and the real newsletter round trip (no secrets, so the server reports unavailability).
 
-I'd like to thank everyone who has inspired, supported, and helped me throughout my journey. Your encouragement and guidance have been invaluable.
+## Known differences from the Next.js site
 
-Happy Coding! 🚀
+- Footnote sections are now styled (the previous build lost their classes to an array `className`).
+- Trailing-slash redirects are 307 (the router's default) instead of 308, and the markdown endpoints are not redirected.
+- `/favicon.svg` is served (it was 404 before); the `/baby` page, Vercel analytics and feature flags are gone.
