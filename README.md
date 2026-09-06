@@ -84,6 +84,7 @@ pnpm --filter emailbot dev
 
 ## Usage notes
 
+- Testing approach: `docs/testing.md`
 - Web app details: `apps/web/README.md`
 - Agent worker details: `apps/emailbot/README.md`
 
