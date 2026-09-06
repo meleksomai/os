@@ -21,10 +21,9 @@ export default defineConfig({
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     mdxPlugin(),
     tanstackStart({
-      // Prerender every page reachable from "/": the static HTML lands in
-      // dist/client and the crawled pages feed sitemap.xml.
-      prerender: { enabled: true, crawlLinks: true },
-      pages: [{ path: "/" }],
+      // Prerender the static routes and every page linked from them: the
+      // HTML lands in dist/client and the crawled pages feed sitemap.xml.
+      prerender: { enabled: true },
       sitemap: { host: siteConfig.url },
       importProtection: {
         // `files` replaces the defaults, so keep `*.server.*` and add the
