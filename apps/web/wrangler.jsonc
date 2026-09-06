@@ -9,6 +9,12 @@
   "observability": {
     "enabled": true
   },
+  // The site's Custom Domain: wrangler creates the DNS record and certificate
+  // on deploy (the hostname must have no other DNS record). The apex,
+  // somai.me, is not routed here on purpose: static assets are served before
+  // the Worker, so a second domain would serve the site twice instead of
+  // redirecting. It redirects to www with a zone Redirect Rule (see README).
+  "routes": [{ "pattern": "www.somai.me", "custom_domain": true }],
   "assets": {
     // Prerendered pages are flat .html files served at their extensionless URL.
     "html_handling": "drop-trailing-slash"
