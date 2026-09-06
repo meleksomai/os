@@ -6,7 +6,6 @@ import {
 import readingTime from "reading-time";
 import { z } from "zod";
 import { mdxToMarkdown, plainText } from "./mdx-to-markdown";
-import { formatPublishedAt, parsePublishedAt } from "./src/lib/date";
 
 /**
  * The site's content, validated and shaped at build time. The generated
@@ -17,35 +16,57 @@ import { formatPublishedAt, parsePublishedAt } from "./src/lib/date";
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+/** `2026-01-02` → `January 2, 2026` */
+const publishedAtFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+const essayFrontmatter = z.object({
+  title: z.string(),
+  subtitle: z.string(),
+  category: z.string(),
+  featured: z.boolean(),
+  /** `YYYY-MM-DD` */
+  publishedAt: z.string().regex(ISO_DATE),
+  audio: z.string().optional(),
+  image: z.string().optional(),
+  /** The MDX body without its frontmatter (added by the parser). */
+  content: z.string(),
+});
+
+/** What the pages need about an essay; this is the `Essay` type the app uses. */
 const essays = defineCollection({
   name: "essays",
   directory: "content",
   include: "*.mdx",
-  schema: z.object({
-    title: z.string(),
-    subtitle: z.string(),
-    category: z.string(),
-    featured: z.boolean(),
-    /** `YYYY-MM-DD` */
-    publishedAt: z.string().regex(ISO_DATE),
-    audio: z.string().optional(),
-    image: z.string().optional(),
-    /** The MDX body without its frontmatter (added by the parser). */
-    content: z.string(),
-  }),
+  schema: essayFrontmatter,
   transform: async ({ content, _meta, ...frontmatter }, { cache }) => {
     const markdown = await cache(content, mdxToMarkdown);
     const { text, minutes, time, words } = readingTime(plainText(markdown));
     return {
       ...frontmatter,
       slug: _meta.path,
-      publishedAtFormatted: formatPublishedAt(
-        parsePublishedAt(frontmatter.publishedAt)
+      publishedAtFormatted: publishedAtFormatter.format(
+        new Date(frontmatter.publishedAt)
       ),
       readingTime: { text, minutes, time, words },
-      markdown,
     };
   },
+});
+
+/** The plain-markdown rendition of each essay, served at /essay/:slug.md; kept apart so it never travels with an `Essay`. */
+const renditions = defineCollection({
+  name: "renditions",
+  directory: "content",
+  include: "*.mdx",
+  schema: essayFrontmatter,
+  transform: async ({ content, _meta }, { cache }) => ({
+    slug: _meta.path,
+    markdown: await cache(content, mdxToMarkdown),
+  }),
 });
 
 /** A record of the Paperpile export in content/papers.json; only these fields are kept. */
@@ -75,4 +96,4 @@ const research = defineSingleton({
   }),
 });
 
-export default defineConfig({ content: [essays, research] });
+export default defineConfig({ content: [essays, renditions, research] });

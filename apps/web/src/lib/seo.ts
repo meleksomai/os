@@ -1,6 +1,5 @@
 import type { AnyRouteMatch } from "@tanstack/react-router";
 import { siteConfig, siteUrl } from "@/config/site";
-import { parsePublishedAt } from "@/lib/date";
 
 export interface PageSeo {
   /** Page part of the document title, rendered as `<site name> | <title>`; omitted, the site name alone. */
@@ -76,7 +75,7 @@ export function generateSeo(page: PageSeo = {}): HeadTags {
     meta.push(
       {
         property: "article:published_time",
-        content: parsePublishedAt(page.article.publishedAt).toISOString(),
+        content: new Date(page.article.publishedAt).toISOString(),
       },
       { property: "article:author", content: siteConfig.url }
     );

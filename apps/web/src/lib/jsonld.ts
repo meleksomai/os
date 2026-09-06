@@ -1,7 +1,6 @@
 import type { AnyRouteMatch } from "@tanstack/react-router";
 import type { BlogPosting, Person, Thing, WithContext } from "schema-dts";
 import { siteConfig, siteUrl } from "@/config/site";
-import { parsePublishedAt } from "@/lib/date";
 
 /** A Schema.org object with its `@context`, typed by `schema-dts` (types only, no runtime). */
 export type JsonLd = WithContext<Thing>;
@@ -65,7 +64,7 @@ export function blogJsonLd(input: BlogInput): WithContext<BlogPosting> {
     headline: input.title,
     description: input.description,
     image: siteUrl(input.ogImage),
-    datePublished: parsePublishedAt(input.publishedAt).toISOString(),
+    datePublished: new Date(input.publishedAt).toISOString(),
     author: person,
     url,
     mainEntityOfPage: url,

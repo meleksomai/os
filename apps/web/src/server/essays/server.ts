@@ -1,38 +1,32 @@
-import { allEssays, type Essay as EssayDocument } from "content-collections";
-import type { Essay } from "./schema";
+import { allEssays, allRenditions, type Essay } from "content-collections";
 
 /** Every essay in `content/`, newest first (content-collections.ts builds and validates them). */
 const essays = [...allEssays].sort((a, b) =>
   b.publishedAt.localeCompare(a.publishedAt)
 );
 
-function toEssay({ markdown: _markdown, ...essay }: EssayDocument): Essay {
-  return essay;
-}
-
 export function listEssays(): Essay[] {
-  return essays.map(toEssay);
+  return essays;
 }
 
 export function getEssayBySlug(slug: string): Essay | null {
-  const essay = essays.find((candidate) => candidate.slug === slug);
-  return essay ? toEssay(essay) : null;
+  return essays.find((essay) => essay.slug === slug) ?? null;
 }
 
 /**
- * Plain-markdown rendition of an essay for user agents that ask for
- * text/markdown: the title heading, a metadata line, then the body the
- * collection produced from the MDX source (mdx-to-markdown.ts).
+ * Plain-markdown rendition of an essay for user agents: the title heading, a
+ * metadata line, then the body the collection produced from the MDX source
+ * (mdx-to-markdown.ts).
  */
 export function getEssayMarkdown(slug: string): string | null {
-  const essay = essays.find((candidate) => candidate.slug === slug);
+  const essay = getEssayBySlug(slug);
+  const rendition = allRenditions.find((candidate) => candidate.slug === slug);
 
-  if (!essay) {
+  if (!(essay && rendition)) {
     return null;
   }
 
-  const { title, subtitle, publishedAtFormatted, readingTime, markdown } =
-    essay;
+  const { title, subtitle, publishedAtFormatted, readingTime } = essay;
 
   return `# ${title} - ${subtitle}
 
@@ -40,6 +34,6 @@ export function getEssayMarkdown(slug: string): string | null {
 
 ---
 
-${markdown}
+${rendition.markdown}
 `;
 }

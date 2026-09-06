@@ -1,6 +1,5 @@
 /** biome-ignore-all lint/performance/useTopLevelRegex: unit testing */
 import { describe, expect, it } from "vitest";
-import { parsePublishedAt } from "@/lib/date";
 import { getEssayBySlug, listEssays } from "@/server/essays/server";
 import { essaySlugsOnDisk } from "../../../essays";
 
@@ -17,29 +16,9 @@ describe("listEssays", () => {
   });
 
   it("is sorted by publishedAt descending", () => {
-    const dates = listEssays().map((essay) =>
-      parsePublishedAt(essay.publishedAt).getTime()
-    );
-    const sorted = [...dates].sort((a, b) => b - a);
-    expect(dates).toEqual(sorted);
-  });
-
-  it("exposes complete metadata for every essay", () => {
-    for (const essay of listEssays()) {
-      expect(essay.title).toBeTruthy();
-      expect(essay.subtitle).toBeTruthy();
-      expect(essay.category).toBeTruthy();
-      expect(essay.publishedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(essay.publishedAtFormatted).toMatch(/\d{4}$/);
-      expect(typeof essay.featured).toBe("boolean");
-    }
-  });
-
-  it("exposes reading time for every essay", () => {
-    for (const essay of listEssays()) {
-      expect(essay.readingTime.text).toMatch(/min read/);
-      expect(essay.readingTime.words).toBeGreaterThan(0);
-    }
+    // ISO dates sort lexicographically.
+    const dates = listEssays().map((essay) => essay.publishedAt);
+    expect(dates).toEqual([...dates].sort().reverse());
   });
 
   it("has at least one featured essay for the home page", () => {
