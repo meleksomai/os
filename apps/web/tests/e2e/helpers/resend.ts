@@ -36,7 +36,7 @@ export async function recordedRequestsFor(
 }
 
 /** The dummy secrets the e2e Worker runs with, read from .dev.vars.e2e. */
-export function e2eDevVars(): { apiKey: string; audienceId: string } {
+export function e2eDevVars(): { apiKey: string; segmentId: string } {
   const file = readFileSync(
     new URL("../../../.dev.vars.e2e", import.meta.url),
     "utf8"
@@ -50,11 +50,11 @@ export function e2eDevVars(): { apiKey: string; audienceId: string } {
     vars.set(line.slice(0, separator).trim(), line.slice(separator + 1).trim());
   }
   const apiKey = vars.get("RESEND_API_KEY");
-  const audienceId = vars.get("RESEND_SEGMENT_GENERAL");
-  if (!(apiKey && audienceId)) {
+  const segmentId = vars.get("RESEND_SEGMENT_GENERAL");
+  if (!(apiKey && segmentId)) {
     throw new Error(
       ".dev.vars.e2e must define RESEND_API_KEY and RESEND_SEGMENT_GENERAL"
     );
   }
-  return { apiKey, audienceId };
+  return { apiKey, segmentId };
 }

@@ -5,7 +5,7 @@ name: Contract tests
 #
 # Required repository secrets:
 #   RESEND_API_KEY               a key scoped to contacts
-#   RESEND_CONTRACT_AUDIENCE_ID  a Resend audience used for nothing else
+#   RESEND_CONTRACT_SEGMENT_ID   a Resend segment used for nothing else
 on:
   schedule:
     - cron: "17 6 * * *"
@@ -37,15 +37,15 @@ jobs:
       - name: require secrets
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          RESEND_CONTRACT_AUDIENCE_ID: ${{ secrets.RESEND_CONTRACT_AUDIENCE_ID }}
+          RESEND_CONTRACT_SEGMENT_ID: ${{ secrets.RESEND_CONTRACT_SEGMENT_ID }}
         run: |
-          if [ -z "$RESEND_API_KEY" ] || [ -z "$RESEND_CONTRACT_AUDIENCE_ID" ]; then
-            echo "::error::RESEND_API_KEY and RESEND_CONTRACT_AUDIENCE_ID must be set as repository secrets"
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$RESEND_CONTRACT_SEGMENT_ID" ]; then
+            echo "::error::RESEND_API_KEY and RESEND_CONTRACT_SEGMENT_ID must be set as repository secrets"
             exit 1
           fi
 
       - name: resend contract tests
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          RESEND_CONTRACT_AUDIENCE_ID: ${{ secrets.RESEND_CONTRACT_AUDIENCE_ID }}
+          RESEND_CONTRACT_SEGMENT_ID: ${{ secrets.RESEND_CONTRACT_SEGMENT_ID }}
         run: pnpm --filter @workspace/emailing test:contract

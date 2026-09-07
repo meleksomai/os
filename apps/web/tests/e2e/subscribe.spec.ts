@@ -12,7 +12,7 @@ import { e2eDevVars, recordedRequestsFor, uniqueEmail } from "./helpers/resend";
 const SERVER_FN = "**/_serverFn/**";
 const SUBSCRIBER_PREFIX = "subscriber-";
 
-const { apiKey, audienceId } = e2eDevVars();
+const { apiKey, segmentId } = e2eDevVars();
 
 test.describe("Newsletter Subscription", () => {
   test("contact form section is visible on homepage", async ({ page }) => {
@@ -85,15 +85,15 @@ test.describe("Newsletter Subscription", () => {
     await expect(page.getByRole("status")).toContainText("You're on the list!");
     await expect(page.locator('input[type="email"]')).not.toBeVisible();
 
-    // What Resend would have received: one contact creation on the configured
-    // audience, authenticated with the configured key, address normalised.
+    // What Resend would have received: one contact creation in the configured
+    // segment, authenticated with the configured key, address normalised.
     const received = await recordedRequestsFor(request, email);
     expect(received).toHaveLength(1);
     expect(received[0]).toMatchObject({
       method: "POST",
-      path: `/audiences/${audienceId}/contacts`,
+      path: "/contacts",
       authorization: `Bearer ${apiKey}`,
-      body: { email, unsubscribed: false },
+      body: { email, unsubscribed: false, segments: [{ id: segmentId }] },
     });
   });
 
@@ -109,7 +109,12 @@ test.describe("Newsletter Subscription", () => {
 
     await expect(page.getByRole("status")).toBeVisible();
     await expect(page.getByRole("status")).toContainText("You're on the list!");
-    expect(await recordedRequestsFor(request, email)).toHaveLength(1);
+    // Resend refuses to create the existing contact, so the Worker adds it
+    // to the segment instead.
+    expect(await recordedRequestsFor(request, email)).toMatchObject([
+      { method: "POST", path: "/contacts" },
+      { method: "POST", path: `/contacts/${email}/segments/${segmentId}` },
+    ]);
   });
 
   test("a Resend outage shows the error state", async ({ page, request }) => {
