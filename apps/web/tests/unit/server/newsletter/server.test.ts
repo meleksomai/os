@@ -19,7 +19,7 @@ describe("subscribeToNewsletter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv("RESEND_API_KEY", "test_api_key");
-    vi.stubEnv("RESEND_SEGMENT_GENERAL", "test_audience_id");
+    vi.stubEnv("RESEND_SEGMENT_GENERAL", "seg_test");
   });
 
   describe("validation", () => {
@@ -85,7 +85,7 @@ describe("subscribeToNewsletter", () => {
       expect(mockSubscribeContact).not.toHaveBeenCalled();
     });
 
-    it("returns error when audience ID is missing", async () => {
+    it("returns error when the segment id is missing", async () => {
       vi.stubEnv("RESEND_SEGMENT_GENERAL", "");
 
       const result = await subscribeToNewsletter(
@@ -111,7 +111,7 @@ describe("subscribeToNewsletter", () => {
 
       expect(mockSubscribeContact).toHaveBeenCalledWith({
         email: "test@example.com",
-        audienceId: "test_audience_id",
+        segmentId: "seg_test",
         apiKey: "test_api_key",
       });
     });

@@ -11,9 +11,13 @@
  * known prefix. Behaviour lives in the address, not in shared state, so
  * parallel tests never interfere.
  *
- * The response shapes mirror what the Resend SDK expects (`response.ok` or a
- * JSON error body). Whether they still match the real API is the job of the
- * contract tests (tests/contract), which run on a schedule.
+ * The endpoints are Resend's Segments API: `POST /contacts` with a `segments`
+ * list, and `POST /contacts/{email}/segments/{id}` for a contact that already
+ * exists. The deprecated Audiences endpoints (`/audiences/{id}/contacts`) are
+ * deliberately not served: calling them with a segment id is the bug this
+ * fake now guards against, so they answer 404 like any other unknown path.
+ * Whether these shapes still match the real API is the job of the contract
+ * tests (tests/contract), which run on a schedule.
  */
 import { randomUUID } from "node:crypto";
 import {
@@ -34,6 +38,7 @@ export const FAKE_REQUESTS_PATH = "/__fake/requests";
 
 /** Email local-part prefixes that select a scripted answer. */
 export const OUTAGE_PREFIX = "outage-";
+/** The contact already exists: creation answers 409, adding to a segment works. */
 export const DUPLICATE_PREFIX = "duplicate-";
 
 export interface RecordedRequest {
@@ -46,13 +51,14 @@ export interface RecordedRequest {
 export interface FakeResend {
   /** Base URL to put in RESEND_BASE_URL. */
   url: string;
-  /** Requests received so far, optionally only those carrying this email. */
+  /** Requests received so far, optionally only those about this email. */
   requests(email?: string): RecordedRequest[];
   reset(): void;
   close(): Promise<void>;
 }
 
-const CREATE_CONTACT_PATH = /^\/audiences\/[^/]+\/contacts$/;
+const CREATE_CONTACT_PATH = /^\/contacts$/;
+const ADD_CONTACT_SEGMENT_PATH = /^\/contacts\/([^/]+)\/segments\/[^/]+$/;
 const BEARER_PREFIX = "Bearer ";
 
 const HTTP_OK = 200;
@@ -92,12 +98,31 @@ function resendError(
   reply(res, statusCode, { statusCode, name, message });
 }
 
+function outage(res: ServerResponse): void {
+  resendError(
+    res,
+    HTTP_SERVER_ERROR,
+    "application_error",
+    "Internal server error. We are unable to process your request right now, please try again later."
+  );
+}
+
 function emailOf(body: unknown): string | null {
   if (typeof body === "object" && body !== null && "email" in body) {
     const { email } = body as { email: unknown };
     return typeof email === "string" ? email : null;
   }
   return null;
+}
+
+/** The address a request is about: in its body, or in its path. */
+function emailOfRequest(request: RecordedRequest): string | null {
+  const fromBody = emailOf(request.body);
+  if (fromBody) {
+    return fromBody;
+  }
+  const match = ADD_CONTACT_SEGMENT_PATH.exec(request.path);
+  return match?.[1] ? decodeURIComponent(match[1]) : null;
 }
 
 function handleCreateContact(
@@ -115,12 +140,7 @@ function handleCreateContact(
     return;
   }
   if (email.startsWith(OUTAGE_PREFIX)) {
-    resendError(
-      res,
-      HTTP_SERVER_ERROR,
-      "application_error",
-      "Internal server error. We are unable to process your request right now, please try again later."
-    );
+    outage(res);
     return;
   }
   if (email.startsWith(DUPLICATE_PREFIX)) {
@@ -133,6 +153,17 @@ function handleCreateContact(
     return;
   }
   reply(res, HTTP_CREATED, { object: "contact", id: randomUUID() });
+}
+
+function handleAddContactSegment(
+  res: ServerResponse,
+  recorded: RecordedRequest
+): void {
+  if (emailOfRequest(recorded)?.startsWith(OUTAGE_PREFIX)) {
+    outage(res);
+    return;
+  }
+  reply(res, HTTP_CREATED, { id: randomUUID() });
 }
 
 /** Start a fake on `port` (0 picks a free one). */
@@ -148,7 +179,7 @@ export function startFakeResend(
       return [...requests];
     }
     const wanted = email.toLowerCase();
-    return requests.filter((r) => emailOf(r.body)?.toLowerCase() === wanted);
+    return requests.filter((r) => emailOfRequest(r)?.toLowerCase() === wanted);
   };
 
   const handleControl = (
@@ -200,6 +231,10 @@ export function startFakeResend(
     }
     if (req.method === "POST" && CREATE_CONTACT_PATH.test(url.pathname)) {
       handleCreateContact(res, recorded);
+      return;
+    }
+    if (req.method === "POST" && ADD_CONTACT_SEGMENT_PATH.test(url.pathname)) {
+      handleAddContactSegment(res, recorded);
       return;
     }
     resendError(

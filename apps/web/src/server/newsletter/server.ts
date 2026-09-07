@@ -35,11 +35,11 @@ export async function subscribeToNewsletter(
   // Read per request: on Workers, secrets are populated into process.env for
   // each invocation and must not be cached at module scope.
   const apiKey = process.env.RESEND_API_KEY;
-  const audienceId = process.env.RESEND_SEGMENT_GENERAL;
+  const segmentId = process.env.RESEND_SEGMENT_GENERAL;
 
-  if (!(apiKey && audienceId)) {
+  if (!(apiKey && segmentId)) {
     return UNAVAILABLE;
   }
 
-  return await subscribeContact({ email: trimmedEmail, audienceId, apiKey });
+  return await subscribeContact({ email: trimmedEmail, segmentId, apiKey });
 }

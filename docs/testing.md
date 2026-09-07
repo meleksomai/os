@@ -30,13 +30,13 @@ This is the standard split: hermetic tests for the pipeline, periodic contract t
 
 ## Reference implementation: the newsletter (Resend)
 
-The site's subscribe form calls a TanStack server function, which calls `subscribeContact` in `packages/emailing`, which calls the Resend SDK.
+The site's subscribe form calls a TanStack server function, which calls `subscribeContact` in `packages/emailing`, which calls the Resend SDK. Resend's contacts are global (keyed by email) and belong to Segments, which replaced the deprecated Audiences; the adapter creates the contact in the segment from `RESEND_SEGMENT_GENERAL` and, when the contact already exists, adds it to the segment.
 
 **Unit** (`packages/emailing/tests/unit`, `apps/web/tests/unit`): the SDK is mocked with the response shapes it really returns. The SDK does not throw on API errors; it resolves `{ data: null, error }`.
 
-**The fake** (`packages/emailing/testing/fake-resend`): owned by the package that wraps Resend and exported as `@workspace/emailing/testing/fake-resend`. `startFakeResend()` runs it in-process; `serve.ts` runs it as a process for apps. It implements only the endpoints we use, records every request (`GET /__fake/requests?email=`), and scripts failures by address prefix (`outage-` gives a 500, `duplicate-` gives a 409 "already exists"). Behaviour lives in the address, not in shared state, so tests run in parallel.
+**The fake** (`packages/emailing/testing/fake-resend`): owned by the package that wraps Resend and exported as `@workspace/emailing/testing/fake-resend`. `startFakeResend()` runs it in-process; `serve.ts` runs it as a process for apps. It implements only the endpoints we use (`POST /contacts`, `POST /contacts/{email}/segments/{id}`; the deprecated audience endpoints answer 404), records every request (`GET /__fake/requests?email=`), and scripts failures by address prefix (`outage-` gives a 500, `duplicate-` gives a 409 "already exists" on creation). Behaviour lives in the address, not in shared state, so tests run in parallel.
 
-**Integration** (`packages/emailing/tests/integration`): `subscribeContact` with the real SDK against the fake, started by a Vitest `globalSetup` on a fixed port because the SDK reads `RESEND_BASE_URL` when its module loads. Asserts the request Resend would receive and the adapter's answer for success, duplicate, and outage.
+**Integration** (`packages/emailing/tests/integration`): `subscribeContact` with the real SDK against the fake, started by a Vitest `globalSetup` on a fixed port because the SDK reads `RESEND_BASE_URL` when its module loads. Asserts the requests Resend would receive and the adapter's answer for success, duplicate (creation refused, then added to the segment), and outage.
 
 **End-to-end** (`apps/web/tests/e2e/subscribe.spec.ts`):
 
@@ -45,9 +45,11 @@ The site's subscribe form calls a TanStack server function, which calls `subscri
 - `playwright.config.ts` starts the fake (`pnpm --filter @workspace/emailing fake-resend`), then runs `CLOUDFLARE_ENV=e2e pnpm build && pnpm preview`. The preview is never reused.
 - Tests assert on the UI and on what Resend would have received: path, bearer token, normalised address.
 
-**Contract** (`packages/emailing/tests/contract/resend.test.ts`): runs `subscribeContact` against Resend with a unique address in a dedicated audience, checks the contact exists, checks a repeat still reports success, removes the contact. Needs `RESEND_API_KEY` and `RESEND_CONTRACT_AUDIENCE_ID`; skips without them.
+**Contract** (`packages/emailing/tests/contract/resend.test.ts`): runs `subscribeContact` against Resend with a unique address and a dedicated segment, checks the contact exists and is in the segment, checks a repeat still reports success, removes the contact from the segment and checks a subscription adds it back, then removes the contact. Needs `RESEND_API_KEY` and `RESEND_CONTRACT_SEGMENT_ID`; skips without them locally, while the `contract` workflow fails when the repository secrets are missing.
 
 **What it caught.** The adapter only handled thrown errors, so any Resend failure reported "Thanks for subscribing!". The unit tests had mocked a rejection the SDK never produces. The fake, sitting at the HTTP boundary, exercised the SDK's real behaviour and the outage test failed. The integration layer now catches this class of bug in the package itself, without a browser.
+
+**What it missed, and why.** Resend replaced Audiences with Segments, and the adapter kept creating contacts through the deprecated `POST /audiences/{id}/contacts` with the segment id from `RESEND_SEGMENT_GENERAL`. Every hermetic layer stayed green: the unit mocks, the fake, and therefore the integration and e2e suites all encoded our own assumption about the vendor, and a wrong assumption is invisible to a test that checks it against itself. The one layer built to catch this, the contract test, had never run: its repository secrets were never added, so the scheduled workflow failed at its "require secrets" step from its first run. Two lessons. A fake is a hypothesis about the vendor, and the contract test is the only thing that tests the hypothesis; a contract workflow that has never gone green is a gap, not a safety net. And the seam must be observable: the adapter swallows the vendor's answer, so nothing in the logs says why a subscription fails.
 
 ## Adding a new integration
 

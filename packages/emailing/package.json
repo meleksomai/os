@@ -15,7 +15,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "resend": "6.7.0"
+    "resend": "6.26.0"
   },
   "devDependencies": {
     "@types/node": "24.10.4",
